@@ -104,33 +104,23 @@ function waLink(message: string) {
 }
 
 /* ------------------------------------------------------------------
-   Logo : marque 2x2 + typographie
+   Logo : le symbole recadré depuis le fichier fourni
+   « Exoticas logo H1.png » (279 × 289 px, vert #237F3C), décliné en blanc
+   pour les fonds verts. Aucune retouche de tracé : recadrage seul.
 ------------------------------------------------------------------ */
 
 function Logo({ size = 34 }: { size?: number }) {
   return (
-    <svg
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       className="mark"
+      src="/logo/marque-blanche.png"
+      alt=""
       width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      fill="none"
+      height={Math.round((size * 289) / 279)}
       aria-hidden="true"
-    >
-      <g fill="currentColor">
-        <rect x="2" y="4" width="18" height="3.2" rx="1.6" />
-        <rect x="2" y="10.4" width="18" height="3.2" rx="1.6" />
-        <rect x="2" y="16.8" width="18" height="3.2" rx="1.6" />
-        <g transform="translate(36,12)">
-          <g className="mark-flower">
-            <ellipse rx="2.7" ry="7.2" transform="rotate(45)" />
-            <ellipse rx="2.7" ry="7.2" transform="rotate(135)" />
-          </g>
-        </g>
-        <circle cx="11" cy="36" r="8" />
-        <path d="M28 44V28h16v4.4H32.4V44H28Z" />
-      </g>
-    </svg>
+      decoding="async"
+    />
   );
 }
 
@@ -689,8 +679,6 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .head-nom{font-size:1.15rem;letter-spacing:.01em}
 .mark{transition:transform .6s var(--ease-out)}
 .head-logo:hover .mark{transform:rotate(-8deg) scale(1.06)}
-.mark-flower{transform-box:fill-box;transform-origin:center;animation:breathe 6s var(--ease) infinite alternate}
-@keyframes breathe{from{opacity:.82}to{opacity:1;transform:scale(1.12)}}
 .head-nav{display:flex;align-items:center;gap:22px;font-size:.95rem}
 .head-nav a:not(.btn){text-decoration:none;color:#fff;position:relative}
 .head-nav a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-6px;height:1.5px;width:100%;
@@ -719,6 +707,16 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--vert);color:#fff;padding:150px 0 96px;overflow:hidden}
+/* PC : le hero occupe la hauteur de la fenêtre, contenu centré dans la zone
+   utile (le padding haut dégage toujours l'en-tête fixe). Sur mobile la règle
+   ne s'applique pas : le hero y garde sa carte compacte. */
+@media (min-width:821px){
+  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:center}
+  /* le cadre suit la hauteur de la fenêtre (340 px → la largeur de sa colonne,
+     ~423 px) : sinon il flotte, minuscule, dans un hero de 900 px de haut.
+     Sélecteur doublé pour passer devant la règle .frame placée plus bas. */
+  .hero .frame{max-width:clamp(340px,46vh,440px)}
+}
 .hero-bg{position:absolute;inset:0;background-image:var(--hero-img);background-size:cover;background-position:50% 34%;
   opacity:0;transition:opacity .8s var(--ease)}
 .hero-in{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
