@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------
    Informations récupérées du flyer Exoticas (Cotonou, Bénin)
@@ -244,6 +244,49 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
 
+  /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
+     couleur du hero porte le texte qui se tape caractère par caractère, puis se
+     lève et les entrées du hero jouent (elles sont en pause tant qu'il est up).
+     Le passage est marqué dans localStorage ; prefers-reduced-motion coupe tout,
+     et un localStorage inaccessible (navigation privée) n'empêche pas l'affichage.
+     Volontairement sans cleanup : en dev, StrictMode montez/démontez reminderait
+     l'effet après que la trace a été posée, et le rideau resterait baissé sans
+     que rien ne se tape. Le garde en ref ne lance la séquence qu'une fois, et les
+     trois temporaires se terminent d'eux-mêmes en moins de 3 s. */
+  const [bienvenue, setBienvenue] = useState<"off" | "frappe" | "leve">("off");
+  const [frappe, setFrappe] = useState("");
+  const lancee = useRef(false);
+
+  useEffect(() => {
+    if (lancee.current) return;
+    let dejaVue = false;
+    try {
+      dejaVue = localStorage.getItem("exo-bienvenue") === "1";
+    } catch {
+      dejaVue = false;
+    }
+    if (dejaVue || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    lancee.current = true;
+    try {
+      localStorage.setItem("exo-bienvenue", "1");
+    } catch {
+      /* pas de trace : la bienvenue se rejouera, ce n'est pas grave */
+    }
+    const chars = [..."Bienvenue à Exoticas"];
+    const PAS = 62; // ms entre deux caractères
+    const FIN = chars.length * PAS + 900; // + une pose avant que le rideau se lève
+    setBienvenue("frappe");
+    let i = 0;
+    const typer = window.setInterval(() => {
+      i += 1;
+      setFrappe(chars.slice(0, i).join(""));
+      if (i >= chars.length) window.clearInterval(typer);
+    }, PAS);
+    window.setTimeout(() => setBienvenue("leve"), FIN);
+    window.setTimeout(() => setBienvenue("off"), FIN + 800);
+  }, []);
+
   function localiser() {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
       setGeo({ etat: "absent" });
@@ -358,10 +401,21 @@ export default function Home() {
       <main id="top">
         {/* HERO */}
         <section
-          className="hero"
+          className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}
           style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
         >
           <div className="hero-bg" aria-hidden="true" />
+          {bienvenue !== "off" && (
+            <div
+              className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
+              aria-hidden="true"
+            >
+              <p className="welcome-texte">
+                {frappe}
+                <span className="welcome-caret" />
+              </p>
+            </div>
+          )}
           <div className="wrap hero-in">
             <div className="hero-copy">
               <span className="rise" style={{ "--d": "60ms" } as React.CSSProperties}>
@@ -708,10 +762,17 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--vert);color:#fff;padding:150px 0 96px;overflow:hidden}
 /* PC : le hero occupe la hauteur de la fenêtre, contenu centré dans la zone
-   utile (le padding haut dégage toujours l'en-tête fixe). Sur mobile la règle
-   ne s'applique pas : le hero y garde sa carte compacte. */
+   utile (le padding haut dégage toujours l'en-tête fixe). Mobile : même
+   hauteur de fenêtre, mais contenu calé en bas sur sa bande, l'image restant
+   visible au-dessus. La colonne unique en minmax(0,1fr) garde au .wrap ses
+   1080 px : sans elle, ses marges auto le réduiraient à la largeur de son
+   contenu (892 px au lieu de 1040). */
 @media (min-width:821px){
-  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:center}
+  .hero{min-height:100vh;min-height:100svh;display:grid;
+    grid-template-columns:minmax(0,1fr);align-content:center}
+  /* dans une grille, les marges auto du .wrap le font rétrécir à son contenu
+     (892 px au lieu de 1040) : width:100% lui rend sa largeur mesurée. */
+  .hero .hero-in{width:100%}
   /* le cadre suit la hauteur de la fenêtre (340 px → la largeur de sa colonne,
      ~423 px) : sinon il flotte, minuscule, dans un hero de 900 px de haut.
      Sélecteur doublé pour passer devant la règle .frame placée plus bas. */
@@ -735,6 +796,21 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .frame img{width:100%;height:100%;object-fit:cover;object-position:50% 38%}
 .kenburns{animation:kb 22s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.14) translate(-2%,-3%)}}
+
+/* ---------- bienvenue dactylographiée (première visite) ----------
+   Le rideau reprend le vert du hero — il ne voile pas la photo, il la remplace
+   le temps de la frappe, puis glisse vers le haut (le hero est en overflow:hidden).
+   min-height sur le texte : la ligne ne saute pas quand elle est encore vide. */
+.hero.is-welcome .rise{animation-play-state:paused}
+.welcome{position:absolute;inset:0;z-index:2;display:grid;place-items:center;padding:0 24px;
+  background:var(--vert);color:#fff;text-align:center;
+  transition:transform .8s var(--ease)}
+.welcome-up{transform:translateY(-100%)}
+.welcome-texte{margin:0;min-height:1.2em;font-size:clamp(1.4rem,4.6vw,2.15rem);
+  line-height:1.15;letter-spacing:-.02em}
+.welcome-caret{display:inline-block;width:2px;height:1.05em;margin-left:3px;
+  vertical-align:-.12em;background:currentColor;animation:caret 1.05s steps(1,end) infinite}
+@keyframes caret{50%{opacity:0}}
 
 /* entrées échelonnées au chargement */
 .rise{animation:rise .9s var(--ease-out) both;animation-delay:var(--d,0ms)}
@@ -861,11 +937,16 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
 }
 @media (max-width:820px){
-  .hero{padding:110px 0 72px}
+  /* Mobile : l'image est le fond de tout le hero, qui prend la hauteur de
+     l'écran comme en PC. Le texte ne pose plus sur une nappe qui la recouvre :
+     la bande verte est calée en bas, à la hauteur du bloc de texte, et la
+     photo se lit au-dessus (≈180 px sur un 390×844). align-content:end ne fait
+     rien si le contenu dépasse 100svh : le hero s'allonge et la bande suit. */
+  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:end;padding:96px 0 26px}
   .hero-bg{opacity:1;animation:zoom 26s var(--ease) infinite alternate}
   @keyframes zoom{from{transform:scale(1)}to{transform:scale(1.12)}}
   .hero-in{grid-template-columns:1fr;gap:0}
-  .hero-copy{background:var(--vert);padding:26px 22px;border-radius:12px;
+  .hero-copy{background:var(--vert);padding:24px 20px;border-radius:12px;
     box-shadow:0 18px 44px rgba(15,30,8,.28)}
   .hero-photo{display:none}
   .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
