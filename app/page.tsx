@@ -134,6 +134,29 @@ const AVIS = [
   },
 ];
 
+/* Photos du lieu (fiche Google Maps) : boutique, salle, coin café. */
+const LIEU = {
+  arbre: { src: "/lieu/boutique-arbre.webp", w: 382, h: 510, alt: "Salle d'Exoticas : grand arbre, étagères de plantes et fauteuil, à Cotonou" },
+  tasses: { src: "/lieu/salle-tasses.webp", w: 382, h: 510, alt: "Table avec deux cafés au milieu des plantes chez Exoticas, Cotonou" },
+  etageres: { src: "/lieu/boutique-etageres.webp", w: 382, h: 510, alt: "Étagères de plantes en pots et tables du coin café d'Exoticas" },
+  brunch: { src: "/lieu/cafe-brunch.webp", w: 382, h: 510, alt: "Brunch chez Exoticas : gaufres au chocolat, croissant, omelette, jus et café" },
+  crepes: { src: "/lieu/cafe-crepes-sandwich.webp", w: 287, h: 510, alt: "Crêpes, sandwich grillé et jus frais au café d'Exoticas" },
+  jus: { src: "/lieu/cafe-jus.webp", w: 287, h: 510, alt: "Jus frais devant les étagères de plantes du café Exoticas" },
+};
+
+const AU_MENU = [
+  "Brunch",
+  "Gaufres",
+  "Crêpes",
+  "Croissant",
+  "Omelette",
+  "Sandwichs grillés",
+  "Salades",
+  "Jus frais",
+  "Iced latte",
+  "Café",
+];
+
 function waLink(message: string) {
   return `https://wa.me/${BRAND.wa}?text=${encodeURIComponent(message)}`;
 }
@@ -161,7 +184,7 @@ function Logo({ size = 34 }: { size?: number }) {
 
 function Wordmark({ light = true }: { light?: boolean }) {
   return (
-    <span className="wordmark" style={{ color: light ? "#fff" : "#22331B" }}>
+    <span className="wordmark" style={{ color: light ? "#fff" : "#1E2B28" }}>
       <Logo size={30} />
       <span className="wordmark-text">
         <span className="wordmark-nom">{BRAND.nom}</span>
@@ -434,7 +457,10 @@ export default function Home() {
             <span className="head-nom">exoticas</span>
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
-            <a href="#galerie">Galerie</a>
+            <a href="#lieu">Le lieu</a>
+            <a href="#cafe">Café</a>
+            <a href="#galerie">Plantes</a>
+            <a href="#avis">Avis</a>
             <a href="#contact">Contact</a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
               <PhoneIcon size={16} /> Appeler
@@ -467,11 +493,11 @@ export default function Home() {
                 <Wordmark />
               </span>
               <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
-                Donnons vie à vos espaces.
+                Plantes rares, café et coworking à Cotonou.
               </h1>
               <p className="rise" style={{ "--d": "260ms" } as React.CSSProperties}>
-                Plants café, boutique, coworking et paysagisme : tout ce qu'il
-                faut pour vous reconnecter à l'essentiel, à Tokpa-hoho, Cotonou.
+                Une boutique-jardin à Tokpa-hoho : plantes rares, coin café,
+                coworking et paysagisme, pour vous reconnecter à l'essentiel.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
                 <a className="btn btn-light" href="#contact">
@@ -486,18 +512,70 @@ export default function Home() {
               </p>
             </div>
             <div className="hero-photo rise" style={{ "--d": "320ms" } as React.CSSProperties}>
-              <div className="frame">
+              <div className="collage">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className="kenburns"
-                  src="/galerie/p1-visuel-maitre.jpg"
-                  alt="Exoticas, la vie en vert : plantes rares et paysagisme à Cotonou"
-                  width={1526}
-                  height={1600}
-                  fetchPriority="high"
-                  decoding="async"
-                />
+                <img className="collage-a" src={LIEU.tasses.src} width={LIEU.tasses.w} height={LIEU.tasses.h} alt={LIEU.tasses.alt} fetchPriority="high" decoding="async" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="collage-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} decoding="async" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* LE LIEU */}
+        <section id="lieu" className="section">
+          <div className="wrap lieu-in">
+            <div data-reveal className="reveal">
+              <h2>Une boutique-jardin où l'on s'installe</h2>
+              <p className="lede">
+                À Tokpa-hoho, Exoticas mêle boutique de plantes rares, coin café
+                et espace pour travailler : murs vert profond, bois brut et
+                étagères de plantes. On y vient choisir une plante, déjeuner ou
+                ouvrir son ordinateur.
+              </p>
+              <ul className="puces">
+                <li>Boutique de plantes rares et d'intérieur</li>
+                <li>Coin café et brunch</li>
+                <li>Coworking</li>
+                <li>Paysagisme sur devis</li>
+              </ul>
+            </div>
+            <div className="lieu-photos" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+              {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={im.src} className={`lieu-p lieu-p${i}`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* LE CAFÉ */}
+        <section id="cafe" className="section cafe">
+          <div className="wrap cafe-in">
+            <div className="cafe-photos" data-reveal>
+              {[LIEU.brunch, LIEU.crepes, LIEU.jus].map((im, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={im.src} className={`cafe-p cafe-p${i}`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+              ))}
+            </div>
+            <div data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+              <h2>Le coin café, au milieu des plantes</h2>
+              <p className="lede">
+                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et un iced
+                latte salué par nos clients : de quoi se poser un moment, entre
+                deux plantes.
+              </p>
+              <ul className="menu-chips">
+                {AU_MENU.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+              <p className="prix">
+                Comptez environ 2 000 à 6 000 FCFA par personne (d'après les avis Google).
+              </p>
+              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, j'aimerais réserver une table.")} target="_blank" rel="noopener">
+                <WhatsAppIcon size={18} /> Réserver une table
+              </a>
             </div>
           </div>
         </section>
@@ -762,14 +840,19 @@ export default function Home() {
 
 const css = `
 :root{
-  --vert:#466931;
-  --vert-fonce:#3A5528;
-  --vert-nuit:#2C4220;
-  --vert-accent:#6EA03F;
-  --creme:#F7F6F1;
-  --texte:#22331B;
-  --muted:#6E7A66;
-  --line:#DDE2D6;
+  /* palette tirée des photos du lieu : murs vert sapin, bois brut, jaune moutarde, terre cuite */
+  --vert:#23403B;
+  --vert-fonce:#1A322E;
+  --vert-nuit:#122421;
+  --vert-accent:#E1A32D;
+  --moutarde:#E1A32D;
+  --terre:#C4673E;
+  --bois:#8B5A34;
+  --creme:#F6EFE2;
+  --texte:#1E2B28;
+  --muted:#6B726B;
+  --line:#E3DACA;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
   --r:8px;
   --ease:cubic-bezier(.22,.61,.36,1);
   --ease-out:cubic-bezier(.16,1,.3,1);
@@ -795,6 +878,7 @@ body{
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 h1,h2,h3{margin:0 0 .55rem;font-weight:550;text-wrap:balance}
+h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500}
 h1{font-size:clamp(2.35rem,4.6vw,3.45rem);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(1.65rem,2.6vw,2.15rem);line-height:1.1;letter-spacing:-.03em}
 h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
@@ -932,6 +1016,42 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .avis-notes{display:block;margin-top:4px}
 .lede{color:var(--muted);font-size:1.04rem;line-height:1.6;max-width:52ch;margin:0 0 8px}
 
+/* ---------- le lieu ---------- */
+.lieu-in{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,5vw,72px);align-items:center}
+.puces{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.puces li{position:relative;padding-left:26px}
+.puces li::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--moutarde)}
+.lieu-photos{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px;height:clamp(380px,46vw,560px)}
+.lieu-p{width:100%;height:100%;min-height:0;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(20,35,12,.2)}
+.lieu-p0{grid-row:1 / span 2;border-radius:120px 120px var(--r) var(--r)}
+.lieu-p1{grid-column:2;grid-row:1}
+.lieu-p2{grid-column:2;grid-row:2}
+
+/* ---------- le café ---------- */
+.cafe{background:var(--vert);color:#fff;position:relative}
+.cafe::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;
+  background:linear-gradient(90deg,var(--moutarde),var(--terre),var(--bois))}
+.cafe h2{color:#fff}
+.cafe .lede{color:rgba(255,255,255,.82)}
+.cafe-in{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
+.cafe-photos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px;height:clamp(380px,44vw,540px)}
+.cafe-p{width:100%;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.cafe-p{height:100%;min-height:0}
+.cafe-p0{grid-row:1 / span 2}
+.menu-chips{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.menu-chips li{padding:6px 14px;border-radius:99px;font-size:.9rem;
+  border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92)}
+.prix{margin:20px 0 22px;font-size:.92rem;color:rgba(255,255,255,.7)}
+.btn-moutarde{background:var(--moutarde);color:var(--vert-nuit);font-weight:600}
+.btn-moutarde:hover{background:#EDB544}
+
+/* collage du hero */
+.collage{position:relative;width:min(100%,400px);aspect-ratio:1/1.12}
+.collage img{position:absolute;object-fit:cover;border-radius:var(--r);
+  border:3px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(8,20,18,.45)}
+.collage-a{left:0;top:0;width:66%;height:84%;border-radius:140px 140px var(--r) var(--r)!important}
+.collage-b{right:0;bottom:0;width:50%;height:58%}
+
 /* ---------- galerie : planche-contact sur plaque de glace ----------
    La photo garde son ratio 3:4 (aucun recadrage) et ne recoit ni filtre ni nappe :
    c'est la plaque autour qui est translucide, éclairée par un liseré intérieur. */
@@ -960,9 +1080,9 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
   box-shadow:var(--glace-relu),inset 0 1px 2px rgba(20,35,12,.05);
   border-radius:var(--r);padding:11px 13px;width:100%;
   transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease-out),background .3s var(--ease)}
-.form input:hover,.form textarea:hover{border-color:#C3CDB8;background:rgba(255,255,255,.85)}
+.form input:hover,.form textarea:hover{border-color:#D2C5AC;background:rgba(255,255,255,.85)}
 .form input:focus,.form textarea:focus{outline:none;border-color:var(--vert);background:#fff;
-  box-shadow:0 0 0 3px rgba(110,160,63,.22),inset 0 1px 2px rgba(20,35,12,.04)}
+  box-shadow:0 0 0 3px rgba(225,163,45,.32),inset 0 1px 2px rgba(20,35,12,.04)}
 .form .btn{justify-self:start;margin-top:4px}
 .note{font-size:.88rem;color:var(--muted);border-left:2px solid var(--vert-accent);padding-left:12px;margin:0;
   max-height:0;opacity:0;overflow:hidden;transition:max-height .6s var(--ease-out),opacity .6s var(--ease)}
@@ -1040,6 +1160,8 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 
 /* ---------- responsive ---------- */
 @media (max-width:900px){
+  .lieu-in,.cafe-in{grid-template-columns:1fr}
+  .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
 }
@@ -1060,6 +1182,8 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
   .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .hero-cta .btn{padding:12px 10px;font-size:.9rem}
   .head-nav{gap:12px;font-size:.88rem}
+  .head-nav a:not(.btn){display:none}
+  .lieu-photos,.cafe-photos{height:420px}
   .section{padding:48px 0}
   .grid{grid-template-columns:repeat(3,1fr);gap:12px}
 }

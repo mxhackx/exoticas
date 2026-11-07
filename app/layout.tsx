@@ -8,10 +8,10 @@ import type { Metadata, Viewport } from "next";
 const SITE = "https://exoticas.bj";
 
 const NOM = "Exoticas";
-const TITRE = "Exoticas — Plantes, paysagisme et plants café à Cotonou";
+const TITRE = "Exoticas — Plantes rares, café et coworking à Cotonou";
 const DESCRIPTION =
-  "Plantes rares, paysagisme et plants café à Tokpa-hoho, Cotonou (Bénin). " +
-  "49 plantes photographiées à la boutique. Devis sur WhatsApp ou par téléphone.";
+  "Boutique de plantes rares, coin café et coworking à Tokpa-hoho, Cotonou (Bénin). " +
+  "Brunch, paysagisme, plants café. Devis sur WhatsApp ou par téléphone.";
 const ADRESSE_LONGUE =
   "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club";
 const TEL = "+2290153300000";
@@ -42,6 +42,8 @@ export const metadata: Metadata = {
     "bonsaï Cotonou",
     "philodendron Bénin",
     "coworking Cotonou",
+    "café Cotonou",
+    "brunch Cotonou",
   ],
   authors: [{ name: NOM, url: SITE }],
   creator: NOM,
@@ -103,7 +105,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#466931",
+  themeColor: "#23403B",
   colorScheme: "light",
 };
 
@@ -111,7 +113,7 @@ export const viewport: Viewport = {
    informations que le flyer : rien d'inventé, les horaires restent absents
    tant qu'ils ne sont pas connus. */
 const BOUTIQUE = {
-  "@type": "Florist",
+  "@type": ["Florist", "CafeOrCoffeeShop"],
   "@id": `${SITE}/#boutique`,
   name: NOM,
   alternateName: "Exoticas — La vie en vert",
