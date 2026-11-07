@@ -100,7 +100,6 @@ const PLANTES = [
   { n: "Pink princess", s: "pink-princess" },
   { n: "Spathiphyllium", s: "spathiphyllium" },
   { n: "Tradescantia zebrina", s: "tradescantia-zebrina" },
-  { n: "Verveine", s: "verveine" },
 ];
 /* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
    (l'avis de Hadyr K est traduit de l'anglais). Mettre à jour « quand » de temps en temps. */
@@ -133,6 +132,69 @@ const AVIS = [
     notes: "Cuisine 4/5 · Service 4/5 · Ambiance 3/5",
   },
 ];
+
+
+/* Fiches de la galerie : descriptions générales de chaque plante (rien sur
+   les prix ni les stocks : on les confirme par WhatsApp). */
+const CAT = {
+  interieur: { t: "Plante d'intérieur", l: "Lumière vive, sans soleil direct", a: "Substrat légèrement humide" },
+  rare: { t: "Plante rare", l: "Lumière vive, sans soleil direct", a: "Laisser sécher le dessus du terreau" },
+  orchidee: { t: "Orchidée", l: "Lumière vive, sans soleil direct", a: "Peu d'eau, bien drainée" },
+  bonsai: { t: "Bonsaï", l: "Lumière vive, un peu de soleil", a: "Arroser dès que le terreau sèche" },
+  arbre: { t: "Arbre tropical", l: "Plein soleil", a: "Arrosage régulier" },
+  retombante: { t: "Plante retombante", l: "Lumière vive à mi-ombre", a: "Arrosage modéré" },
+} as const;
+
+const INFOS: Record<string, [keyof typeof CAT, string]> = {
+  "alocasia-sanderiana-nain-ou-oreille-d-ane": ["rare", "Feuilles en fer de lance vert sombre, aux nervures blanches très contrastées. Elle aime l'humidité ambiante."],
+  "anthurium-hookeri-black": ["rare", "Variété d'anthurium hookeri : une rosette dense de grandes feuilles brillantes, au port spectaculaire."],
+  "anthurium-hookerie-aurea": ["rare", "Variété d'anthurium hookeri à rosette de grandes feuilles lancéolées, très décorative en intérieur lumineux."],
+  "anthurium": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
+  "anthurium-2": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
+  "asparagus": ["retombante", "Un feuillage fin et plumeux, aérien, qui s'étale ou retombe en cascade. Facile à vivre en pot suspendu."],
+  "begonia-masoniana-ou-begonia-croix-de-fer": ["rare", "Feuilles bosselées vert vif marquées d'une croix brun-pourpre en leur centre, d'où son nom de bégonia croix de fer."],
+  "bonsai-araucaria-cunninghamii": ["bonsai", "Un araucaria cunninghamii (pin de Moreton Bay) conduit en bonsaï : silhouette de conifère en miniature."],
+  "bonsai": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-2": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-3": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-4": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "cocotier": ["arbre", "Le palmier emblématique des côtes tropicales, ici en jeune plant : feuilles arquées et silhouette élancée."],
+  "colocasia-cintho-aloha": ["rare", "Un colocasia aux grandes feuilles en forme de cœur, qui donne un effet jungle immédiat. Il apprécie un sol frais."],
+  "dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
+  "epipremnum": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
+  "epipremnum-2": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
+  "epiprenum-variegata": ["retombante", "Un pothos panaché : des feuilles marbrées de crème ou de jaune, qui éclairent un coin sombre."],
+  "frangipanier": ["arbre", "L'arbuste aux fleurs parfumées des tropiques, utilisé en bouquets et en jardins. Il aime le plein soleil."],
+  "goyavier-blanc": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
+  "goyavier": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
+  "grenadier": ["arbre", "Un arbuste fruitier aux fleurs orangées qui donne des grenades. Idéal en grand pot ou au jardin."],
+  "hosta-africain": ["interieur", "Un feuillage décoratif qui se plaît à la mi-ombre : une valeur sûre pour garnir un coin de terrasse."],
+  "lys-du-bengale-variegata": ["interieur", "Un feuillage panaché élégant, qui apporte de la lumière dans un massif ou un grand pot."],
+  "monstera-adansonii": ["interieur", "Le monstera aux feuilles percées de trous, qui grimpe ou retombe. Très graphique sur une étagère."],
+  "monstera-albo": ["rare", "Une variété panachée de blanc, très recherchée par les collectionneurs. Chaque feuille est unique."],
+  "monstera-burle-marx": ["rare", "Un feuillage découpé, graphique et compact, très prisé des amateurs de plantes tropicales."],
+  "monstera-delicioca-variegata": ["rare", "Le monstera deliciosa en version panachée : de grandes feuilles découpées marbrées de crème."],
+  "monstera-deliciosa": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
+  "monstera-deliciosa-2": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
+  "monstera-thai-constellation": ["rare", "Une variété panachée aux feuilles étoilées de crème, comme un ciel de constellations. Rare et très décorative."],
+  "murier-platane-rouge-et-blanc": ["arbre", "Un mûrier à grandes feuilles, aussi beau qu'utile : il donne des mûres sucrées."],
+  "orchidee-chauve-souris": ["rare", "Une plante surprenante aux fleurs sombres à longs filaments, qui évoquent des ailes de chauve-souris."],
+  "orchidee-dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
+  "orchidee-dendrobium-2": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
+  "orchidee-phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "papayer": ["arbre", "Un papayer, à croissance rapide : un arbre fruitier tropical au feuillage découpé très décoratif."],
+  "peperomia-lemon-lime": ["interieur", "Un petit péperomia au feuillage vert tendre et citron, compact et facile. Il éclaire n'importe quelle étagère."],
+  "peperomia-raindrop": ["interieur", "Des feuilles rondes et charnues, en forme de gouttes de pluie. Compact, facile et très mignon sur un bureau."],
+  "phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "phalaenopsis-2": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "phalaenopsis-3": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "philodendron-erubescens": ["rare", "Un philodendron aux tiges et feuilles teintées de rouge-bordeaux, au port grimpant et élégant."],
+  "philodendron-pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
+  "philodendron-xanadu": ["interieur", "Un philodendron touffu aux feuilles lobées, au port compact. Très généreux en volume, facile à vivre."],
+  "pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
+  "spathiphyllium": ["interieur", "Le « lys de la paix » : feuillage vert profond et fleurs blanches, qui supporte les pièces peu éclairées."],
+  "tradescantia-zebrina": ["retombante", "Des feuilles rayées d'argent et de violet, qui retombent en cascade. Se bouture très facilement."],
+};
 
 /* Photos du lieu (fiche Google Maps) : boutique, salle, coin café. */
 const LIEU = {
@@ -320,6 +382,25 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
+  const [fiche, setFiche] = useState<number | null>(null);
+
+  /* fiche plante : Échap, flèches, et page figée derrière */
+  useEffect(() => {
+    if (fiche === null) return;
+    const n = PLANTES.length;
+    function touche(e: KeyboardEvent) {
+      if (e.key === "Escape") setFiche(null);
+      else if (e.key === "ArrowRight") setFiche((i) => (i === null ? i : (i + 1) % n));
+      else if (e.key === "ArrowLeft") setFiche((i) => (i === null ? i : (i - 1 + n) % n));
+    }
+    window.addEventListener("keydown", touche);
+    const avant = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", touche);
+      document.body.style.overflow = avant;
+    };
+  }, [fiche]);
 
   /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
      couleur du hero porte le texte qui se tape caractère par caractère, puis se
@@ -595,35 +676,45 @@ export default function Home() {
           <div className="wrap">
             <h2 data-reveal className="reveal">Galerie de plantes rares et d'intérieur</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              {PLANTES.length} plantes de la boutique, photographiées ici. Chaque carte
-              s'ouvre en pleine image.
+              {PLANTES.length} plantes de la boutique, photographiées ici. Touchez une
+              carte pour voir sa fiche.
             </p>
             <div className="grid">
-              {PLANTES.map((p, i) => (
-                <a
-                  className="card reveal"
-                  data-reveal
-                  style={{ "--d": `${(i % 4) * 70}ms` } as React.CSSProperties}
-                  href={`/galerie/pleine/${p.s}.jpg`}
-                  key={p.s}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <span className="card-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`/galerie/mini/${p.s}.jpg`}
-                      alt={`${p.n}, plante de la boutique Exoticas à Cotonou`}
-                      title={p.n}
-                      width={480}
-                      height={640}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </span>
-                  <span className="card-cap">{p.n}</span>
-                </a>
-              ))}
+              {PLANTES.map((p, i) => {
+                const [cat] = INFOS[p.s] ?? ["interieur"];
+                return (
+                  <a
+                    className="card reveal"
+                    data-reveal
+                    style={{ "--d": `${(i % 4) * 70}ms` } as React.CSSProperties}
+                    href={`/galerie/pleine/${p.s}.jpg`}
+                    key={p.s}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFiche(i);
+                    }}
+                    aria-haspopup="dialog"
+                  >
+                    <span className="card-img">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/galerie/mini/${p.s}.jpg`}
+                        alt={`${p.n}, plante de la boutique Exoticas à Cotonou`}
+                        title={p.n}
+                        width={480}
+                        height={640}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className="card-voir" aria-hidden="true">Voir la fiche</span>
+                    </span>
+                    <span className="card-cap">
+                      <span className="card-tag">{CAT[cat].t}</span>
+                      <span className="card-nom">{p.n}</span>
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -885,6 +976,51 @@ export default function Home() {
         </div>
       </footer>
 
+      {fiche !== null && (() => {
+        const p = PLANTES[fiche];
+        const [cat, desc] = INFOS[p.s] ?? ["interieur", ""];
+        const c = CAT[cat];
+        const aller = (d: number) => setFiche((fiche + d + PLANTES.length) % PLANTES.length);
+        return (
+          <div
+            className="fiche-fond"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Fiche : ${p.n}`}
+            onClick={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
+          >
+            <div className="fiche">
+              <button className="fiche-x" onClick={() => setFiche(null)} aria-label="Fermer la fiche">×</button>
+              <div className="fiche-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img key={p.s} src={`/galerie/pleine/${p.s}.jpg`} alt={`${p.n}, plante de la boutique Exoticas à Cotonou`} />
+                <button className="fiche-nav fiche-prec" onClick={() => aller(-1)} aria-label="Plante précédente">‹</button>
+                <button className="fiche-nav fiche-suiv" onClick={() => aller(1)} aria-label="Plante suivante">›</button>
+              </div>
+              <div className="fiche-txt" key={`t-${p.s}`}>
+                <span className="card-tag">{c.t}</span>
+                <h3>{p.n}</h3>
+                <p>{desc}</p>
+                <ul className="fiche-soin">
+                  <li><strong>Lumière</strong>{c.l}</li>
+                  <li><strong>Arrosage</strong>{c.a}</li>
+                </ul>
+                <p className="fiche-note">Photographiée à la boutique. Prix et disponibilité : demandez-nous sur WhatsApp.</p>
+                <a
+                  className="btn btn-moutarde"
+                  href={waLink(`Bonjour Exoticas, je suis intéressé(e) par : ${p.n}. Est-elle disponible ?`)}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <WhatsAppIcon size={18} /> Demander cette plante
+                </a>
+                <span className="fiche-compte">{fiche + 1} / {PLANTES.length}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       <a
         className="wa-fixed"
         href={waLink("Bonjour Exoticas,")}
@@ -1121,16 +1257,61 @@ section[id]{scroll-margin-top:88px}
    La photo garde son ratio 3:4 (aucun recadrage) et ne recoit ni filtre ni nappe :
    c'est la plaque autour qui est translucide, éclairée par un liseré intérieur. */
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
-.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;
-  background:var(--glace);border:var(--glace-bord);border-radius:var(--r);padding:6px;
-  box-shadow:var(--glace-relu),var(--glace-ombre);
-  transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out),background .3s var(--ease)}
-.card:hover{transform:translateY(-3px);background:var(--glace-forte);box-shadow:var(--glace-relu),var(--glace-ombre-h)}
-.card:focus-visible{outline:2px solid var(--vert);outline-offset:3px}
-.card-img{display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme);border-radius:5px}
-.card-img img{width:100%;height:100%;object-fit:cover;display:block}
-.card .card-cap{display:block;padding:9px 4px 2px;font-size:.85rem;line-height:1.3;color:var(--muted)}
-.card:hover .card-cap{color:var(--texte)}
+.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;overflow:hidden;
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 1px 2px rgba(20,35,12,.05),0 10px 26px rgba(20,35,12,.08);
+  transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s var(--ease)}
+.card:hover{transform:translateY(-6px)!important;border-color:var(--moutarde);
+  box-shadow:0 2px 4px rgba(20,35,12,.06),0 22px 44px rgba(20,35,12,.18)}
+.card:focus-visible{outline:2px solid var(--moutarde);outline-offset:3px}
+.card-img{position:relative;display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme)}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease-out)}
+.card:hover .card-img img{transform:scale(1.07)}
+.card-img::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;
+  background:linear-gradient(to top,rgba(18,36,33,.62),transparent);opacity:0;transition:opacity .4s var(--ease)}
+.card:hover .card-img::after,.card:focus-visible .card-img::after{opacity:1}
+.card-voir{position:absolute;left:50%;bottom:14px;z-index:1;transform:translate(-50%,12px);opacity:0;
+  padding:7px 15px;border-radius:99px;background:var(--moutarde);color:var(--vert-nuit);
+  font-size:.82rem;font-weight:600;white-space:nowrap;
+  transition:opacity .35s var(--ease),transform .4s var(--ease-out)}
+.card:hover .card-voir,.card:focus-visible .card-voir{opacity:1;transform:translate(-50%,0)}
+.card-cap{display:grid;gap:3px;padding:12px 14px 15px}
+.card-tag{font:600 .68rem/1.2 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--terre)}
+.card-nom{font:500 1.02rem/1.25 var(--serif);color:var(--texte)}
+
+/* ---------- fiche plante (clic sur une carte) ---------- */
+.fiche-fond{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;
+  background:rgba(12,26,23,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  animation:fadein .3s var(--ease-out) both}
+.fiche{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);width:min(980px,100%);
+  max-height:min(640px,92vh);background:var(--creme);border-radius:18px;overflow:hidden;
+  box-shadow:0 40px 90px rgba(0,0,0,.5);animation:ficheIn .5s var(--ease-out) both}
+@keyframes ficheIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+.fiche-photo{position:relative;background:var(--vert-nuit);min-height:0}
+.fiche-photo img{width:100%;height:100%;object-fit:cover;display:block;animation:fadein .5s var(--ease-out) both}
+.fiche-txt{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:clamp(24px,4vw,44px);
+  overflow-y:auto;animation:fadein .5s var(--ease-out) both}
+.fiche-txt h3{margin:0;font:500 clamp(1.6rem,3vw,2.2rem)/1.1 var(--serif);letter-spacing:-.02em}
+.fiche-txt p{margin:0;color:var(--muted);font-size:1.02rem}
+.fiche-soin{list-style:none;margin:6px 0;padding:0;display:grid;gap:8px;width:100%}
+.fiche-soin li{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:.95rem}
+.fiche-soin strong{display:block;font:600 .68rem/1.2 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--terre);margin-bottom:2px}
+.fiche-txt .fiche-note{font-size:.86rem}
+.fiche-compte{margin-top:auto;font-size:.8rem;color:var(--muted)}
+.fiche-x{position:absolute;top:12px;right:12px;z-index:3;width:40px;height:40px;border-radius:50%;border:0;
+  background:rgba(255,255,255,.92);color:var(--vert-nuit);font-size:1.6rem;line-height:1;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);transition:transform .3s var(--ease-out)}
+.fiche-x:hover{transform:rotate(90deg) scale(1.06)}
+.fiche-nav{position:absolute;top:50%;z-index:2;width:42px;height:42px;margin-top:-21px;border-radius:50%;border:0;
+  background:rgba(255,255,255,.9);color:var(--vert-nuit);font-size:1.7rem;line-height:1;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);transition:transform .3s var(--ease-out),background .3s var(--ease)}
+.fiche-nav:hover{background:#fff;transform:scale(1.1)}
+.fiche-prec{left:12px}.fiche-suiv{right:12px}
+@media (max-width:760px){
+  .fiche{grid-template-columns:1fr;grid-template-rows:minmax(0,42vh) auto;max-height:94vh;overflow-y:auto}
+  .fiche-txt{overflow:visible}
+}
 
 /* ---------- contact ---------- */
 .contact-in{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:start}
@@ -1297,7 +1478,7 @@ section[id]{scroll-margin-top:88px}
 }
 @media (max-width:620px){
   .grid{grid-template-columns:repeat(2,1fr)}
-  .card .card-cap{font-size:.82rem;padding:8px 3px 2px}
+  .card-nom{font-size:.95rem}.card-cap{padding:10px 11px 13px}
 }
 @media (max-width:460px){
   .hero-cta{grid-template-columns:1fr}
