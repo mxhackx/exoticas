@@ -388,7 +388,7 @@ export default function Home() {
             <Logo size={28} />
             <span className="head-nom">exoticas</span>
           </a>
-          <nav className="head-nav">
+          <nav className="head-nav" aria-label="Navigation principale">
             <a href="#galerie">Galerie</a>
             <a href="#contact">Contact</a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
@@ -446,7 +446,11 @@ export default function Home() {
                 <img
                   className="kenburns"
                   src="/galerie/p1-visuel-maitre.jpg"
-                  alt="Visuel de marque Exoticas"
+                  alt="Exoticas, la vie en vert : plantes rares et paysagisme à Cotonou"
+                  width={1526}
+                  height={1600}
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -456,7 +460,7 @@ export default function Home() {
         {/* GALERIE */}
         <section id="galerie" className="section">
           <div className="wrap">
-            <h2 data-reveal className="reveal">Galerie</h2>
+            <h2 data-reveal className="reveal">Galerie de plantes rares et d'intérieur</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               {PLANTES.length} plantes de la boutique, photographiées ici. Chaque carte
               s'ouvre en pleine image.
@@ -476,13 +480,15 @@ export default function Home() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={`/galerie/mini/${p.s}.jpg`}
-                      alt={p.n}
+                      alt={`${p.n}, plante de la boutique Exoticas à Cotonou`}
                       title={p.n}
+                      width={480}
+                      height={640}
                       loading="lazy"
                       decoding="async"
                     />
                   </span>
-                  <figcaption>{p.n}</figcaption>
+                  <span className="card-cap">{p.n}</span>
                 </a>
               ))}
             </div>
@@ -493,7 +499,7 @@ export default function Home() {
         <section id="contact" className="section section-alt">
           <div className="wrap contact-in">
             <div data-reveal className="reveal">
-              <h2>Contact</h2>
+              <h2>Contact et accès à la boutique</h2>
               <p className="lede">
                 Écrivez-nous : votre message s'ouvre dans WhatsApp, on vous
                 répond rapidement.
@@ -838,8 +844,8 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .card:focus-visible{outline:2px solid var(--vert);outline-offset:3px}
 .card-img{display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme);border-radius:5px}
 .card-img img{width:100%;height:100%;object-fit:cover;display:block}
-.card figcaption{padding:9px 4px 2px;font-size:.85rem;line-height:1.3;color:var(--muted)}
-.card:hover figcaption{color:var(--texte)}
+.card .card-cap{display:block;padding:9px 4px 2px;font-size:.85rem;line-height:1.3;color:var(--muted)}
+.card:hover .card-cap{color:var(--texte)}
 
 /* ---------- contact ---------- */
 .contact-in{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:start}
@@ -957,7 +963,7 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 }
 @media (max-width:620px){
   .grid{grid-template-columns:repeat(2,1fr)}
-  .card figcaption{font-size:.82rem;padding:8px 3px 2px}
+  .card .card-cap{font-size:.82rem;padding:8px 3px 2px}
 }
 @media (max-width:460px){
   .hero-cta{grid-template-columns:1fr}

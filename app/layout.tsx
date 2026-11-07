@@ -33,12 +33,23 @@ export const metadata: Metadata = {
     "aménagement paysager Bénin",
     "plantes d'intérieur Cotonou",
     "Tokpa-hoho",
+    "monstera Cotonou",
+    "orchidées Cotonou",
+    "anthurium Bénin",
+    "bonsaï Cotonou",
+    "philodendron Bénin",
+    "coworking Cotonou",
   ],
   authors: [{ name: NOM, url: SITE }],
   creator: NOM,
   publisher: NOM,
   category: "shopping",
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    languages: { "fr-BJ": "/", "x-default": "/" },
+  },
+  formatDetection: { telephone: true, email: true, address: true },
+  manifest: "/manifest.webmanifest",
   robots: {
     index: true,
     follow: true,
@@ -96,8 +107,7 @@ export const viewport: Viewport = {
 /* Fiche entreprise lue par Google (résultats locaux, Maps) — mêmes
    informations que le flyer : rien d'inventé, les horaires restent absents
    tant qu'ils ne sont pas connus. */
-const FICHE = {
-  "@context": "https://schema.org",
+const BOUTIQUE = {
   "@type": "Florist",
   "@id": `${SITE}/#boutique`,
   name: NOM,
@@ -128,6 +138,57 @@ const FICHE = {
     "plants café",
     "décoration végétale",
     "aménagement de terrasses",
+  ],
+};
+
+const SERVICES = [
+  "Plantes rares et d'intérieur",
+  "Paysagisme et aménagement paysager",
+  "Plants café",
+  "Décoration végétale",
+];
+
+const FICHE = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      ...BOUTIQUE,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: TEL,
+        email: MAIL,
+        contactType: "customer service",
+        areaServed: "BJ",
+        availableLanguage: ["fr"],
+      },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Produits et services Exoticas",
+        itemListElement: SERVICES.map((name) => ({
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name, provider: { "@id": `${SITE}/#boutique` } },
+        })),
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#site`,
+      url: SITE,
+      name: NOM,
+      inLanguage: "fr-BJ",
+      publisher: { "@id": `${SITE}/#boutique` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${SITE}/#page`,
+      url: SITE,
+      name: TITRE,
+      description: DESCRIPTION,
+      inLanguage: "fr-BJ",
+      isPartOf: { "@id": `${SITE}/#site` },
+      about: { "@id": `${SITE}/#boutique` },
+      primaryImageOfPage: { "@type": "ImageObject", url: `${SITE}/og.png`, width: 1200, height: 630 },
+    },
   ],
 };
 
