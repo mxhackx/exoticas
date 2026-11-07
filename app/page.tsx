@@ -461,14 +461,23 @@ export default function Home() {
     );
   }
 
-  /* révélation au scroll, avec filet de sécurité : le contenu ne reste jamais caché */
+  /* révélation au scroll : chaque élément apparaît quand il entre à l'écran.
+     Sans IntersectionObserver (très vieux navigateur), tout est montré d'emblée,
+     pour que le contenu ne reste jamais caché. */
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("js");
     const cibles = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal]")
     );
-    const montrer = (el: Element) => el.classList.add("in");
+    /* « in » lance l'apparition ; « done » (une fois finie) rend aux cartes leurs
+       transitions de survol, sans le délai d'échelonnage. */
+    const montrer = (el: Element) => {
+      if (el.classList.contains("in")) return;
+      el.classList.add("in");
+      const d = parseInt((el as HTMLElement).style.getPropertyValue("--d")) || 0;
+      window.setTimeout(() => el.classList.add("done"), d + 1500);
+    };
 
     // déjà visible au chargement -> on révèle tout de suite
     const dansVue = () => {
@@ -479,7 +488,9 @@ export default function Home() {
     dansVue();
 
     let io: IntersectionObserver | null = null;
-    if ("IntersectionObserver" in window) {
+    if (!("IntersectionObserver" in window)) {
+      cibles.forEach(montrer);
+    } else {
       io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
@@ -489,17 +500,12 @@ export default function Home() {
             }
           });
         },
-        { rootMargin: "0px 0px -10% 0px", threshold: 0.08 }
+        { rootMargin: "0px 0px -12% 0px", threshold: 0.1 }
       );
       cibles.forEach((el) => io?.observe(el));
     }
-    // dernier recours (navigateur sans IO, onglet masqué, réveil)
-    const garde = window.setTimeout(() => cibles.forEach(montrer), 2500);
 
-    return () => {
-      io?.disconnect();
-      window.clearTimeout(garde);
-    };
+    return () => io?.disconnect();
   }, []);
 
   /* en-tête compact + barre de progression de lecture */
@@ -552,11 +558,8 @@ export default function Home() {
             <a href="#cafe">Café</a>
             <a href="#galerie">Plantes</a>
             <a href="#avis">Avis</a>
-            <a href="#reseaux">Réseaux</a>
             <a href="#contact">Contact</a>
-            <a className="head-insta" href={BRAND.instagram} target="_blank" rel="noopener me" aria-label="Instagram Exoticas">
-              <InstagramIcon size={22} />
-            </a>
+            <a href="#reseaux">Réseaux</a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
               <PhoneIcon size={16} /> Appeler
             </a>
@@ -637,7 +640,7 @@ export default function Home() {
             <div className="lieu-photos">
               {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`lieu-p lieu-p${i} rv-zoom`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`lieu-p lieu-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
               ))}
             </div>
           </div>
@@ -649,7 +652,7 @@ export default function Home() {
             <div className="cafe-photos">
               {[LIEU.brunch, LIEU.crepes, LIEU.jus].map((im, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`cafe-p cafe-p${i} rv-zoom`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`cafe-p cafe-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
               ))}
             </div>
             <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
@@ -754,58 +757,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* RÉSEAUX */}
-        <section id="reseaux" className="section reseaux">
-          <div className="wrap">
-            <h2 data-reveal className="reveal">Suivez Exoticas</h2>
-            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              Les plantes, le café et la vie de la boutique au quotidien.
-            </p>
-            <a
-              className="insta-card rv-zoom"
-              data-reveal
-              href={BRAND.instagram}
-              target="_blank"
-              rel="noopener me"
-              style={{ "--d": "120ms" } as React.CSSProperties}
-            >
-              <span className="insta-ico"><InstagramIcon size={44} /></span>
-              <span className="insta-txt">
-                <strong>Instagram</strong>
-                <span>@exoticasbj</span>
-              </span>
-              <span className="insta-go">Suivre le compte →</span>
-            </a>
-            <div className="reseaux-liste">
-              {[
-                { href: BRAND.fiche, icone: <PinIcon size={22} />, titre: "Google Maps", sous: "Fiche, avis et itinéraire", ext: true },
-                { href: waLink("Bonjour Exoticas,"), icone: <WhatsAppIcon size={22} />, titre: "WhatsApp", sous: "Écrire à Exoticas", ext: true },
-                { href: BRAND.telHref, icone: <PhoneIcon size={22} />, titre: "Téléphone", sous: BRAND.tel, ext: false },
-                { href: `mailto:${BRAND.mail}`, icone: <MailIcon size={22} />, titre: "E-mail", sous: BRAND.mail, ext: false },
-              ].map((r, i) => (
-                <a
-                  key={r.titre}
-                  className="res-card rv-pop"
-                  data-reveal
-                  href={r.href}
-                  {...(r.ext ? { target: "_blank", rel: "noopener me" } : {})}
-                  style={{ "--d": `${220 + i * 90}ms` } as React.CSSProperties}
-                >
-                  <span className="res-ico">{r.icone}</span>
-                  <span className="res-txt">
-                    <strong>{r.titre}</strong>
-                    <span>{r.sous}</span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* CONTACT */}
         <section id="contact" className="section section-alt">
           <div className="wrap contact-in">
-            <div data-reveal className="reveal">
+            <div data-reveal className="reveal rv-left">
               <h2>Contact et accès à la boutique</h2>
               <p className="lede">
                 Écrivez-nous : votre message s'ouvre dans WhatsApp, on vous
@@ -853,7 +808,7 @@ export default function Home() {
               </form>
             </div>
 
-            <aside data-reveal className="reveal coords" style={{ "--d": "160ms" } as React.CSSProperties}>
+            <aside data-reveal className="reveal rv-right coords" style={{ "--d": "160ms" } as React.CSSProperties}>
               <Plan lat={MAP.lat} lng={MAP.lng} />
 
               <dl>
@@ -930,6 +885,54 @@ export default function Home() {
                 <PinIcon size={18} /> Voir la fiche Google Maps
               </a>
             </aside>
+          </div>
+        </section>
+
+        {/* RÉSEAUX */}
+        <section id="reseaux" className="section reseaux">
+          <div className="wrap">
+            <h2 data-reveal className="reveal">Suivez Exoticas</h2>
+            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
+              Les plantes, le café et la vie de la boutique au quotidien.
+            </p>
+            <a
+              className="insta-card rv-photo"
+              data-reveal
+              href={BRAND.instagram}
+              target="_blank"
+              rel="noopener me"
+              style={{ "--d": "120ms" } as React.CSSProperties}
+            >
+              <span className="insta-ico"><InstagramIcon size={44} /></span>
+              <span className="insta-txt">
+                <strong>Instagram</strong>
+                <span>@exoticasbj</span>
+              </span>
+              <span className="insta-go">Suivre le compte →</span>
+            </a>
+            <div className="reseaux-liste">
+              {[
+                { href: BRAND.fiche, icone: <PinIcon size={22} />, titre: "Google Maps", sous: "Fiche, avis et itinéraire", ext: true },
+                { href: waLink("Bonjour Exoticas,"), icone: <WhatsAppIcon size={22} />, titre: "WhatsApp", sous: "Écrire à Exoticas", ext: true },
+                { href: BRAND.telHref, icone: <PhoneIcon size={22} />, titre: "Téléphone", sous: BRAND.tel, ext: false },
+                { href: `mailto:${BRAND.mail}`, icone: <MailIcon size={22} />, titre: "E-mail", sous: BRAND.mail, ext: false },
+              ].map((r, i) => (
+                <a
+                  key={r.titre}
+                  className="res-card rv-pop"
+                  data-reveal
+                  href={r.href}
+                  {...(r.ext ? { target: "_blank", rel: "noopener me" } : {})}
+                  style={{ "--d": `${220 + i * 90}ms` } as React.CSSProperties}
+                >
+                  <span className="res-ico">{r.icone}</span>
+                  <span className="res-txt">
+                    <strong>{r.titre}</strong>
+                    <span>{r.sous}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         </section>
       </main>
@@ -1195,13 +1198,30 @@ section[id]{scroll-margin-top:88px}
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 
 /* ---------- révélation au scroll ---------- */
-.js [data-reveal]{opacity:0;transform:translateY(26px);
-  transition:opacity .8s var(--ease-out) var(--d,0ms),transform .8s var(--ease-out) var(--d,0ms)}
-.js [data-reveal].in{opacity:1;transform:none}
-.js .rv-left{transform:translateX(-56px)}
-.js .rv-right{transform:translateX(56px)}
-.js .rv-zoom{transform:scale(.9) translateY(34px);transition-duration:1s}
-.js .rv-pop{transform:translateY(14px) scale(.92)}
+.js [data-reveal]{opacity:0;transform:translateY(28px);
+  transition:opacity .8s var(--ease-out) var(--d,0ms),transform .9s var(--ease-out) var(--d,0ms),
+    filter .8s var(--ease-out) var(--d,0ms)}
+.js [data-reveal].in{opacity:1;transform:none;filter:none}
+/* Règles du système (jamais au hasard) :
+   1. Un mouvement de base : monter en fondu. Les titres s'y ajoutent un léger flou qui se précise.
+   2. Un bloc de texte arrive du côté où il se trouve (colonne gauche : de la gauche, droite : de la droite).
+   3. Les photos se dévoilent par le bas (rideau) et se posent en se dézoomant.
+   4. Les pastilles et petites cartes « poppent » l'une après l'autre.
+   5. Tout ce qui est en grille ou en liste est échelonné dans l'ordre de lecture. */
+.js h2[data-reveal]{filter:blur(7px)}
+.js .rv-left{transform:translateX(-64px)}
+.js .rv-right{transform:translateX(64px)}
+.js .rv-pop{transform:translateY(16px) scale(.9)}
+/* le rideau laisse la moitié haute visible : un élément entièrement masqué
+   ne serait jamais détecté comme « entré à l'écran » */
+.js .rv-photo{opacity:0;transform:scale(1.07);clip-path:inset(0 0 50% 0);
+  transition:clip-path 1.2s var(--ease-out) var(--d,0ms),transform 1.4s var(--ease-out) var(--d,0ms),opacity .9s var(--ease-out) var(--d,0ms)}
+.js .rv-photo.in{transform:none;clip-path:inset(-40px)}
+/* cartes de la galerie : la photo se pose quand la carte arrive */
+.js .card:not(.in) .card-img img{transform:scale(1.14)}
+/* repères du hero : le titre et le texte montent à l'arrivée */
+.js [data-reveal].done{transition-delay:0ms;transition-duration:.4s}
+.js .card.done{transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s var(--ease)}
 /* léger parallaxe sur le collage du hero */
 .collage-a{transform:translateY(calc(var(--sy,0) * -.03px))}
 .collage-b{transform:translateY(calc(var(--sy,0) * -.09px))}
@@ -1396,12 +1416,6 @@ section[id]{scroll-margin-top:88px}
 
 
 .centre{text-align:center;margin-top:8px}
-.head-nav .head-insta{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,var(--terre),var(--moutarde));color:#fff;
-  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out)}
-.head-nav .head-insta::after{display:none}
-.head-nav .head-insta:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 8px 20px rgba(0,0,0,.3)}
-
 /* ---------- réseaux ---------- */
 .reseaux{background:var(--creme)}
 .insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 16px;padding:26px clamp(22px,4vw,40px);
@@ -1471,7 +1485,7 @@ section[id]{scroll-margin-top:88px}
   .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .hero-cta .btn{padding:12px 10px;font-size:.9rem}
   .head-nav{gap:12px;font-size:.88rem}
-  .head-nav a:not(.btn):not(.head-insta){display:none}
+  .head-nav a:not(.btn){display:none}
   .lieu-photos,.cafe-photos{height:420px}
   .section{padding:48px 0}
   .grid{grid-template-columns:repeat(3,1fr);gap:12px}
@@ -1488,7 +1502,7 @@ section[id]{scroll-margin-top:88px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .js [data-reveal]{opacity:1;transform:none}
+  .js [data-reveal]{opacity:1;transform:none;filter:none;clip-path:none}
   .rise{opacity:1}
 }
 `;
