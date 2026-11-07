@@ -794,7 +794,8 @@ h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
 p{margin:0 0 1rem;text-wrap:pretty}
 a{color:inherit}
 img{display:block;max-width:100%}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.wrap.head-in{max-width:1080px}
 .muted{color:var(--muted)}
 a[href^="tel"]{font-variant-numeric:tabular-nums}
 /* titres de section : filet au-dessus, ancre dégagée sous l'en-tête fixe */
