@@ -102,6 +102,35 @@ const PLANTES = [
   { n: "Tradescantia zebrina", s: "tradescantia-zebrina" },
   { n: "Verveine", s: "verveine" },
 ];
+/* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
+   (extrait signalé par […]). Mettre à jour « quand » de temps en temps. */
+const AVIS = [
+  {
+    nom: "Claudia Jordá",
+    lang: "fr",
+    quand: "il y a 10 mois",
+    texte:
+      "Excellente boutique de plantes, sans aucun doute le meilleur endroit au Bénin pour trouver des espèces exotiques. Ils ont également un coin café parfait pour se détendre et profiter de l’ambiance : un petit paradis caché. Le manager est très sympathique et toujours attentif, ce qui rend la visite encore plus agréable. Je recommande vivement !",
+    notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
+  },
+  {
+    nom: "Hamza Lechhb",
+    lang: "fr",
+    quand: "il y a 6 mois",
+    texte:
+      "Endroit super agréable avec beaucoup de plantes, ambiance relaxante et un iced latte parfait pour se poser.",
+    notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
+  },
+  {
+    nom: "Hadyr K",
+    lang: "en",
+    quand: "il y a 5 mois",
+    texte:
+      "Food was tasty, specially the salad. […] Beautiful inside with many greens.",
+    notes: "Cuisine 4/5 · Service 4/5 · Ambiance 3/5",
+  },
+];
+
 function waLink(message: string) {
   return `https://wa.me/${BRAND.wa}?text=${encodeURIComponent(message)}`;
 }
@@ -515,15 +544,22 @@ export default function Home() {
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               Ce que disent nos clients sur Google.
             </p>
-            <blockquote data-reveal className="reveal avis" style={{ "--d": "140ms" } as React.CSSProperties}>
-              <p lang="en">
-                « Food was tasty, specially the salad. […] Beautiful inside with many greens. »
-              </p>
-              <footer>
-                <strong>Hadyr K</strong>, Local Guide Google · il y a 5 mois
-                <span className="avis-notes">Cuisine 4/5 · Service 4/5 · Ambiance 3/5</span>
-              </footer>
-            </blockquote>
+            <div className="avis-liste">
+              {AVIS.map((a, i) => (
+                <blockquote
+                  data-reveal
+                  className="reveal avis"
+                  style={{ "--d": `${140 + i * 80}ms` } as React.CSSProperties}
+                  key={a.nom}
+                >
+                  <p lang={a.lang}>« {a.texte} »</p>
+                  <footer>
+                    <strong>{a.nom}</strong>, Local Guide Google · {a.quand}
+                    <span className="avis-notes">{a.notes}</span>
+                  </footer>
+                </blockquote>
+              ))}
+            </div>
             <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
               <PinIcon size={18} /> Voir tous les avis sur Google
             </a>
@@ -878,7 +914,8 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 /* ---------- sections ---------- */
 .section{padding:clamp(64px,8vw,104px) 0}
 .section-alt{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.avis{margin:22px 0;max-width:60ch;background:var(--glace);border:var(--glace-bord);border-radius:var(--r);
+.avis-liste{display:grid;gap:16px;margin:22px 0;max-width:60ch}
+.avis{margin:0;background:var(--glace);border:var(--glace-bord);border-radius:var(--r);
   padding:22px 24px;box-shadow:var(--glace-relu),var(--glace-ombre)}
 .avis p{margin:0 0 14px;font-size:1.05rem;line-height:1.6}
 .avis footer{font-size:.9rem;color:var(--muted)}
