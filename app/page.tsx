@@ -103,7 +103,7 @@ const PLANTES = [
   { n: "Verveine", s: "verveine" },
 ];
 /* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
-   (extrait signalé par […]). Mettre à jour « quand » de temps en temps. */
+   (l'avis de Hadyr K est traduit de l'anglais). Mettre à jour « quand » de temps en temps. */
 const AVIS = [
   {
     nom: "Claudia Jordá",
@@ -123,10 +123,10 @@ const AVIS = [
   },
   {
     nom: "Hadyr K",
-    lang: "en",
+    lang: "fr",
     quand: "il y a 5 mois",
     texte:
-      "Food was tasty, specially the salad. […] Beautiful inside with many greens.",
+      "Les plats étaient bons, surtout la salade. Seul bémol : ça a pris beaucoup de temps, je m’attendais à plus de rapidité pour un coffee restaurant. L’intérieur est magnifique avec beaucoup de verdure ; de meilleures chaises et tables seraient un plus, car ce n’est pas très confortable pour travailler longtemps sur ordinateur. (Traduit de l’anglais)",
     notes: "Cuisine 4/5 · Service 4/5 · Ambiance 3/5",
   },
 ];
