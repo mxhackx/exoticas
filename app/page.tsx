@@ -724,8 +724,8 @@ export default function Home() {
             <a href="#galerie">Plantes</a>
             <a href="#avis">Avis</a>
             <a href="#contact">Contact</a>
-            <a className="btn btn-light btn-sm" href={BRAND.telHref}>
-              <PhoneIcon size={16} /> Appeler
+            <a className="btn btn-light btn-sm" href={BRAND.telHref} aria-label="Appeler Exoticas">
+              <PhoneIcon size={16} /> <span className="btn-txt">Appeler</span>
             </a>
             <button
               type="button"
@@ -1695,7 +1695,7 @@ section[id]{scroll-margin-top:0}
 .coords dl{display:grid;grid-template-columns:88px 1fr;gap:9px 16px;margin:22px 0;font-size:.96rem}
 .coords dt{font:var(--lbl);letter-spacing:var(--lbl-space);text-transform:uppercase;color:var(--muted);
   padding-top:4px}
-.coords dd{margin:0}
+.coords dd{margin:0;overflow-wrap:anywhere}
 .coords dd.muted{grid-column:2}
 .coords a{text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .3s var(--ease),color .3s var(--ease)}
 .coords a:hover{color:var(--vert);border-color:var(--vert)}
@@ -1753,6 +1753,7 @@ section[id]{scroll-margin-top:0}
 .centre{text-align:center;margin-top:8px}
 .voir-plus{margin-top:30px}
 .voir-plus-reste{font-weight:400;opacity:.8;font-size:.85rem}
+.voir-plus .btn{flex-direction:column;gap:2px}
 
 
 /* ---------- vidéos ---------- */
@@ -1916,6 +1917,12 @@ section[id]{scroll-margin-top:0}
 }
 @media (max-width:460px){
   .hero-cta{grid-template-columns:1fr}
+}
+/* très petits écrans : l'en-tête garde le logo lisible, « Appeler » ne garde que son icône */
+@media (max-width:400px){
+  .head-nav .btn-sm .btn-txt{display:none}
+  .head-nav .btn-sm{width:44px;height:44px;padding:0;min-height:44px}
+  .form .btn{padding:14px 18px}
 }
 
 
