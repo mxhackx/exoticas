@@ -1,4 +1,20 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Nunito_Sans } from "next/font/google";
+
+/* Titres : empattements doux (Fraunces). Texte : sans empattement très lisible
+   (Nunito Sans). Les polices sont téléchargées à la compilation et servies par
+   le site lui-même : aucun appel à Google côté visiteur. */
+const serif = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+  axes: ["SOFT", "opsz"],
+});
+const sans = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 /* ------------------------------------------------------------------
    Domaine public du site — UNE SEULE LIGNE À CHANGER le jour de la mise
@@ -149,6 +165,8 @@ const BOUTIQUE = {
 
 const SERVICES = [
   "Plantes rares et d'intérieur",
+  "Café et brunch",
+  "Coworking",
   "Paysagisme et aménagement paysager",
   "Plants café",
   "Décoration végétale",
@@ -204,7 +222,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${serif.variable} ${sans.variable}`}>
       <head>
         <link rel="preconnect" href="https://tile.openstreetmap.org" />
         <script

@@ -219,6 +219,23 @@ const AU_MENU = [
   "Café",
 ];
 
+/* Réalisations d'aménagement paysager (avant / après). Vide pour l'instant :
+   déposer les photos dans public/realisations/ puis ajouter ici
+   { avant: "/realisations/x-avant.jpg", apres: "/realisations/x-apres.jpg", alt: "…" }.
+   Le comparateur s'affiche dès qu'il y a au moins une entrée. */
+const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
+
+/* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
+   nom existe plusieurs fois, pour que les liens et les textes alternatifs
+   ne soient jamais identiques. */
+function nomUnique(i: number) {
+  const n = PLANTES[i].n;
+  const total = PLANTES.filter((x) => x.n.toLowerCase() === n.toLowerCase()).length;
+  if (total < 2) return n;
+  const rang = PLANTES.slice(0, i + 1).filter((x) => x.n.toLowerCase() === n.toLowerCase()).length;
+  return `${n} (photo ${rang})`;
+}
+
 function waLink(message: string) {
   return `https://wa.me/${BRAND.wa}?text=${encodeURIComponent(message)}`;
 }
@@ -279,6 +296,40 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
       <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
       <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
     </svg>
+  );
+}
+
+/* Feuille décorative : très discrète, ondule lentement et suit un peu le défilement */
+function Feuille({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`feuille ${className}`} viewBox="0 0 120 160" aria-hidden="true" focusable="false">
+      <path d="M60 4C102 40 114 94 60 156 6 94 18 40 60 4Z" fill="currentColor" />
+      <path d="M60 28V150M60 70 34 52M60 96 30 76M60 70l26-18M60 96l30-20" stroke="rgba(255,255,255,.35)" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* Comparateur avant / après au curseur (clavier compris) */
+function AvantApres({ avant, apres, alt }: { avant: string; apres: string; alt: string }) {
+  const [pos, setPos] = useState(50);
+  return (
+    <div className="aa" style={{ "--p": `${pos}%` } as React.CSSProperties}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="aa-apres" src={apres} alt={`${alt} — après`} loading="lazy" decoding="async" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="aa-avant" src={avant} alt={`${alt} — avant`} loading="lazy" decoding="async" />
+      <span className="aa-tag aa-tag-a">Avant</span>
+      <span className="aa-tag aa-tag-b">Après</span>
+      <span className="aa-poignee" aria-hidden="true" />
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={pos}
+        onChange={(e) => setPos(+e.target.value)}
+        aria-label="Comparer l'avant et l'après"
+      />
+    </div>
   );
 }
 
@@ -547,10 +598,11 @@ export default function Home() {
           <nav className="head-nav" aria-label="Navigation principale">
             <a href="#lieu">Le lieu</a>
             <a href="#cafe">Café</a>
+            <a href="#coworking">Coworking</a>
+            <a href="#paysagisme">Paysagisme</a>
             <a href="#galerie">Plantes</a>
             <a href="#avis">Avis</a>
             <a href="#contact">Contact</a>
-            <a href="#reseaux">Réseaux</a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
               <PhoneIcon size={16} /> Appeler
             </a>
@@ -565,6 +617,8 @@ export default function Home() {
           style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
         >
           <div className="hero-bg" aria-hidden="true" />
+          <Feuille className="feuille-h1" />
+          <Feuille className="feuille-h2" />
           {bienvenue !== "off" && (
             <div
               className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
@@ -589,7 +643,7 @@ export default function Home() {
                 coworking et paysagisme, pour vous reconnecter à l'essentiel.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-                <a className="btn btn-light" href="#contact">
+                <a className="btn btn-moutarde" href="#contact">
                   Demander un devis
                 </a>
                 <a className="btn btn-ghost" href="#galerie">
@@ -661,6 +715,82 @@ export default function Home() {
           </div>
         </section>
 
+        {/* COWORKING */}
+        <section id="coworking" className="section cow">
+          <div className="wrap lieu-in">
+            <div data-reveal className="reveal rv-left">
+              <h2>Coworking : travailler entouré de verdure</h2>
+              <p className="lede">
+                Exoticas met un espace de travail à disposition dans la
+                boutique-jardin, avec le coin café à deux pas. Un cadre
+                végétal et apaisant pour avancer sur vos dossiers, recevoir un
+                client ou changer d'air.
+              </p>
+              <ul className="puces">
+                {["Cadre calme et végétal", "Café et brunch sur place", "Parking gratuit", "Au cœur de Tokpa-hoho"].map((t, i) => (
+                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
+                ))}
+              </ul>
+              <p className="cow-note">Tarifs, horaires et réservation d'un poste : demandez-nous.</p>
+              <a
+                className="btn btn-moutarde"
+                href={waLink("Bonjour Exoticas, je voudrais des informations sur le coworking (tarifs, horaires).")}
+                target="_blank"
+                rel="noopener"
+              >
+                <WhatsAppIcon size={18} /> Se renseigner sur le coworking
+              </a>
+            </div>
+            <div className="cow-photos">
+              {[LIEU.etageres, LIEU.tasses].map((im, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={im.src} data-reveal style={{ "--d": `${i * 160}ms` } as React.CSSProperties} className={`cow-p cow-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* AMÉNAGEMENT PAYSAGER */}
+        <section id="paysagisme" className="section pays">
+          <Feuille className="feuille-p1" />
+          <div className="wrap lieu-in">
+            <div data-reveal className="reveal rv-left">
+              <h2>Aménagement paysager sur devis</h2>
+              <p className="lede">
+                Terrasse, jardin, cour ou espace d'accueil : Exoticas conçoit
+                et plante des espaces verts à Cotonou. Décrivez-nous votre
+                projet, nous revenons vers vous avec un devis.
+              </p>
+              <ul className="puces">
+                {["Terrasses et jardins", "Cours et intérieurs", "Commerces et bureaux"].map((t, i) => (
+                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
+                ))}
+              </ul>
+              <div className="pays-cta">
+                <a
+                  className="btn btn-moutarde"
+                  href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <WhatsAppIcon size={18} /> Demander un devis
+                </a>
+                <a className="btn btn-ghost" href={BRAND.telHref}>
+                  <PhoneIcon size={16} /> {BRAND.tel}
+                </a>
+              </div>
+            </div>
+            <div className="pays-visuel" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+              {REALISATIONS.length > 0 ? (
+                REALISATIONS.map((r) => <AvantApres key={r.avant} {...r} />)
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* GALERIE */}
         <section id="galerie" className="section">
           <div className="wrap">
@@ -679,6 +809,7 @@ export default function Home() {
                     style={{ "--d": `${(i % 4) * 70}ms` } as React.CSSProperties}
                     href={`/galerie/pleine/${p.s}.jpg`}
                     key={p.s}
+                    aria-label={`Voir la fiche : ${nomUnique(i)}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setFiche(i);
@@ -689,8 +820,8 @@ export default function Home() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/galerie/mini/${p.s}.jpg`}
-                        alt={`${p.n}, plante de la boutique Exoticas à Cotonou`}
-                        title={p.n}
+                        alt={`${nomUnique(i)}, plante de la boutique Exoticas à Cotonou`}
+                        title={nomUnique(i)}
                         width={480}
                         height={640}
                         loading="lazy"
@@ -750,8 +881,8 @@ export default function Home() {
             <div data-reveal className="reveal rv-left">
               <h2>Contact et accès à la boutique</h2>
               <p className="lede">
-                Écrivez-nous : votre message s'ouvre dans WhatsApp, on vous
-                répond rapidement.
+                Écrivez-nous sur WhatsApp : remplissez le formulaire, votre
+                message s'ouvre prêt à envoyer, et on vous répond rapidement.
               </p>
               <form onSubmit={onSubmit} className="form">
                 <label>
@@ -784,11 +915,16 @@ export default function Home() {
                     placeholder="Je souhaite aménager une terrasse de 40 m²…"
                   />
                 </label>
-                <button className="btn btn-primary" type="submit">
-                  Envoyer le message
+                <p className="form-hint">
+                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
+                  avec votre message déjà écrit. Il n'est envoyé qu'une fois
+                  validé dans WhatsApp.
+                </p>
+                <button className="btn btn-moutarde" type="submit">
+                  <WhatsAppIcon size={18} /> Continuer sur WhatsApp
                 </button>
                 <p className={`note${envoye ? " show" : ""}`} role="status">
-                  Message prêt dans WhatsApp. Vous pouvez aussi nous appeler au{" "}
+                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer. Vous pouvez aussi nous appeler au{" "}
                   <a href={BRAND.telHref}>{BRAND.tel}</a> ou écrire à{" "}
                   <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
                 </p>
@@ -882,6 +1018,24 @@ export default function Home() {
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               Les plantes, le café et la vie de la boutique au quotidien.
             </p>
+            <div className="insta-grid">
+              {[LIEU.arbre, LIEU.brunch, LIEU.tasses, LIEU.crepes, LIEU.etageres, LIEU.jus].map((im, i) => (
+                <a
+                  key={im.src}
+                  className="insta-tuile rv-pop"
+                  data-reveal
+                  href={BRAND.instagram}
+                  target="_blank"
+                  rel="noopener me"
+                  aria-label="Voir Exoticas sur Instagram"
+                  style={{ "--d": `${120 + i * 70}ms` } as React.CSSProperties}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+                  <span className="insta-tuile-ico" aria-hidden="true"><InstagramIcon size={22} /></span>
+                </a>
+              ))}
+            </div>
             <a
               className="insta-card rv-photo"
               data-reveal
@@ -976,14 +1130,14 @@ export default function Home() {
             className="fiche-fond"
             role="dialog"
             aria-modal="true"
-            aria-label={`Fiche : ${p.n}`}
+            aria-label={`Fiche : ${nomUnique(fiche)}`}
             onClick={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
           >
             <div className="fiche">
               <button className="fiche-x" onClick={() => setFiche(null)} aria-label="Fermer la fiche">×</button>
               <div className="fiche-photo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img key={p.s} src={`/galerie/pleine/${p.s}.jpg`} alt={`${p.n}, plante de la boutique Exoticas à Cotonou`} />
+                <img key={p.s} src={`/galerie/pleine/${p.s}.jpg`} alt={`${nomUnique(fiche)}, plante de la boutique Exoticas à Cotonou`} />
                 <button className="fiche-nav fiche-prec" onClick={() => aller(-1)} aria-label="Plante précédente">‹</button>
                 <button className="fiche-nav fiche-suiv" onClick={() => aller(1)} aria-label="Plante suivante">›</button>
               </div>
@@ -1042,7 +1196,8 @@ const css = `
   --texte:#1E2B28;
   --muted:#6B726B;
   --line:#E3DACA;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --serif:var(--font-serif),"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:var(--font-sans),ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --r:8px;
   --ease:cubic-bezier(.22,.61,.36,1);
   --ease-out:cubic-bezier(.16,1,.3,1);
@@ -1064,11 +1219,11 @@ const css = `
 html{scroll-behavior:smooth}
 body{
   margin:0;color:var(--texte);background:var(--creme);
-  font:16.5px/1.62 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font:16.5px/1.62 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 h1,h2,h3{margin:0 0 .55rem;font-weight:550;text-wrap:balance}
-h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500}
+h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500;font-variation-settings:"SOFT" 100}
 h1{font-size:clamp(2.35rem,4.6vw,3.45rem);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(1.65rem,2.6vw,2.15rem);line-height:1.1;letter-spacing:-.03em}
 h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
@@ -1104,7 +1259,7 @@ section[id]{scroll-margin-top:88px}
 .head-nav a:not(.btn):hover::after{transform:scaleX(1)}
 
 /* ---------- boutons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+.btn{font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;
   border:1px solid transparent;border-radius:var(--r);padding:12px 20px;text-decoration:none;
   font-size:.95rem;cursor:pointer;position:relative;overflow:hidden;
   transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),background .3s var(--ease),color .3s var(--ease)}
@@ -1144,7 +1299,7 @@ section[id]{scroll-margin-top:88px}
 }
 .hero-bg{position:absolute;inset:0;background-image:var(--hero-img);background-size:cover;background-position:50% 34%;
   opacity:0;transition:opacity .8s var(--ease)}
-.hero-in{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
 .wordmark{display:inline-flex;align-items:center;gap:10px}
 .wordmark-text{display:flex;flex-direction:column;line-height:1.1}
 .wordmark-nom{font-size:1.5rem}
@@ -1394,6 +1549,54 @@ section[id]{scroll-margin-top:88px}
 
 
 .centre{text-align:center;margin-top:8px}
+
+/* ---------- coworking ---------- */
+.cow{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cow-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.cow-p{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r);box-shadow:0 10px 24px rgba(20,35,12,.18)}
+.cow-p0{border-radius:var(--r) var(--r) 120px 120px}
+.cow-p1{margin-top:40px}
+.cow-note{margin:20px 0 14px;font-size:.95rem;color:var(--muted)}
+
+/* ---------- aménagement paysager ---------- */
+.pays{position:relative;overflow:hidden;background:var(--vert-fonce);color:#fff}
+.pays h2{color:#fff}
+.pays .lede{color:rgba(255,255,255,.82)}
+.pays .puces li{background:transparent;border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.92)}
+.pays-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.pays-visuel img{width:100%;max-height:520px;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.aa{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:var(--r);user-select:none}
+.aa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.aa-avant{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+.aa-poignee{position:absolute;top:0;bottom:0;left:var(--p);width:3px;margin-left:-1.5px;background:#fff;pointer-events:none}
+.aa input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.aa input:focus-visible~.aa-poignee{box-shadow:0 0 0 3px var(--moutarde)}
+.aa-tag{position:absolute;top:12px;padding:4px 10px;border-radius:99px;background:rgba(18,36,33,.7);color:#fff;font-size:.78rem}
+.aa-tag-a{left:12px}.aa-tag-b{right:12px}
+
+/* ---------- feuilles décoratives (micro-animation) ---------- */
+.feuille{position:absolute;z-index:0;pointer-events:none;color:#fff;opacity:.09;
+  animation:balance 9s ease-in-out infinite alternate;
+  translate:0 calc(var(--sy,0) * -.04px)}
+.feuille-h1{width:150px;right:6%;top:14%;transform-origin:50% 100%}
+.feuille-h2{width:90px;right:34%;bottom:9%;animation-duration:12s;animation-delay:-4s;transform-origin:50% 100%}
+.feuille-p1{width:200px;left:-40px;bottom:-30px;transform-origin:50% 100%;opacity:.07}
+@keyframes balance{from{transform:rotate(-7deg)}to{transform:rotate(8deg)}}
+.hero-in{z-index:1}
+
+/* ---------- formulaire : indication WhatsApp ---------- */
+.form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(225,163,45,.14);border-radius:var(--r)}
+
+/* ---------- réseaux : le lieu en images ---------- */
+.insta-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:28px 0 0}
+.insta-tuile{position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:var(--r)}
+.insta-tuile img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease-out)}
+.insta-tuile:hover img{transform:scale(1.08)}
+.insta-tuile-ico{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:36px;height:36px;
+  border-radius:50%;background:var(--moutarde);color:var(--vert-nuit);opacity:0;transform:scale(.8);
+  transition:opacity .3s var(--ease),transform .4s var(--ease-out)}
+.insta-tuile:hover .insta-tuile-ico,.insta-tuile:focus-visible .insta-tuile-ico{opacity:1;transform:none}
+
 /* ---------- réseaux ---------- */
 .reseaux{background:var(--creme)}
 .insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 22px;padding:26px clamp(22px,4vw,40px);
@@ -1442,6 +1645,7 @@ section[id]{scroll-margin-top:88px}
 /* ---------- responsive ---------- */
 @media (max-width:900px){
   .lieu-in,.cafe-in{grid-template-columns:1fr}
+  .insta-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
