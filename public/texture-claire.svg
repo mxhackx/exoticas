@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="520" viewBox="0 0 520 520" fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <!-- feuille de monstera -->
+  <g transform="translate(40 40)">
+    <path d="M120 40C60 38 14 90 24 152 34 214 96 246 150 226 196 208 216 158 202 108 190 68 160 42 120 40Z"/>
+    <path d="M24 152l46-8M40 196l42-26M80 232l30-40M202 108l-50 6M190 150l-46 12M120 40v78M120 118l-34 38M120 118l42 28M120 118V232"/>
+    <path d="M120 232c4 40 -6 80 -30 120"/>
+  </g>
+  <!-- palme -->
+  <g transform="translate(300 30) rotate(18)">
+    <path d="M60 10C120 60 120 190 60 250 0 190 0 60 60 10Z"/>
+    <path d="M60 10V250M60 70l-38-20M60 110l-44-22M60 150l-44-20M60 190l-34-16M60 70l38-20M60 110l44-22M60 150l44-20M60 190l34-16"/>
+  </g>
+  <!-- feuille en cœur -->
+  <g transform="translate(70 330)">
+    <path d="M70 14C132 20 152 92 108 142 92 160 70 168 70 168 70 168 16 148 6 98 -4 48 30 12 70 14Z"/>
+    <path d="M70 168V14M70 120l-34-26M70 120l34-26M70 80l-24-24M70 80l24-24"/>
+    <path d="M70 168c-2 28 4 46 14 62"/>
+  </g>
+  <!-- feuilles jumelles -->
+  <g transform="translate(330 300) rotate(-14)">
+    <path d="M10 120C10 60 60 10 130 14 128 80 84 124 10 120Z"/>
+    <path d="M10 120L100 44M40 98l34 6M62 78l30 4"/>
+    <path d="M10 120C-6 150 -10 190 4 230"/>
+    <path d="M130 200C100 150 130 90 190 80 200 140 180 190 130 200Z"/>
+    <path d="M130 200L178 112"/>
+  </g>
+</svg>
