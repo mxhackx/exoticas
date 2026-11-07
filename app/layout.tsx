@@ -16,6 +16,7 @@ const ADRESSE_LONGUE =
   "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club";
 const TEL = "+2290153300000";
 const MAIL = "exoticasbj@gmail.com";
+const INSTAGRAM = "https://www.instagram.com/exoticasbj/";
 const GEO = { lat: 6.35601, lng: 2.4371 };
 
 export const metadata: Metadata = {
@@ -118,6 +119,7 @@ const BOUTIQUE = {
   image: [`${SITE}/og.png`],
   telephone: TEL,
   email: MAIL,
+  sameAs: [INSTAGRAM],
   address: {
     "@type": "PostalAddress",
     streetAddress: `${ADRESSE_LONGUE}, Tokpa-hoho`,

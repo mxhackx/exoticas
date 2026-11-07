@@ -13,6 +13,7 @@ const BRAND = {
   telHref: "tel:+2290153300000",
   wa: "2290153300000",
   mail: "exoticasbj@gmail.com",
+  instagram: "https://www.instagram.com/exoticasbj/",
   adresseCourte: "Tokpa-hoho, 5ème arrondissement, Cotonou",
   adresseLongue:
     "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club",
@@ -148,6 +149,16 @@ function PhoneIcon({ size = 17 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17.2 17.2 0 0 1 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1l-2.1 2.3Z" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
     </svg>
   );
 }
@@ -638,6 +649,12 @@ export default function Home() {
               <strong>Courriel</strong>
               <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
             </p>
+            <p>
+              <strong>Réseaux</strong>
+              <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-social">
+                <InstagramIcon size={16} /> Instagram @exoticasbj
+              </a>
+            </p>
           </div>
           <div data-reveal className="reveal foot-col" style={{ "--d": "180ms" } as React.CSSProperties}>
             <p>
@@ -923,6 +940,7 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .foot-col a{text-decoration:none;border-bottom:1px solid transparent;
   transition:border-color .3s var(--ease)}
 .foot-col a:hover{border-color:rgba(255,255,255,.7)}
+.foot-social{display:inline-flex;align-items:center;gap:8px}
 .foot-col .muted{display:block;color:rgba(255,255,255,.62);font-size:.9rem;margin-top:5px}
 .foot-bottom{margin-top:28px;padding-top:14px;border-top:1px solid rgba(255,255,255,.16);
   font-size:.82rem;color:rgba(255,255,255,.62)}
