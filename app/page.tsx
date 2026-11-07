@@ -137,13 +137,23 @@ const AVIS = [
 /* Fiches de la galerie : descriptions générales de chaque plante (rien sur
    les prix ni les stocks : on les confirme par WhatsApp). */
 const CAT = {
-  interieur: { t: "Plante d'intérieur", l: "Lumière vive, sans soleil direct", a: "Substrat légèrement humide" },
-  rare: { t: "Plante rare", l: "Lumière vive, sans soleil direct", a: "Laisser sécher le dessus du terreau" },
-  orchidee: { t: "Orchidée", l: "Lumière vive, sans soleil direct", a: "Peu d'eau, bien drainée" },
-  bonsai: { t: "Bonsaï", l: "Lumière vive, un peu de soleil", a: "Arroser dès que le terreau sèche" },
-  arbre: { t: "Arbre tropical", l: "Plein soleil", a: "Arrosage régulier" },
-  retombante: { t: "Plante retombante", l: "Lumière vive à mi-ombre", a: "Arrosage modéré" },
+  interieur: { t: "Plante d'intérieur", l: "Lumière vive, sans soleil direct", a: "Substrat légèrement humide", lc: "Lumière vive", ac: "Arrosage modéré", f: "interieur" },
+  rare: { t: "Plante rare", l: "Lumière vive, sans soleil direct", a: "Laisser sécher le dessus du terreau", lc: "Lumière vive", ac: "Arrosage prudent", f: "rare" },
+  orchidee: { t: "Orchidée", l: "Lumière vive, sans soleil direct", a: "Peu d'eau, bien drainée", lc: "Lumière vive", ac: "Peu d'eau", f: "orchidee" },
+  bonsai: { t: "Bonsaï", l: "Lumière vive, un peu de soleil", a: "Arroser dès que le terreau sèche", lc: "Lumière vive", ac: "Arrosage régulier", f: "bonsai" },
+  arbre: { t: "Arbre tropical", l: "Plein soleil", a: "Arrosage régulier", lc: "Plein soleil", ac: "Arrosage régulier", f: "arbre" },
+  retombante: { t: "Plante retombante", l: "Lumière vive à mi-ombre", a: "Arrosage modéré", lc: "Lumière vive", ac: "Arrosage modéré", f: "interieur" },
 } as const;
+
+/* Filtres de la galerie */
+const FILTRES = [
+  { k: "toutes", n: "Toutes" },
+  { k: "interieur", n: "D'intérieur" },
+  { k: "rare", n: "Rares" },
+  { k: "orchidee", n: "Orchidées" },
+  { k: "bonsai", n: "Bonsaïs" },
+  { k: "arbre", n: "Arbres" },
+] as const;
 
 const INFOS: Record<string, [keyof typeof CAT, string]> = {
   "alocasia-sanderiana-nain-ou-oreille-d-ane": ["rare", "Feuilles en fer de lance vert sombre, aux nervures blanches très contrastées. Elle aime l'humidité ambiante."],
@@ -206,17 +216,11 @@ const LIEU = {
   jus: { src: "/lieu/cafe-jus.webp", w: 287, h: 510, alt: "Jus frais devant les étagères de plantes du café Exoticas" },
 };
 
-const AU_MENU = [
-  "Brunch",
-  "Gaufres",
-  "Crêpes",
-  "Croissant",
-  "Omelette",
-  "Sandwichs grillés",
-  "Salades",
-  "Jus frais",
-  "Iced latte",
-  "Café",
+/* Carte du café : aperçu des plats vus sur place et cités dans les avis (sans prix) */
+const CARTE = [
+  { t: "Brunch et salé", items: ["Brunch", "Omelette", "Sandwichs grillés", "Salades"] },
+  { t: "Sucré", items: ["Gaufres", "Crêpes", "Croissant"] },
+  { t: "Boissons", items: ["Jus frais", "Iced latte", "Café"] },
 ];
 
 /* Réalisations d'aménagement paysager (avant / après). Vide pour l'instant :
@@ -428,20 +432,33 @@ type Geo = {
 };
 
 export default function Home() {
-  const [form, setForm] = useState({ nom: "", contact: "", message: "" });
+  const [form, setForm] = useState({ nom: "", contact: "", objet: "Aménagement paysager (devis)", message: "" });
   const [envoye, setEnvoye] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
+  const [filtre, setFiltre] = useState<string>("toutes");
+  /* indices (dans PLANTES) des plantes affichées selon le filtre */
+  const visibles = PLANTES.map((p, i) => i).filter(
+    (i) => filtre === "toutes" || CAT[(INFOS[PLANTES[i].s] ?? ["interieur"])[0]].f === filtre
+  );
 
   /* fiche plante : Échap, flèches, et page figée derrière */
   useEffect(() => {
     if (fiche === null) return;
-    const n = PLANTES.length;
+    const liste = PLANTES.map((p, i) => i).filter(
+      (i) => filtre === "toutes" || CAT[(INFOS[PLANTES[i].s] ?? ["interieur"])[0]].f === filtre
+    );
+    const n = liste.length;
+    const pas = (i: number | null, d: number) => {
+      if (i === null || n === 0) return i;
+      const pos = Math.max(0, liste.indexOf(i));
+      return liste[(pos + d + n) % n];
+    };
     function touche(e: KeyboardEvent) {
       if (e.key === "Escape") setFiche(null);
-      else if (e.key === "ArrowRight") setFiche((i) => (i === null ? i : (i + 1) % n));
-      else if (e.key === "ArrowLeft") setFiche((i) => (i === null ? i : (i - 1 + n) % n));
+      else if (e.key === "ArrowRight") setFiche((i) => pas(i, 1));
+      else if (e.key === "ArrowLeft") setFiche((i) => pas(i, -1));
     }
     window.addEventListener("keydown", touche);
     const avant = document.body.style.overflow;
@@ -450,7 +467,7 @@ export default function Home() {
       window.removeEventListener("keydown", touche);
       document.body.style.overflow = avant;
     };
-  }, [fiche]);
+  }, [fiche, filtre]);
 
   /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
      couleur du hero porte le texte qui se tape caractère par caractère, puis se
@@ -579,6 +596,7 @@ export default function Home() {
     e.preventDefault();
     const msg =
       `Bonjour Exoticas,\n\n` +
+      `Objet : ${form.objet}\n` +
       `Je m'appelle ${form.nom || "—"}. ${form.message}\n\n` +
       `Me joindre : ${form.contact || "—"}`;
     window.open(waLink(msg), "_blank", "noopener");
@@ -635,6 +653,9 @@ export default function Home() {
               <span className="rise" style={{ "--d": "60ms" } as React.CSSProperties}>
                 <Wordmark />
               </span>
+              <p className="eyebrow eyebrow-clair rise" style={{ "--d": "110ms" } as React.CSSProperties}>
+                Tokpa-hoho · Cotonou
+              </p>
               <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
                 Plantes rares, café et coworking à Cotonou.
               </h1>
@@ -643,11 +664,11 @@ export default function Home() {
                 coworking et paysagisme, pour vous reconnecter à l'essentiel.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-                <a className="btn btn-moutarde" href="#contact">
-                  Demander un devis
+                <a className="btn btn-moutarde" href="#coworking">
+                  Travailler chez nous
                 </a>
                 <a className="btn btn-ghost" href="#galerie">
-                  Voir la galerie
+                  Voir les plantes
                 </a>
               </div>
               <p className="hero-adr rise" style={{ "--d": "460ms" } as React.CSSProperties}>
@@ -665,10 +686,27 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ACTIVITÉS */}
+        <nav className="bande" aria-label="Nos activités">
+          <div className="wrap bande-in">
+            {[
+              { h: "#cafe", n: "Café et brunch" },
+              { h: "#galerie", n: "Plantes rares et d'intérieur" },
+              { h: "#coworking", n: "Espace coworking" },
+              { h: "#paysagisme", n: "Aménagement paysager sur devis" },
+            ].map((a, i) => (
+              <a key={a.h} href={a.h} data-reveal className="rv-pop" style={{ "--d": `${i * 80}ms` } as React.CSSProperties}>
+                {a.n}
+              </a>
+            ))}
+          </div>
+        </nav>
+
         {/* LE LIEU */}
         <section id="lieu" className="section">
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
+              <p className="eyebrow">Le lieu</p>
               <h2>Une boutique-jardin où l'on s'installe</h2>
               <p className="lede">
                 À Tokpa-hoho, Exoticas réunit une boutique de plantes rares, un
@@ -701,16 +739,26 @@ export default function Home() {
               ))}
             </div>
             <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
-              <h2>Le coin café d'Exoticas</h2>
+              <p className="eyebrow eyebrow-clair">Le café</p>
+              <h2>Brunch, douceurs et boissons fraîches</h2>
               <p className="lede">
                 Brunch, gaufres, crêpes, sandwichs grillés, jus frais et café :
                 à savourer dans un décor de plantes et de bois brut.
               </p>
-              <ul className="menu-chips">
-                {AU_MENU.map((m, i) => (
-                  <li key={m} data-reveal className="rv-pop" style={{ "--d": `${260 + i * 60}ms` } as React.CSSProperties}>{m}</li>
+              <div className="carte" data-reveal style={{ "--d": "240ms" } as React.CSSProperties}>
+                <h3>La carte</h3>
+                {CARTE.map((g) => (
+                  <div key={g.t} className="carte-groupe">
+                    <h4>{g.t}</h4>
+                    <ul>
+                      {g.items.map((m) => (
+                        <li key={m}>{m}</li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+                <p className="carte-note">Carte et prix sur place.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -719,18 +767,27 @@ export default function Home() {
         <section id="coworking" className="section cow">
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
-              <h2>Coworking : travailler entouré de verdure</h2>
+              <p className="eyebrow">Coworking</p>
+              <h2>Travaillez entouré de verdure</h2>
               <p className="lede">
                 Exoticas met un espace de travail à disposition dans la
                 boutique-jardin, avec le coin café à deux pas. Un cadre
                 végétal et apaisant pour avancer sur vos dossiers, recevoir un
                 client ou changer d'air.
               </p>
-              <ul className="puces">
-                {["Cadre calme et végétal", "Café et brunch sur place", "Parking gratuit", "Au cœur de Tokpa-hoho"].map((t, i) => (
-                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
+              <div className="cow-cards">
+                {[
+                  { t: "Cadre végétal", d: "Murs verts, bois brut et plantes" },
+                  { t: "Café sur place", d: "Brunch, jus frais et café" },
+                  { t: "Stationnement gratuit", d: "Parking devant la boutique" },
+                  { t: "Facile à trouver", d: "À 1 min de l'échangeur Ganhi" },
+                ].map((c, i) => (
+                  <div key={c.t} className="cow-card rv-pop" data-reveal style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>
+                    <strong>{c.t}</strong>
+                    <span>{c.d}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <p className="cow-note">Tarifs, horaires et réservation d'un poste : demandez-nous.</p>
               <a
                 className="btn btn-moutarde"
@@ -755,7 +812,8 @@ export default function Home() {
           <Feuille className="feuille-p1" />
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
-              <h2>Aménagement paysager sur devis</h2>
+              <p className="eyebrow eyebrow-clair">Aménagement paysager</p>
+              <h2>Un jardin sur mesure, sur devis</h2>
               <p className="lede">
                 Terrasse, jardin, cour ou espace d'accueil : Exoticas conçoit
                 et plante des espaces verts à Cotonou. Décrivez-nous votre
@@ -794,13 +852,28 @@ export default function Home() {
         {/* GALERIE */}
         <section id="galerie" className="section">
           <div className="wrap">
+            <p data-reveal className="eyebrow reveal">La boutique</p>
             <h2 data-reveal className="reveal">Galerie de plantes rares et d'intérieur</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              {PLANTES.length} plantes de la boutique, photographiées ici. Touchez une
+              {visibles.length} plantes de la boutique, photographiées ici. Touchez une
               carte pour voir sa fiche.
             </p>
+            <div className="filtres" role="group" aria-label="Filtrer les plantes">
+              {FILTRES.map((f) => (
+                <button
+                  key={f.k}
+                  type="button"
+                  className={`filtre${filtre === f.k ? " on" : ""}`}
+                  aria-pressed={filtre === f.k}
+                  onClick={() => setFiltre(f.k)}
+                >
+                  {f.n}
+                </button>
+              ))}
+            </div>
             <div className="grid">
-              {PLANTES.map((p, i) => {
+              {visibles.map((i) => {
+                const p = PLANTES[i];
                 const [cat] = INFOS[p.s] ?? ["interieur"];
                 return (
                   <a
@@ -832,6 +905,10 @@ export default function Home() {
                     <span className="card-cap">
                       <span className="card-tag">{CAT[cat].t}</span>
                       <span className="card-nom">{p.n}</span>
+                      <span className="card-soins">
+                        <span>{CAT[cat].lc}</span>
+                        <span>{CAT[cat].ac}</span>
+                      </span>
                     </span>
                   </a>
                 );
@@ -843,6 +920,7 @@ export default function Home() {
         {/* AVIS */}
         <section id="avis" className="section">
           <div className="wrap">
+            <p data-reveal className="eyebrow reveal">Avis</p>
             <h2 data-reveal className="reveal">Avis clients</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               Ce que disent nos clients sur Google.
@@ -879,7 +957,8 @@ export default function Home() {
         <section id="contact" className="section section-alt">
           <div className="wrap contact-in">
             <div data-reveal className="reveal rv-left">
-              <h2>Contact et accès à la boutique</h2>
+              <p className="eyebrow">Contact</p>
+              <h2>Venez nous voir</h2>
               <p className="lede">
                 Écrivez-nous sur WhatsApp : remplissez le formulaire, votre
                 message s'ouvre prêt à envoyer, et on vous répond rapidement.
@@ -904,6 +983,17 @@ export default function Home() {
                     placeholder="01 …  ou  vous@exemple.com"
                     autoComplete="tel"
                   />
+                </label>
+                <label>
+                  Objet
+                  <select
+                    value={form.objet}
+                    onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}
+                  >
+                    {["Aménagement paysager (devis)", "Coworking", "Café et brunch", "Plantes", "Autre"].map((o) => (
+                      <option key={o}>{o}</option>
+                    ))}
+                  </select>
                 </label>
                 <label>
                   Message
@@ -1014,7 +1104,8 @@ export default function Home() {
         {/* RÉSEAUX */}
         <section id="reseaux" className="section reseaux">
           <div className="wrap">
-            <h2 data-reveal className="reveal">Suivez Exoticas</h2>
+            <p data-reveal className="eyebrow reveal">Instagram</p>
+            <h2 data-reveal className="reveal">La vie chez Exoticas</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               Les plantes, le café et la vie de la boutique au quotidien.
             </p>
@@ -1124,7 +1215,9 @@ export default function Home() {
         const p = PLANTES[fiche];
         const [cat, desc] = INFOS[p.s] ?? ["interieur", ""];
         const c = CAT[cat];
-        const aller = (d: number) => setFiche((fiche + d + PLANTES.length) % PLANTES.length);
+        const pos = Math.max(0, visibles.indexOf(fiche));
+        const aller = (d: number) =>
+          setFiche(visibles[(pos + d + visibles.length) % visibles.length]);
         return (
           <div
             className="fiche-fond"
@@ -1158,7 +1251,7 @@ export default function Home() {
                 >
                   <WhatsAppIcon size={18} /> Demander cette plante
                 </a>
-                <span className="fiche-compte">{fiche + 1} / {PLANTES.length}</span>
+                <span className="fiche-compte">{pos + 1} / {visibles.length}</span>
               </div>
             </div>
           </div>
@@ -1190,7 +1283,7 @@ const css = `
   --vert-nuit:#2C4220;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
-  --terre:#C4673E;
+  --terre:#B25832;
   --bois:#8B5A34;
   --creme:#F6EFE2;
   --texte:#1E2B28;
@@ -1396,11 +1489,8 @@ section[id]{scroll-margin-top:88px}
 .cafe-p{width:100%;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .cafe-p{height:100%;min-height:0}
 .cafe-p0{grid-row:1 / span 2}
-.menu-chips{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.menu-chips li{padding:6px 14px;border-radius:99px;font-size:.9rem;
-  border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92)}
-.btn-moutarde{background:var(--moutarde);color:var(--vert-nuit);font-weight:600}
-.btn-moutarde:hover{background:#EDB544}
+.btn-moutarde{background:var(--terre);color:#fff;font-weight:600}
+.btn-moutarde:hover{background:#9A4A27}
 
 /* collage du hero */
 .collage{position:relative;width:min(100%,400px);aspect-ratio:1/1.12}
@@ -1424,7 +1514,7 @@ section[id]{scroll-margin-top:88px}
 .card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease-out)}
 .card:hover .card-img img{transform:scale(1.07)}
 .card-voir{position:absolute;left:50%;bottom:14px;z-index:1;transform:translate(-50%,12px);opacity:0;
-  padding:7px 15px;border-radius:99px;background:var(--moutarde);color:var(--vert-nuit);
+  padding:7px 15px;border-radius:99px;background:var(--terre);color:#fff;
   font-size:.82rem;font-weight:600;white-space:nowrap;
   transition:opacity .35s var(--ease),transform .4s var(--ease-out)}
 .card:hover .card-voir,.card:focus-visible .card-voir{opacity:1;transform:translate(-50%,0)}
@@ -1550,6 +1640,50 @@ section[id]{scroll-margin-top:88px}
 
 .centre{text-align:center;margin-top:8px}
 
+
+/* ---------- surtitres ---------- */
+.eyebrow{margin:0 0 12px;font:700 .74rem/1.2 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--terre)}
+.eyebrow-clair{color:#F0C469}
+.hero-copy .eyebrow{margin:18px 0 -6px;font-size:.74rem;line-height:1.2;color:#F0C469}
+
+/* ---------- bande des activités ---------- */
+.bande{background:var(--vert-fonce);color:#fff}
+.bande-in{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
+.bande a{text-decoration:none;font-size:.95rem;font-weight:600;position:relative;padding:4px 0}
+.bande a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:#F0C469;
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .35s var(--ease-out)}
+.bande a:hover::after{transform:scaleX(1)}
+
+/* ---------- coworking : points forts ---------- */
+.cow-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 0}
+.cow-card{display:grid;gap:2px;padding:14px 16px;border-radius:var(--r);background:#fff;border:1px solid var(--line)}
+.cow-card strong{font-weight:700;font-size:.95rem}
+.cow-card span{font-size:.85rem;color:var(--muted)}
+
+/* ---------- café : la carte ---------- */
+.carte{margin-top:22px;padding:24px 26px;border-radius:14px;background:#fff;color:var(--texte);
+  box-shadow:0 14px 34px rgba(0,0,0,.25)}
+.carte h3{margin:0 0 6px;font:500 1.3rem/1.2 var(--serif)}
+.carte-groupe{padding:12px 0 4px;border-top:1px solid var(--line)}
+.carte-groupe:first-of-type{border-top:0}
+.carte-groupe h4{margin:0 0 6px;font:700 .72rem/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--terre)}
+.carte-groupe ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 18px}
+.carte-groupe li{font-size:1rem}
+.carte-note{margin:12px 0 0;font-size:.85rem;color:var(--muted)}
+
+/* ---------- galerie : filtres et soins ---------- */
+.filtres{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.filtre{font:600 .88rem/1 var(--sans);padding:9px 16px;border-radius:99px;border:1px solid var(--line);
+  background:#fff;color:var(--texte);cursor:pointer;
+  transition:background .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease)}
+.filtre:hover{border-color:var(--vert)}
+.filtre.on{background:var(--vert);border-color:var(--vert);color:#fff}
+.filtre:focus-visible{outline:2px solid var(--terre);outline-offset:2px}
+.card-soins{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.card-soins span{font:600 .72rem/1 var(--sans);padding:4px 8px;border-radius:99px;background:var(--creme);color:var(--vert)}
+.form select{font-family:inherit;font-size:1rem;line-height:1.5;color:var(--texte);background:rgba(255,255,255,.72);
+  border:var(--glace-bord);border-radius:var(--r);padding:11px 13px;width:100%}
+
 /* ---------- coworking ---------- */
 .cow{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .cow-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
@@ -1610,7 +1744,7 @@ section[id]{scroll-margin-top:88px}
 .insta-txt{display:grid;gap:2px;min-width:0}
 .insta-txt strong{font:500 clamp(1.5rem,3vw,2.1rem)/1.1 var(--serif)}
 .insta-txt span{font-size:1.1rem;opacity:.92}
-.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:var(--moutarde);color:var(--vert-nuit);
+.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:var(--terre);color:#fff;
   font-weight:600;font-size:.95rem;white-space:nowrap}
 .reseaux-liste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .res-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--r);text-decoration:none;
@@ -1624,7 +1758,7 @@ section[id]{scroll-margin-top:88px}
 .foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
   border:1px solid rgba(255,255,255,.35);font-size:.92rem}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
-.foot-col a.foot-pill-insta{background:var(--moutarde);color:var(--vert-nuit);border-color:transparent;font-weight:600}
+.foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 @media (max-width:900px){
   .reseaux-liste{grid-template-columns:repeat(2,minmax(0,1fr))}
   @media (max-width:520px){.reseaux-liste{grid-template-columns:1fr}}
@@ -1645,6 +1779,7 @@ section[id]{scroll-margin-top:88px}
 /* ---------- responsive ---------- */
 @media (max-width:900px){
   .lieu-in,.cafe-in{grid-template-columns:1fr}
+  .bande-in{justify-content:center}
   .insta-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
