@@ -626,10 +626,10 @@ export default function Home() {
             <div data-reveal className="reveal rv-left">
               <h2>Une boutique-jardin où l'on s'installe</h2>
               <p className="lede">
-                À Tokpa-hoho, Exoticas mêle boutique de plantes rares, coin café
-                et espace pour travailler : murs vert profond, bois brut et
-                étagères de plantes. On y vient choisir une plante, déjeuner ou
-                ouvrir son ordinateur.
+                À Tokpa-hoho, Exoticas réunit une boutique de plantes rares, un
+                coin café et un espace de coworking, dans un décor de murs vert
+                profond, de bois brut et d'étagères de plantes. On y vient
+                choisir une plante, déjeuner ou prendre un moment au calme.
               </p>
               <ul className="puces">
                 {["Boutique de plantes rares et d'intérieur", "Coin café et brunch", "Coworking", "Paysagisme sur devis"].map((t, i) => (
@@ -656,19 +656,18 @@ export default function Home() {
               ))}
             </div>
             <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
-              <h2>Le coin café, au milieu des plantes</h2>
+              <h2>Le coin café d'Exoticas</h2>
               <p className="lede">
-                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et un iced
-                latte salué par nos clients : de quoi se poser un moment, entre
-                deux plantes.
+                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et café :
+                à savourer dans un décor de plantes et de bois brut.
               </p>
               <ul className="menu-chips">
                 {AU_MENU.map((m, i) => (
                   <li key={m} data-reveal className="rv-pop" style={{ "--d": `${260 + i * 60}ms` } as React.CSSProperties}>{m}</li>
                 ))}
               </ul>
-              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, j'aimerais réserver une table.")} target="_blank" rel="noopener">
-                <WhatsAppIcon size={18} /> Réserver une table
+              <a className="btn btn-moutarde" href="#contact">
+                <PinIcon size={18} /> Venir nous voir
               </a>
             </div>
           </div>
