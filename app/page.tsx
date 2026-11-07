@@ -1396,12 +1396,12 @@ section[id]{scroll-margin-top:88px}
 .centre{text-align:center;margin-top:8px}
 /* ---------- réseaux ---------- */
 .reseaux{background:var(--creme)}
-.insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 16px;padding:26px clamp(22px,4vw,40px);
+.insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 22px;padding:26px clamp(22px,4vw,40px);
   border-radius:16px;text-decoration:none;color:#fff;
   background:var(--vert);
-  box-shadow:0 18px 44px rgba(20,35,12,.25);
+  box-shadow:0 8px 20px rgba(20,35,12,.16);
   transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
-.insta-card:hover{transform:translateY(-4px)!important;box-shadow:0 26px 56px rgba(20,35,12,.32)}
+.insta-card:hover{transform:translateY(-3px)!important;box-shadow:0 14px 28px rgba(20,35,12,.2)}
 .insta-ico{display:grid;place-items:center;width:76px;height:76px;border-radius:20px;
   background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);flex:none}
 .insta-txt{display:grid;gap:2px;min-width:0}
@@ -1411,8 +1411,8 @@ section[id]{scroll-margin-top:88px}
   font-weight:600;font-size:.95rem;white-space:nowrap}
 .reseaux-liste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .res-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--r);text-decoration:none;
-  background:var(--glace);border:var(--glace-bord);box-shadow:var(--glace-relu),var(--glace-ombre);min-width:0}
-.res-card:hover{transform:translateY(-3px)!important;background:var(--glace-forte);box-shadow:var(--glace-relu),var(--glace-ombre-h)}
+  background:#fff;border:1px solid var(--line);box-shadow:0 4px 12px rgba(20,35,12,.06);min-width:0}
+.res-card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 24px rgba(20,35,12,.14)}
 .res-ico{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--vert);color:#fff;flex:none}
 .res-txt{display:grid;min-width:0}
 .res-txt strong{font-weight:600}
