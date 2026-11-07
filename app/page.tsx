@@ -1884,9 +1884,8 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
-/* ---------- textures : feuilles au trait, ton sur ton ---------- */
-.hero,.cafe,.pays,.hero-copy{background-image:url(/texture-claire.svg);background-size:520px 520px}
-main>section.section:not(.cafe):not(.pays){background-image:url(/texture-sombre.svg);background-size:520px 520px}
+/* ---------- texture : feuilles au trait, seulement sur le hero et l'aménagement paysager ---------- */
+.hero,.pays{background-image:url(/texture-claire.svg);background-size:520px 520px}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
