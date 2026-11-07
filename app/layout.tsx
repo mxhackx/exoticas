@@ -16,6 +16,8 @@ const ADRESSE_LONGUE =
   "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club";
 const TEL = "+2290153300000";
 const MAIL = "exoticasbj@gmail.com";
+const FICHE_MAPS =
+  "https://www.google.com/maps/place/exoticas/data=!4m2!3m1!1s0x102355007b48f569:0x6ecd9c011dacc305";
 const INSTAGRAM = "https://www.instagram.com/exoticasbj/";
 const GEO = { lat: 6.35601, lng: 2.4371 };
 
@@ -119,7 +121,7 @@ const BOUTIQUE = {
   image: [`${SITE}/og.png`],
   telephone: TEL,
   email: MAIL,
-  sameAs: [INSTAGRAM],
+  sameAs: [INSTAGRAM, FICHE_MAPS],
   address: {
     "@type": "PostalAddress",
     streetAddress: `${ADRESSE_LONGUE}, Tokpa-hoho`,
@@ -132,7 +134,7 @@ const BOUTIQUE = {
     latitude: GEO.lat,
     longitude: GEO.lng,
   },
-  hasMap: `https://www.google.com/maps/dir/?api=1&destination=${GEO.lat},${GEO.lng}`,
+  hasMap: FICHE_MAPS,
   areaServed: { "@type": "City", name: "Cotonou" },
   knowsAbout: [
     "plantes rares",

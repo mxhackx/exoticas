@@ -14,6 +14,8 @@ const BRAND = {
   wa: "2290153300000",
   mail: "exoticasbj@gmail.com",
   instagram: "https://www.instagram.com/exoticasbj/",
+  fiche:
+    "https://www.google.com/maps/place/exoticas/data=!4m2!3m1!1s0x102355007b48f569:0x6ecd9c011dacc305",
   adresseCourte: "Tokpa-hoho, 5ème arrondissement, Cotonou",
   adresseLongue:
     "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club",
@@ -630,6 +632,9 @@ export default function Home() {
               <a className="btn btn-wa" href={waLink("Bonjour Exoticas, j'aimerais avoir des informations.")} target="_blank" rel="noopener">
                 <WhatsAppIcon size={18} /> Écrire sur WhatsApp
               </a>
+              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me" style={{ marginTop: 10 }}>
+                <PinIcon size={18} /> Voir la fiche Google Maps
+              </a>
             </aside>
           </div>
         </section>
@@ -653,6 +658,10 @@ export default function Home() {
               <strong>Réseaux</strong>
               <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-social">
                 <InstagramIcon size={16} /> Instagram @exoticasbj
+              </a>
+              <br />
+              <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-social">
+                <PinIcon size={16} /> Google Maps
               </a>
             </p>
           </div>
