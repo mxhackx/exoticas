@@ -1043,10 +1043,10 @@ export default function Home() {
 
 const css = `
 :root{
-  /* palette tirée des photos du lieu : murs vert sapin, bois brut, jaune moutarde, terre cuite */
-  --vert:#23403B;
-  --vert-fonce:#1A322E;
-  --vert-nuit:#122421;
+  /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
+  --vert:#466931;
+  --vert-fonce:#3A5528;
+  --vert-nuit:#2C4220;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#C4673E;
@@ -1252,7 +1252,7 @@ section[id]{scroll-margin-top:88px}
 /* ---------- le café ---------- */
 .cafe{background:var(--vert);color:#fff;position:relative}
 .cafe::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;
-  background:linear-gradient(90deg,var(--moutarde),var(--terre),var(--bois))}
+  background:var(--moutarde)}
 .cafe h2{color:#fff}
 .cafe .lede{color:rgba(255,255,255,.82)}
 .cafe-in{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
@@ -1287,9 +1287,6 @@ section[id]{scroll-margin-top:88px}
 .card-img{position:relative;display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme)}
 .card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease-out)}
 .card:hover .card-img img{transform:scale(1.07)}
-.card-img::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;
-  background:linear-gradient(to top,rgba(18,36,33,.62),transparent);opacity:0;transition:opacity .4s var(--ease)}
-.card:hover .card-img::after,.card:focus-visible .card-img::after{opacity:1}
 .card-voir{position:absolute;left:50%;bottom:14px;z-index:1;transform:translate(-50%,12px);opacity:0;
   padding:7px 15px;border-radius:99px;background:var(--moutarde);color:var(--vert-nuit);
   font-size:.82rem;font-weight:600;white-space:nowrap;
@@ -1420,7 +1417,7 @@ section[id]{scroll-margin-top:88px}
 .reseaux{background:var(--creme)}
 .insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 16px;padding:26px clamp(22px,4vw,40px);
   border-radius:16px;text-decoration:none;color:#fff;
-  background:linear-gradient(120deg,var(--vert) 0%,#34574F 38%,var(--terre) 78%,var(--moutarde) 100%);
+  background:var(--vert);
   box-shadow:0 18px 44px rgba(20,35,12,.25);
   transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .insta-card:hover{transform:translateY(-4px)!important;box-shadow:0 26px 56px rgba(20,35,12,.32)}
@@ -1429,7 +1426,7 @@ section[id]{scroll-margin-top:88px}
 .insta-txt{display:grid;gap:2px;min-width:0}
 .insta-txt strong{font:500 clamp(1.5rem,3vw,2.1rem)/1.1 var(--serif)}
 .insta-txt span{font-size:1.1rem;opacity:.92}
-.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:#fff;color:var(--vert);
+.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:var(--moutarde);color:var(--vert-nuit);
   font-weight:600;font-size:.95rem;white-space:nowrap}
 .reseaux-liste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .res-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--r);text-decoration:none;
@@ -1443,7 +1440,7 @@ section[id]{scroll-margin-top:88px}
 .foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
   border:1px solid rgba(255,255,255,.35);font-size:.92rem}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
-.foot-col a.foot-pill-insta{background:linear-gradient(120deg,var(--terre),var(--moutarde));border-color:transparent;font-weight:600}
+.foot-col a.foot-pill-insta{background:var(--moutarde);color:var(--vert-nuit);border-color:transparent;font-weight:600}
 @media (max-width:900px){
   .reseaux-liste{grid-template-columns:repeat(2,minmax(0,1fr))}
   @media (max-width:520px){.reseaux-liste{grid-template-columns:1fr}}
