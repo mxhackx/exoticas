@@ -24,10 +24,10 @@ const sans = Nunito_Sans({
 const SITE = "https://exoticas.bj";
 
 const NOM = "Exoticas";
-const TITRE = "Exoticas — Plantes rares, café et coworking à Cotonou";
+const TITRE = "Exoticas | Aménagement paysager et plantes rares à Cotonou";
 const DESCRIPTION =
-  "Boutique de plantes rares, coin café et coworking à Tokpa-hoho, Cotonou (Bénin). " +
-  "Brunch, paysagisme, plants café. Devis sur WhatsApp ou par téléphone.";
+  "Aménagement paysager sur mesure, plantes rares et locales, terrasse café conviviale et " +
+  "coworking à Tokpa-hoho, Cotonou. Devis sur WhatsApp ou par téléphone.";
 const ADRESSE_LONGUE =
   "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club";
 const TEL = "+2290153300000";

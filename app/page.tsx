@@ -239,16 +239,6 @@ const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
 type Video = { titre: string; src?: string; poster?: string; youtube?: string };
 const VIDEOS: Video[] = [];
 
-/* Réalisations d'aménagement paysager en photos et vidéos (section « Nos réalisations »).
-   Vide pour l'instant : la grille n'apparaît que lorsqu'il y a des entrées ; le lien
-   vers Instagram, lui, est toujours là.
-   • Photo : déposer le .jpg dans public/realisations/ puis
-     { photo: "/realisations/terrasse.jpg", titre: "Terrasse à Cotonou" }
-   • Vidéo du site : { src: "/realisations/jardin.mp4", poster: "/realisations/jardin.jpg", titre: "…" }
-   • Vidéo YouTube : { youtube: "ID_DE_LA_VIDEO", titre: "…" } */
-type Projet = { titre: string; photo?: string; src?: string; poster?: string; youtube?: string };
-const PROJETS: Projet[] = [];
-
 /* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
    nom existe plusieurs fois, pour que les liens et les textes alternatifs
    ne soient jamais identiques. */
@@ -520,6 +510,7 @@ export default function Home() {
   const [form, setForm] = useState({ nom: "", contact: "", objet: "Aménagement paysager (devis)", message: "" });
   const [envoye, setEnvoye] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false);
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
   const [filtre, setFiltre] = useState<string>("toutes");
@@ -532,6 +523,19 @@ export default function Home() {
   );
   const affiche = cols * 2 * paliers;
   const affichees = visibles.slice(0, affiche);
+
+  /* menu mobile : Échap pour fermer, page figée derrière */
+  useEffect(() => {
+    if (!menu) return;
+    const touche = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
+    window.addEventListener("keydown", touche);
+    const avant = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", touche);
+      document.body.style.overflow = avant;
+    };
+  }, [menu]);
 
   /* nombre de colonnes de la galerie, aux mêmes seuils que le CSS */
   useEffect(() => {
@@ -723,9 +727,45 @@ export default function Home() {
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
               <PhoneIcon size={16} /> Appeler
             </a>
+            <button
+              type="button"
+              className={`burger${menu ? " ouvert" : ""}`}
+              aria-label={menu ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-expanded={menu}
+              aria-controls="menu-mobile"
+              onClick={() => setMenu((m) => !m)}
+            >
+              <span /><span /><span />
+            </button>
           </nav>
         </div>
       </header>
+
+      <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
+        <nav aria-label="Menu mobile">
+          {[
+            ["#lieu", "Le lieu"],
+            ["#cafe", "Café"],
+            ["#coworking", "Coworking"],
+            ["#paysagisme", "Paysagisme"],
+            ["#galerie", "Plantes"],
+            ["#avis", "Avis"],
+            ["#contact", "Contact"],
+          ].map(([h, n], i) => (
+            <a key={h} href={h} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
+              {n}
+            </a>
+          ))}
+        </nav>
+        <div className="menu-cta">
+          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener">
+            <WhatsAppIcon size={18} /> Écrire sur WhatsApp
+          </a>
+          <a className="btn btn-ghost" tabIndex={menu ? 0 : -1} href={BRAND.telHref}>
+            <PhoneIcon size={16} /> {BRAND.tel}
+          </a>
+        </div>
+      </div>
 
       <main id="top">
         {/* HERO */}
@@ -756,17 +796,17 @@ export default function Home() {
                 Tokpa-hoho · Cotonou
               </p>
               <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
-                Plantes rares, café et coworking à Cotonou.
+                Aménagement paysager et plantes rares à Cotonou.
               </h1>
               <p className="rise" style={{ "--d": "260ms" } as React.CSSProperties}>
-                Une boutique-jardin à Tokpa-hoho : plantes rares, coin café,
-                coworking et paysagisme, pour vous reconnecter à l'essentiel.
+                Un lieu unique où la nature rencontre l'élégance : espaces verts
+                sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-                <a className="btn btn-moutarde" href="#coworking">
-                  Travailler chez nous
+                <a className="btn btn-moutarde btn-fl" href="#contact">
+                  Demander un devis
                 </a>
-                <a className="btn btn-ghost" href="#galerie">
+                <a className="btn btn-ghost btn-fl" href="#galerie">
                   Voir les plantes
                 </a>
               </div>
@@ -789,10 +829,10 @@ export default function Home() {
         <nav className="bande" aria-label="Nos activités">
           <div className="wrap bande-in">
             {[
-              { h: "#cafe", n: "Café et brunch" },
-              { h: "#galerie", n: "Plantes rares et d'intérieur" },
-              { h: "#coworking", n: "Espace coworking" },
-              { h: "#paysagisme", n: "Aménagement paysager sur devis" },
+              { h: "#paysagisme", n: "Espaces verts sur mesure" },
+              { h: "#cafe", n: "Terrasse café conviviale" },
+              { h: "#coworking", n: "Coworking" },
+              { h: "#galerie", n: "Plantes rares et locales" },
             ].map((a, i) => (
               <a key={a.h} href={a.h} data-reveal className="rv-pop" style={{ "--d": `${i * 80}ms` } as React.CSSProperties}>
                 {a.n}
@@ -806,15 +846,15 @@ export default function Home() {
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
               <p className="eyebrow">Le lieu</p>
-              <h2>Une boutique-jardin où l'on s'installe</h2>
+              <h2>Un lieu unique où la nature rencontre l'élégance</h2>
               <p className="lede">
-                À Tokpa-hoho, Exoticas réunit une boutique de plantes rares, un
-                coin café et un espace de coworking, dans un décor de murs vert
-                profond, de bois brut et d'étagères de plantes. On y vient
-                choisir une plante, déjeuner ou prendre un moment au calme.
+                Exoticas, votre partenaire nature et design : une boutique de
+                plantes rares et locales, une terrasse café conviviale et un
+                espace de coworking, dans un décor de murs vert profond, de bois
+                brut et d'étagères de plantes.
               </p>
               <ul className="puces">
-                {["Boutique de plantes rares et d'intérieur", "Coin café et brunch", "Coworking", "Paysagisme sur devis"].map((t, i) => (
+                {["Espaces verts sur mesure", "Terrasse café conviviale", "Coworking", "Plantes rares et locales"].map((t, i) => (
                   <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
                 ))}
               </ul>
@@ -949,8 +989,8 @@ export default function Home() {
                 >
                   <WhatsAppIcon size={18} /> Demander un devis
                 </a>
-                <a className="btn btn-ghost" href="#realisations">
-                  Voir nos réalisations
+                <a className="btn btn-ghost" href={BRAND.telHref}>
+                  <PhoneIcon size={16} /> {BRAND.tel}
                 </a>
               </div>
             </div>
@@ -961,62 +1001,6 @@ export default function Home() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
               )}
-            </div>
-          </div>
-        </section>
-
-        {/* RÉALISATIONS */}
-        <section id="realisations" className="section reali">
-          <div className="wrap">
-            <p data-reveal className="eyebrow reveal">Réalisations</p>
-            <h2 data-reveal className="reveal">Nos réalisations</h2>
-            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              Terrasses, jardins et espaces végétalisés conçus par Exoticas :
-              retrouvez nos projets en photos et en vidéos sur Instagram.
-            </p>
-            {PROJETS.length > 0 && (
-              <div className="projets">
-                {PROJETS.map((pr, i) => (
-                  <div
-                    key={pr.photo ?? pr.src ?? pr.youtube}
-                    className="projet rv-photo"
-                    data-reveal
-                    style={{ "--d": `${(i % 3) * 120}ms` } as React.CSSProperties}
-                  >
-                    {pr.photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={pr.photo} alt={pr.titre} loading="lazy" decoding="async" />
-                    ) : (
-                      <LecteurVideo v={pr} />
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            <a
-              className="reali-insta rv-pop"
-              data-reveal
-              href={BRAND.instagram}
-              target="_blank"
-              rel="noopener me"
-              style={{ "--d": "160ms" } as React.CSSProperties}
-            >
-              <span className="reali-ico"><InstagramIcon size={34} /></span>
-              <span className="reali-txt">
-                <strong>Voir nos réalisations sur Instagram</strong>
-                <span>@exoticasbj</span>
-              </span>
-              <span className="reali-go">Ouvrir Instagram →</span>
-            </a>
-            <div className="reali-cta" data-reveal style={{ "--d": "220ms" } as React.CSSProperties}>
-              <a
-                className="btn btn-moutarde"
-                href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")}
-                target="_blank"
-                rel="noopener"
-              >
-                <WhatsAppIcon size={18} /> Demander un devis
-              </a>
             </div>
           </div>
         </section>
@@ -1128,6 +1112,7 @@ export default function Home() {
                 </blockquote>
               ))}
             </div>
+            <p className="avis-hint">Faites glisser pour lire les autres avis</p>
             <div className="centre">
               <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
                 <PinIcon size={18} /> Voir tous les avis sur Google
@@ -1323,7 +1308,7 @@ export default function Home() {
           </div>
         </div>
         <div className="wrap foot-bottom">
-          <span>© {new Date().getFullYear()} Exoticas — La vie en vert</span>
+          <span>© {new Date().getFullYear()} Exoticas — votre partenaire nature &amp; design</span>
         </div>
       </footer>
 
@@ -1449,6 +1434,7 @@ a[href^="tel"]{font-variant-numeric:tabular-nums}
    (galerie, contact) grandit simplement. */
 main>section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
 main>section.section{padding-top:calc(76px + clamp(20px,3.5vw,48px));padding-bottom:clamp(40px,6vw,80px)}
+main{overflow-x:clip}
 main>section>.wrap{width:100%}
 section[id]{scroll-margin-top:0}
 
@@ -1474,24 +1460,28 @@ section[id]{scroll-margin-top:0}
 .head-nav a:not(.btn):hover::after{transform:scaleX(1)}
 
 /* ---------- boutons ---------- */
-.btn{font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  border:1px solid transparent;border-radius:var(--r);padding:12px 20px;text-decoration:none;
-  font-size:.95rem;cursor:pointer;position:relative;overflow:hidden;
-  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),background .3s var(--ease),color .3s var(--ease)}
-.btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.22);
+.btn{font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  border:1.5px solid transparent;border-radius:999px;padding:14px 26px;min-height:48px;text-decoration:none;
+  font-size:.97rem;font-weight:700;letter-spacing:.01em;line-height:1.1;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.2);
   transform:translateX(-101%);transition:transform .55s var(--ease-out)}
 .btn:hover::after{transform:translateX(0)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,35,12,.22)}
-.btn:active{transform:translateY(0)}
-.btn-light{background:#fff;color:var(--vert);border-color:#fff}
-.btn-light:hover{background:var(--creme)}
-.btn-primary{background:var(--vert);color:#fff}
-.btn-primary:hover{background:var(--vert-fonce)}
-.btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
-.btn-ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
-.btn-sm{padding:9px 15px;font-size:.9rem}
-.btn-wa{background:#fff;color:var(--vert);border-color:var(--line)}
-.btn-wa:hover{background:var(--creme)}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn:focus-visible{outline:3px solid #F0C469;outline-offset:3px}
+/* flèche qui glisse au survol */
+.btn-fl::before{content:"→";order:2;display:inline-block;transition:transform .3s var(--ease-out)}
+.btn-fl:hover::before{transform:translateX(5px)}
+.btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
+.btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
+.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(70,105,49,.3)}
+.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(70,105,49,.35)}
+.btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
+.btn-ghost:hover{background:#fff;color:var(--vert);border-color:#fff}
+.btn-sm{padding:9px 18px;min-height:40px;font-size:.9rem}
+.btn-wa{background:#fff;color:var(--vert);border-color:var(--line);box-shadow:0 4px 12px rgba(20,35,12,.08)}
+.btn-wa:hover{background:var(--creme);border-color:var(--vert)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--vert);color:#fff;padding:150px 0 96px;overflow:hidden}
@@ -1611,8 +1601,8 @@ section[id]{scroll-margin-top:0}
 .cafe-p{width:100%;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .cafe-p{height:100%;min-height:0}
 .cafe-p0{grid-row:1 / span 2}
-.btn-moutarde{background:var(--terre);color:#fff;font-weight:600}
-.btn-moutarde:hover{background:#9A4A27}
+.btn-moutarde{background:var(--terre);color:#fff;box-shadow:0 6px 18px rgba(178,88,50,.38)}
+.btn-moutarde:hover{background:#9A4A27;box-shadow:0 12px 28px rgba(178,88,50,.42)}
 
 /* collage du hero */
 .collage{position:relative;width:min(100%,400px);aspect-ratio:1/1.12}
@@ -1765,26 +1755,6 @@ section[id]{scroll-margin-top:0}
 .voir-plus-reste{font-weight:400;opacity:.8;font-size:.85rem}
 
 
-/* ---------- réalisations ---------- */
-.reali{background:var(--creme)}
-.projets{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px;margin-top:26px}
-.projet{border-radius:var(--r);overflow:hidden}
-.projet>img{width:100%;aspect-ratio:4/5;object-fit:cover;box-shadow:0 10px 24px rgba(20,35,12,.18)}
-.projet .video{aspect-ratio:4/5}
-.reali-insta{display:flex;align-items:center;gap:20px;margin-top:28px;padding:22px clamp(20px,3.5vw,34px);
-  border-radius:16px;background:var(--vert);color:#fff;text-decoration:none;
-  box-shadow:0 8px 20px rgba(20,35,12,.16);transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
-.reali-insta:hover{transform:translateY(-3px)!important;box-shadow:0 14px 28px rgba(20,35,12,.2)}
-.reali-ico{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;flex:none;
-  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35)}
-.reali-txt{display:grid;gap:2px;min-width:0}
-.reali-txt strong{font:500 clamp(1.2rem,2.4vw,1.6rem)/1.15 var(--serif)}
-.reali-txt span{opacity:.9}
-.reali-go{margin-left:auto;padding:11px 18px;border-radius:99px;background:var(--terre);color:#fff;
-  font-weight:600;font-size:.92rem;white-space:nowrap}
-.reali-cta{margin-top:18px}
-@media (max-width:700px){.reali-insta{flex-wrap:wrap}.reali-go{margin-left:0;width:100%;text-align:center}}
-
 /* ---------- vidéos ---------- */
 .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:26px}
 .video{position:relative;border-radius:14px;overflow:hidden;background:var(--vert-nuit);aspect-ratio:16/9;
@@ -1906,7 +1876,20 @@ section[id]{scroll-margin-top:0}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
 }
 @media (max-width:820px){
-  .avis-liste{grid-template-columns:1fr}
+  .head-nav .burger{display:block}
+  /* mobile : les entrées latérales deviennent verticales (sinon la page déborde à droite) */
+  .js .rv-left,.js .rv-right{transform:translateY(28px)}
+  .js .rv-left.in,.js .rv-right.in{transform:none}
+  /* avis : on les fait défiler d'un geste, au lieu de les empiler */
+  .avis-liste{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:22px -20px 0;
+    padding:4px 20px 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .avis-liste::-webkit-scrollbar{display:none}
+  .avis{flex:0 0 86%;scroll-snap-align:center}
+  .avis-hint{display:block;margin:0 0 14px;text-align:center;font-size:.82rem;color:var(--muted)}
+  /* bande des activités : grille 2 × 2 */
+  .bande-in{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:14px;padding-bottom:14px}
+  .bande a{text-align:center;padding:10px 8px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:.85rem}
+  .bande a::after{display:none}
   /* Mobile : l'image est le fond de tout le hero, qui prend la hauteur de
      l'écran comme en PC. Le texte ne pose plus sur une nappe qui la recouvre :
      la bande verte est calée en bas, à la hauteur du bloc de texte, et la
@@ -1919,8 +1902,8 @@ section[id]{scroll-margin-top:0}
   .hero-copy{background:var(--vert);padding:24px 20px;border-radius:12px;
     box-shadow:0 18px 44px rgba(15,30,8,.28)}
   .hero-photo{display:none}
-  .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .hero-cta .btn{padding:12px 10px;font-size:.9rem}
+  .hero-cta{display:grid;grid-template-columns:1fr;gap:10px}
+  .hero-cta .btn{padding:14px 16px}
   .head-nav{gap:12px;font-size:.88rem}
   .head-nav a:not(.btn){display:none}
   .lieu-photos,.cafe-photos{height:420px}
@@ -1934,6 +1917,30 @@ section[id]{scroll-margin-top:0}
 @media (max-width:460px){
   .hero-cta{grid-template-columns:1fr}
 }
+
+
+/* ---------- burger + menu mobile ---------- */
+.burger{display:none;width:44px;height:44px;margin-left:4px;border:0;border-radius:50%;background:rgba(255,255,255,.14);
+  cursor:pointer;position:relative;flex:none}
+.burger span{position:absolute;left:12px;right:12px;height:2px;border-radius:2px;background:#fff;
+  transition:transform .35s var(--ease-out),opacity .2s var(--ease),top .35s var(--ease-out)}
+.burger span:nth-child(1){top:15px}.burger span:nth-child(2){top:21px}.burger span:nth-child(3){top:27px}
+.burger.ouvert span:nth-child(1){top:21px;transform:rotate(45deg)}
+.burger.ouvert span:nth-child(2){opacity:0}
+.burger.ouvert span:nth-child(3){top:21px;transform:rotate(-45deg)}
+.burger:focus-visible{outline:3px solid #F0C469;outline-offset:2px}
+.menu-mobile{position:fixed;inset:0;z-index:49;display:flex;flex-direction:column;justify-content:center;gap:28px;
+  padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-claire.svg);background-size:520px 520px;
+  color:#fff;visibility:hidden;opacity:0;transform:translateY(-12px);
+  transition:opacity .35s var(--ease),transform .45s var(--ease-out),visibility 0s linear .45s}
+.menu-mobile.ouvert{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+.menu-mobile nav{display:grid;gap:2px}
+.menu-mobile nav a{font:500 1.9rem/1.25 var(--serif);text-decoration:none;color:#fff;padding:8px 0;
+  opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease-out),transform .5s var(--ease-out)}
+.menu-mobile.ouvert nav a{opacity:1;transform:none;transition-delay:calc(var(--i) * 45ms + 120ms)}
+.menu-cta{display:grid;gap:10px}
+@media (min-width:821px){.menu-mobile{display:none}}
+.avis-hint{display:none}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
