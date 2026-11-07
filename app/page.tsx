@@ -107,6 +107,7 @@ const PLANTES = [
 const AVIS = [
   {
     nom: "Claudia Jordá",
+    etoiles: 5,
     lang: "fr",
     quand: "il y a 10 mois",
     texte:
@@ -115,6 +116,7 @@ const AVIS = [
   },
   {
     nom: "Hamza Lechhb",
+    etoiles: 5,
     lang: "fr",
     quand: "il y a 6 mois",
     texte:
@@ -123,6 +125,7 @@ const AVIS = [
   },
   {
     nom: "Hadyr K",
+    etoiles: 4,
     lang: "fr",
     quand: "il y a 5 mois",
     texte:
@@ -552,6 +555,10 @@ export default function Home() {
                   style={{ "--d": `${140 + i * 80}ms` } as React.CSSProperties}
                   key={a.nom}
                 >
+                  <p className="avis-etoiles" role="img" aria-label={`${a.etoiles} étoiles sur 5`}>
+                    {"★".repeat(a.etoiles)}
+                    <span>{"★".repeat(5 - a.etoiles)}</span>
+                  </p>
                   <p lang={a.lang}>« {a.texte} »</p>
                   <footer>
                     <strong>{a.nom}</strong>, Local Guide Google · {a.quand}
@@ -915,9 +922,11 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 /* ---------- sections ---------- */
 .section{padding:clamp(64px,8vw,104px) 0}
 .section-alt{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.avis-liste{display:grid;gap:16px;margin:22px 0;max-width:60ch}
+.avis-liste{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:26px 0}
 .avis{margin:0;background:var(--glace);border:var(--glace-bord);border-radius:var(--r);
   padding:22px 24px;box-shadow:var(--glace-relu),var(--glace-ombre)}
+.avis-etoiles{margin:0 0 10px!important;font-size:1.2rem!important;letter-spacing:2px;color:#E0A526;line-height:1!important}
+.avis-etoiles span{color:var(--line)}
 .avis p{margin:0 0 14px;font-size:1.05rem;line-height:1.6}
 .avis footer{font-size:.9rem;color:var(--muted)}
 .avis-notes{display:block;margin-top:4px}
@@ -1035,6 +1044,7 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
 }
 @media (max-width:820px){
+  .avis-liste{grid-template-columns:1fr}
   /* Mobile : l'image est le fond de tout le hero, qui prend la hauteur de
      l'écran comme en PC. Le texte ne pose plus sur une nappe qui la recouvre :
      la bande verte est calée en bas, à la hauteur du bloc de texte, et la
