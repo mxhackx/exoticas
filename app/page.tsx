@@ -380,7 +380,6 @@ export default function Home() {
   const [form, setForm] = useState({ nom: "", contact: "", message: "" });
   const [envoye, setEnvoye] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
 
@@ -508,13 +507,11 @@ export default function Home() {
     return () => io?.disconnect();
   }, []);
 
-  /* en-tête compact + barre de progression de lecture */
+  /* en-tête compact + parallaxe du hero */
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY;
       setScrolled(y > 24);
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.min(1, y / max) : 0);
       if (y < 1400) document.documentElement.style.setProperty("--sy", String(y));
     }
     onScroll();
@@ -540,12 +537,6 @@ export default function Home() {
   return (
     <>
       <style>{css}</style>
-
-      <div
-        className="progress"
-        style={{ transform: `scaleX(${progress})` }}
-        aria-hidden="true"
-      />
 
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
@@ -1091,10 +1082,6 @@ a[href^="tel"]{font-variant-numeric:tabular-nums}
 /* ancre dégagée sous l'en-tête fixe */
 section[id]{scroll-margin-top:88px}
 
-/* ---------- barre de progression ---------- */
-.progress{position:fixed;inset:0 auto auto 0;height:2px;width:100%;z-index:60;
-  background:var(--vert-accent);transform-origin:0 50%;transform:scaleX(0);
-  transition:transform .12s linear}
 
 /* ---------- header ---------- */
 .site-head{position:fixed;top:0;left:0;right:0;z-index:50;color:#fff;
@@ -1247,8 +1234,6 @@ section[id]{scroll-margin-top:88px}
 
 /* ---------- le café ---------- */
 .cafe{background:var(--vert);color:#fff;position:relative}
-.cafe::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;
-  background:var(--moutarde)}
 .cafe h2{color:#fff}
 .cafe .lede{color:rgba(255,255,255,.82)}
 .cafe-in{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
@@ -1277,7 +1262,7 @@ section[id]{scroll-margin-top:88px}
   background:#fff;border:1px solid var(--line);border-radius:14px;
   box-shadow:0 1px 2px rgba(20,35,12,.05),0 10px 26px rgba(20,35,12,.08);
   transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s var(--ease)}
-.card:hover{transform:translateY(-6px)!important;border-color:var(--moutarde);
+.card:hover{transform:translateY(-6px)!important;
   box-shadow:0 2px 4px rgba(20,35,12,.06),0 22px 44px rgba(20,35,12,.18)}
 .card:focus-visible{outline:2px solid var(--moutarde);outline-offset:3px}
 .card-img{position:relative;display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme)}
