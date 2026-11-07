@@ -239,6 +239,16 @@ const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
 type Video = { titre: string; src?: string; poster?: string; youtube?: string };
 const VIDEOS: Video[] = [];
 
+/* Réalisations d'aménagement paysager en photos et vidéos (section « Nos réalisations »).
+   Vide pour l'instant : la grille n'apparaît que lorsqu'il y a des entrées ; le lien
+   vers Instagram, lui, est toujours là.
+   • Photo : déposer le .jpg dans public/realisations/ puis
+     { photo: "/realisations/terrasse.jpg", titre: "Terrasse à Cotonou" }
+   • Vidéo du site : { src: "/realisations/jardin.mp4", poster: "/realisations/jardin.jpg", titre: "…" }
+   • Vidéo YouTube : { youtube: "ID_DE_LA_VIDEO", titre: "…" } */
+type Projet = { titre: string; photo?: string; src?: string; poster?: string; youtube?: string };
+const PROJETS: Projet[] = [];
+
 /* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
    nom existe plusieurs fois, pour que les liens et les textes alternatifs
    ne soient jamais identiques. */
@@ -939,8 +949,8 @@ export default function Home() {
                 >
                   <WhatsAppIcon size={18} /> Demander un devis
                 </a>
-                <a className="btn btn-ghost" href={BRAND.telHref}>
-                  <PhoneIcon size={16} /> {BRAND.tel}
+                <a className="btn btn-ghost" href="#realisations">
+                  Voir nos réalisations
                 </a>
               </div>
             </div>
@@ -951,6 +961,62 @@ export default function Home() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* RÉALISATIONS */}
+        <section id="realisations" className="section reali">
+          <div className="wrap">
+            <p data-reveal className="eyebrow reveal">Réalisations</p>
+            <h2 data-reveal className="reveal">Nos réalisations</h2>
+            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
+              Terrasses, jardins et espaces végétalisés conçus par Exoticas :
+              retrouvez nos projets en photos et en vidéos sur Instagram.
+            </p>
+            {PROJETS.length > 0 && (
+              <div className="projets">
+                {PROJETS.map((pr, i) => (
+                  <div
+                    key={pr.photo ?? pr.src ?? pr.youtube}
+                    className="projet rv-photo"
+                    data-reveal
+                    style={{ "--d": `${(i % 3) * 120}ms` } as React.CSSProperties}
+                  >
+                    {pr.photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={pr.photo} alt={pr.titre} loading="lazy" decoding="async" />
+                    ) : (
+                      <LecteurVideo v={pr} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            <a
+              className="reali-insta rv-pop"
+              data-reveal
+              href={BRAND.instagram}
+              target="_blank"
+              rel="noopener me"
+              style={{ "--d": "160ms" } as React.CSSProperties}
+            >
+              <span className="reali-ico"><InstagramIcon size={34} /></span>
+              <span className="reali-txt">
+                <strong>Voir nos réalisations sur Instagram</strong>
+                <span>@exoticasbj</span>
+              </span>
+              <span className="reali-go">Ouvrir Instagram →</span>
+            </a>
+            <div className="reali-cta" data-reveal style={{ "--d": "220ms" } as React.CSSProperties}>
+              <a
+                className="btn btn-moutarde"
+                href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")}
+                target="_blank"
+                rel="noopener"
+              >
+                <WhatsAppIcon size={18} /> Demander un devis
+              </a>
             </div>
           </div>
         </section>
@@ -1698,6 +1764,26 @@ section[id]{scroll-margin-top:0}
 .voir-plus{margin-top:30px}
 .voir-plus-reste{font-weight:400;opacity:.8;font-size:.85rem}
 
+
+/* ---------- réalisations ---------- */
+.reali{background:var(--creme)}
+.projets{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px;margin-top:26px}
+.projet{border-radius:var(--r);overflow:hidden}
+.projet>img{width:100%;aspect-ratio:4/5;object-fit:cover;box-shadow:0 10px 24px rgba(20,35,12,.18)}
+.projet .video{aspect-ratio:4/5}
+.reali-insta{display:flex;align-items:center;gap:20px;margin-top:28px;padding:22px clamp(20px,3.5vw,34px);
+  border-radius:16px;background:var(--vert);color:#fff;text-decoration:none;
+  box-shadow:0 8px 20px rgba(20,35,12,.16);transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
+.reali-insta:hover{transform:translateY(-3px)!important;box-shadow:0 14px 28px rgba(20,35,12,.2)}
+.reali-ico{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;flex:none;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35)}
+.reali-txt{display:grid;gap:2px;min-width:0}
+.reali-txt strong{font:500 clamp(1.2rem,2.4vw,1.6rem)/1.15 var(--serif)}
+.reali-txt span{opacity:.9}
+.reali-go{margin-left:auto;padding:11px 18px;border-radius:99px;background:var(--terre);color:#fff;
+  font-weight:600;font-size:.92rem;white-space:nowrap}
+.reali-cta{margin-top:18px}
+@media (max-width:700px){.reali-insta{flex-wrap:wrap}.reali-go{margin-left:0;width:100%;text-align:center}}
 
 /* ---------- vidéos ---------- */
 .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:26px}
