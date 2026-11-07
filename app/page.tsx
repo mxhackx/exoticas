@@ -229,6 +229,16 @@ const CARTE = [
    Le comparateur s'affiche dès qu'il y a au moins une entrée. */
 const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
 
+/* Vidéos du site. Vide pour l'instant : la section « Le lieu en vidéo » (et son
+   lien dans le menu) n'apparaît que lorsqu'il y a au moins une entrée.
+   • Fichier du site : déposer le .mp4 dans public/videos/ (court, ≤ 720 p, idéalement
+     < 6 Mo) et une image d'aperçu .jpg, puis ajouter
+     { src: "/videos/cafe.mp4", poster: "/videos/cafe.jpg", titre: "Le café d'Exoticas" }.
+   • YouTube (vidéos longues ou lourdes) : { youtube: "ID_DE_LA_VIDEO", titre: "…" }.
+     Le lecteur YouTube ne se charge qu'au clic (pas de suivi avant). */
+type Video = { titre: string; src?: string; poster?: string; youtube?: string };
+const VIDEOS: Video[] = [];
+
 /* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
    nom existe plusieurs fois, pour que les liens et les textes alternatifs
    ne soient jamais identiques. */
@@ -337,6 +347,80 @@ function AvantApres({ avant, apres, alt }: { avant: string; apres: string; alt: 
   );
 }
 
+/* Lecteur vidéo léger : rien ne se télécharge avant d'être proche de l'écran ;
+   un fichier local joue en boucle, muet, uniquement quand on le voit ; un clic
+   donne le son et les commandes. Mouvement réduit : pas de lecture automatique. */
+function LecteurVideo({ v }: { v: Video }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [actif, setActif] = useState(false); // YouTube chargé / commandes affichées
+  const [lecture, setLecture] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !v.src) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.preload = "auto";
+          el.play().then(() => setLecture(true)).catch(() => {});
+        } else {
+          el.pause();
+          setLecture(false);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [v.src]);
+
+  if (v.youtube) {
+    return (
+      <div className="video">
+        {actif ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&rel=0`}
+            title={v.titre}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <button type="button" className="video-facade" onClick={() => setActif(true)} aria-label={`Lire la vidéo : ${v.titre}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`https://i.ytimg.com/vi/${v.youtube}/hqdefault.jpg`} alt="" loading="lazy" />
+            <span className="video-play" aria-hidden="true">▶</span>
+          </button>
+        )}
+        <span className="video-titre">{v.titre}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="video">
+      <video
+        ref={ref}
+        src={v.src}
+        poster={v.poster}
+        muted={!actif}
+        controls={actif}
+        loop
+        playsInline
+        preload="none"
+        aria-label={v.titre}
+        onClick={() => {
+          if (!actif) {
+            setActif(true);
+            if (ref.current) ref.current.muted = false;
+          }
+        }}
+      />
+      {!actif && !lecture && <span className="video-play" aria-hidden="true">▶</span>}
+      <span className="video-titre">{v.titre}</span>
+    </div>
+  );
+}
+
 function MailIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -438,10 +522,23 @@ export default function Home() {
   const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
   const [filtre, setFiltre] = useState<string>("toutes");
-  /* indices (dans PLANTES) des plantes affichées selon le filtre */
+  /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
+  const [cols, setCols] = useState(4);
+  const [paliers, setPaliers] = useState(1);
+  /* indices (dans PLANTES) des plantes du filtre ; « affichees » = celles montrées */
   const visibles = PLANTES.map((p, i) => i).filter(
     (i) => filtre === "toutes" || CAT[(INFOS[PLANTES[i].s] ?? ["interieur"])[0]].f === filtre
   );
+  const affiche = cols * 2 * paliers;
+  const affichees = visibles.slice(0, affiche);
+
+  /* nombre de colonnes de la galerie, aux mêmes seuils que le CSS */
+  useEffect(() => {
+    const calc = () => setCols(window.innerWidth > 900 ? 4 : window.innerWidth > 620 ? 3 : 2);
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
 
   /* fiche plante : Échap, flèches, et page figée derrière */
   useEffect(() => {
@@ -573,7 +670,7 @@ export default function Home() {
     }
 
     return () => io?.disconnect();
-  }, []);
+  }, [affiche, filtre]);
 
   /* en-tête compact + parallaxe du hero */
   useEffect(() => {
@@ -615,6 +712,7 @@ export default function Home() {
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
             <a href="#lieu">Le lieu</a>
+            {VIDEOS.length > 0 && <a href="#videos">Vidéos</a>}
             <a href="#cafe">Café</a>
             <a href="#coworking">Coworking</a>
             <a href="#paysagisme">Paysagisme</a>
@@ -728,6 +826,23 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* VIDÉOS (affichée seulement s'il y en a) */}
+        {VIDEOS.length > 0 && (
+          <section id="videos" className="section">
+            <div className="wrap">
+              <p data-reveal className="eyebrow reveal">En mouvement</p>
+              <h2 data-reveal className="reveal">Le lieu en vidéo</h2>
+              <div className="videos">
+                {VIDEOS.map((v, i) => (
+                  <div key={v.src ?? v.youtube} data-reveal className="rv-photo" style={{ "--d": `${i * 120}ms` } as React.CSSProperties}>
+                    <LecteurVideo v={v} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* LE CAFÉ */}
         <section id="cafe" className="section cafe">
@@ -865,14 +980,17 @@ export default function Home() {
                   type="button"
                   className={`filtre${filtre === f.k ? " on" : ""}`}
                   aria-pressed={filtre === f.k}
-                  onClick={() => setFiltre(f.k)}
+                  onClick={() => {
+                    setFiltre(f.k);
+                    setPaliers(1);
+                  }}
                 >
                   {f.n}
                 </button>
               ))}
             </div>
             <div className="grid">
-              {visibles.map((i) => {
+              {affichees.map((i) => {
                 const p = PLANTES[i];
                 const [cat] = INFOS[p.s] ?? ["interieur"];
                 return (
@@ -914,6 +1032,14 @@ export default function Home() {
                 );
               })}
             </div>
+            {visibles.length > affiche && (
+              <div className="centre voir-plus">
+                <button type="button" className="btn btn-primary" onClick={() => setPaliers((n) => n + 1)}>
+                  Voir plus de plantes
+                  <span className="voir-plus-reste">{visibles.length - affiche} restantes</span>
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -1639,7 +1765,22 @@ section[id]{scroll-margin-top:88px}
 
 
 .centre{text-align:center;margin-top:8px}
+.voir-plus{margin-top:30px}
+.voir-plus-reste{font-weight:400;opacity:.8;font-size:.85rem}
 
+
+/* ---------- vidéos ---------- */
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:26px}
+.video{position:relative;border-radius:14px;overflow:hidden;background:var(--vert-nuit);aspect-ratio:16/9;
+  box-shadow:0 14px 34px rgba(20,35,12,.22)}
+.video video,.video iframe,.video-facade{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+.video-facade{padding:0;cursor:pointer;background:none}
+.video-facade img{width:100%;height:100%;object-fit:cover}
+.video-play{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:64px;height:64px;margin:-32px 0 0 -32px;
+  border-radius:50%;background:var(--terre);color:#fff;font-size:1.3rem;padding-left:4px;pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.video-titre{position:absolute;left:12px;bottom:10px;padding:4px 10px;border-radius:99px;
+  background:rgba(18,36,33,.72);color:#fff;font-size:.8rem;pointer-events:none}
 
 /* ---------- surtitres ---------- */
 .eyebrow{margin:0 0 12px;font:700 .74rem/1.2 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--terre)}
