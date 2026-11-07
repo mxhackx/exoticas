@@ -508,6 +508,28 @@ export default function Home() {
           </div>
         </section>
 
+        {/* AVIS */}
+        <section id="avis" className="section">
+          <div className="wrap">
+            <h2 data-reveal className="reveal">Avis clients</h2>
+            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
+              Ce que disent nos clients sur Google.
+            </p>
+            <blockquote data-reveal className="reveal avis" style={{ "--d": "140ms" } as React.CSSProperties}>
+              <p lang="en">
+                « Food was tasty, specially the salad. […] Beautiful inside with many greens. »
+              </p>
+              <footer>
+                <strong>Hadyr K</strong>, Local Guide Google · il y a 5 mois
+                <span className="avis-notes">Cuisine 4/5 · Service 4/5 · Ambiance 3/5</span>
+              </footer>
+            </blockquote>
+            <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
+              <PinIcon size={18} /> Voir tous les avis sur Google
+            </a>
+          </div>
+        </section>
+
         {/* CONTACT */}
         <section id="contact" className="section section-alt">
           <div className="wrap contact-in">
@@ -856,6 +878,11 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 /* ---------- sections ---------- */
 .section{padding:clamp(64px,8vw,104px) 0}
 .section-alt{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.avis{margin:22px 0;max-width:60ch;background:var(--glace);border:var(--glace-bord);border-radius:var(--r);
+  padding:22px 24px;box-shadow:var(--glace-relu),var(--glace-ombre)}
+.avis p{margin:0 0 14px;font-size:1.05rem;line-height:1.6}
+.avis footer{font-size:.9rem;color:var(--muted)}
+.avis-notes{display:block;margin-top:4px}
 .lede{color:var(--muted);font-size:1.04rem;line-height:1.6;max-width:52ch;margin:0 0 8px}
 
 /* ---------- galerie : planche-contact sur plaque de glace ----------
