@@ -666,9 +666,6 @@ export default function Home() {
                   <li key={m} data-reveal className="rv-pop" style={{ "--d": `${260 + i * 60}ms` } as React.CSSProperties}>{m}</li>
                 ))}
               </ul>
-              <a className="btn btn-moutarde" href="#contact">
-                <PinIcon size={18} /> Venir nous voir
-              </a>
             </div>
           </div>
         </section>
