@@ -421,15 +421,6 @@ function LecteurVideo({ v }: { v: Video }) {
   );
 }
 
-function MailIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.7" />
-      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function PinIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1226,73 +1217,6 @@ export default function Home() {
             </aside>
           </div>
         </section>
-
-        {/* RÉSEAUX */}
-        <section id="reseaux" className="section reseaux">
-          <div className="wrap">
-            <p data-reveal className="eyebrow reveal">Instagram</p>
-            <h2 data-reveal className="reveal">La vie chez Exoticas</h2>
-            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              Les plantes, le café et la vie de la boutique au quotidien.
-            </p>
-            <div className="insta-grid">
-              {[LIEU.arbre, LIEU.brunch, LIEU.tasses, LIEU.crepes, LIEU.etageres, LIEU.jus].map((im, i) => (
-                <a
-                  key={im.src}
-                  className="insta-tuile rv-pop"
-                  data-reveal
-                  href={BRAND.instagram}
-                  target="_blank"
-                  rel="noopener me"
-                  aria-label="Voir Exoticas sur Instagram"
-                  style={{ "--d": `${120 + i * 70}ms` } as React.CSSProperties}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-                  <span className="insta-tuile-ico" aria-hidden="true"><InstagramIcon size={22} /></span>
-                </a>
-              ))}
-            </div>
-            <a
-              className="insta-card rv-photo"
-              data-reveal
-              href={BRAND.instagram}
-              target="_blank"
-              rel="noopener me"
-              style={{ "--d": "120ms" } as React.CSSProperties}
-            >
-              <span className="insta-ico"><InstagramIcon size={44} /></span>
-              <span className="insta-txt">
-                <strong>Instagram</strong>
-                <span>@exoticasbj</span>
-              </span>
-              <span className="insta-go">Suivre le compte →</span>
-            </a>
-            <div className="reseaux-liste">
-              {[
-                { href: BRAND.fiche, icone: <PinIcon size={22} />, titre: "Google Maps", sous: "Fiche, avis et itinéraire", ext: true },
-                { href: waLink("Bonjour Exoticas,"), icone: <WhatsAppIcon size={22} />, titre: "WhatsApp", sous: "Écrire à Exoticas", ext: true },
-                { href: BRAND.telHref, icone: <PhoneIcon size={22} />, titre: "Téléphone", sous: BRAND.tel, ext: false },
-                { href: `mailto:${BRAND.mail}`, icone: <MailIcon size={22} />, titre: "E-mail", sous: BRAND.mail, ext: false },
-              ].map((r, i) => (
-                <a
-                  key={r.titre}
-                  className="res-card rv-pop"
-                  data-reveal
-                  href={r.href}
-                  {...(r.ext ? { target: "_blank", rel: "noopener me" } : {})}
-                  style={{ "--d": `${220 + i * 90}ms` } as React.CSSProperties}
-                >
-                  <span className="res-ico">{r.icone}</span>
-                  <span className="res-txt">
-                    <strong>{r.titre}</strong>
-                    <span>{r.sous}</span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer className="site-foot">
@@ -1453,8 +1377,14 @@ img{display:block;max-width:100%}
 .wrap.head-in{max-width:1080px}
 .muted{color:var(--muted)}
 a[href^="tel"]{font-variant-numeric:tabular-nums}
-/* ancre dégagée sous l'en-tête fixe */
-section[id]{scroll-margin-top:88px}
+/* Chaque section occupe au moins toute la hauteur de l'écran (svh : tient compte
+   des barres d'adresse mobiles), en-tête fixe compris : le contenu est centré
+   dans la zone visible sous l'en-tête. Une section plus longue que l'écran
+   (galerie, contact) grandit simplement. */
+main>section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+main>section.section{padding-top:calc(76px + clamp(20px,3.5vw,48px));padding-bottom:clamp(40px,6vw,80px)}
+main>section>.wrap{width:100%}
+section[id]{scroll-margin-top:0}
 
 
 /* ---------- header ---------- */
@@ -1862,51 +1792,11 @@ section[id]{scroll-margin-top:88px}
 /* ---------- formulaire : indication WhatsApp ---------- */
 .form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(225,163,45,.14);border-radius:var(--r)}
 
-/* ---------- réseaux : le lieu en images ---------- */
-.insta-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:28px 0 0}
-.insta-tuile{position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:var(--r)}
-.insta-tuile img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease-out)}
-.insta-tuile:hover img{transform:scale(1.08)}
-.insta-tuile-ico{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:36px;height:36px;
-  border-radius:50%;background:var(--moutarde);color:var(--vert-nuit);opacity:0;transform:scale(.8);
-  transition:opacity .3s var(--ease),transform .4s var(--ease-out)}
-.insta-tuile:hover .insta-tuile-ico,.insta-tuile:focus-visible .insta-tuile-ico{opacity:1;transform:none}
-
-/* ---------- réseaux ---------- */
-.reseaux{background:var(--creme)}
-.insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 22px;padding:26px clamp(22px,4vw,40px);
-  border-radius:16px;text-decoration:none;color:#fff;
-  background:var(--vert);
-  box-shadow:0 8px 20px rgba(20,35,12,.16);
-  transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
-.insta-card:hover{transform:translateY(-3px)!important;box-shadow:0 14px 28px rgba(20,35,12,.2)}
-.insta-ico{display:grid;place-items:center;width:76px;height:76px;border-radius:20px;
-  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);flex:none}
-.insta-txt{display:grid;gap:2px;min-width:0}
-.insta-txt strong{font:500 clamp(1.5rem,3vw,2.1rem)/1.1 var(--serif)}
-.insta-txt span{font-size:1.1rem;opacity:.92}
-.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:var(--terre);color:#fff;
-  font-weight:600;font-size:.95rem;white-space:nowrap}
-.reseaux-liste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.res-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--r);text-decoration:none;
-  background:#fff;border:1px solid var(--line);box-shadow:0 4px 12px rgba(20,35,12,.06);min-width:0}
-.res-card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 24px rgba(20,35,12,.14)}
-.res-ico{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--vert);color:#fff;flex:none}
-.res-txt{display:grid;min-width:0}
-.res-txt strong{font-weight:600}
-.res-txt span{font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
 .foot-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
   border:1px solid rgba(255,255,255,.35);font-size:.92rem}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
-@media (max-width:900px){
-  .reseaux-liste{grid-template-columns:repeat(2,minmax(0,1fr))}
-  @media (max-width:520px){.reseaux-liste{grid-template-columns:1fr}}
-  .insta-card{flex-wrap:wrap}
-  .insta-go{margin-left:0;width:100%;text-align:center}
-}
-
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
   background:var(--vert);color:#fff;display:grid;place-items:center;text-decoration:none;
@@ -1921,7 +1811,6 @@ section[id]{scroll-margin-top:88px}
 @media (max-width:900px){
   .lieu-in,.cafe-in{grid-template-columns:1fr}
   .bande-in{justify-content:center}
-  .insta-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
