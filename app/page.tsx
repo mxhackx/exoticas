@@ -220,6 +220,15 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
   );
 }
 
+function MailIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.7" />
+      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function PinIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -419,6 +428,7 @@ export default function Home() {
       setScrolled(y > 24);
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(max > 0 ? Math.min(1, y / max) : 0);
+      if (y < 1400) document.documentElement.style.setProperty("--sy", String(y));
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -461,7 +471,11 @@ export default function Home() {
             <a href="#cafe">Café</a>
             <a href="#galerie">Plantes</a>
             <a href="#avis">Avis</a>
+            <a href="#reseaux">Réseaux</a>
             <a href="#contact">Contact</a>
+            <a className="head-insta" href={BRAND.instagram} target="_blank" rel="noopener me" aria-label="Instagram Exoticas">
+              <InstagramIcon size={22} />
+            </a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref}>
               <PhoneIcon size={16} /> Appeler
             </a>
@@ -525,7 +539,7 @@ export default function Home() {
         {/* LE LIEU */}
         <section id="lieu" className="section">
           <div className="wrap lieu-in">
-            <div data-reveal className="reveal">
+            <div data-reveal className="reveal rv-left">
               <h2>Une boutique-jardin où l'on s'installe</h2>
               <p className="lede">
                 À Tokpa-hoho, Exoticas mêle boutique de plantes rares, coin café
@@ -534,16 +548,15 @@ export default function Home() {
                 ouvrir son ordinateur.
               </p>
               <ul className="puces">
-                <li>Boutique de plantes rares et d'intérieur</li>
-                <li>Coin café et brunch</li>
-                <li>Coworking</li>
-                <li>Paysagisme sur devis</li>
+                {["Boutique de plantes rares et d'intérieur", "Coin café et brunch", "Coworking", "Paysagisme sur devis"].map((t, i) => (
+                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
+                ))}
               </ul>
             </div>
-            <div className="lieu-photos" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+            <div className="lieu-photos">
               {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} className={`lieu-p lieu-p${i}`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`lieu-p lieu-p${i} rv-zoom`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
               ))}
             </div>
           </div>
@@ -552,13 +565,13 @@ export default function Home() {
         {/* LE CAFÉ */}
         <section id="cafe" className="section cafe">
           <div className="wrap cafe-in">
-            <div className="cafe-photos" data-reveal>
+            <div className="cafe-photos">
               {[LIEU.brunch, LIEU.crepes, LIEU.jus].map((im, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} className={`cafe-p cafe-p${i}`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
+                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`cafe-p cafe-p${i} rv-zoom`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
               ))}
             </div>
-            <div data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+            <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
               <h2>Le coin café, au milieu des plantes</h2>
               <p className="lede">
                 Brunch, gaufres, crêpes, sandwichs grillés, jus frais et un iced
@@ -566,13 +579,10 @@ export default function Home() {
                 deux plantes.
               </p>
               <ul className="menu-chips">
-                {AU_MENU.map((m) => (
-                  <li key={m}>{m}</li>
+                {AU_MENU.map((m, i) => (
+                  <li key={m} data-reveal className="rv-pop" style={{ "--d": `${260 + i * 60}ms` } as React.CSSProperties}>{m}</li>
                 ))}
               </ul>
-              <p className="prix">
-                Comptez environ 2 000 à 6 000 FCFA par personne (d'après les avis Google).
-              </p>
               <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, j'aimerais réserver une table.")} target="_blank" rel="noopener">
                 <WhatsAppIcon size={18} /> Réserver une table
               </a>
@@ -645,9 +655,59 @@ export default function Home() {
                 </blockquote>
               ))}
             </div>
-            <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
-              <PinIcon size={18} /> Voir tous les avis sur Google
+            <div className="centre">
+              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
+                <PinIcon size={18} /> Voir tous les avis sur Google
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* RÉSEAUX */}
+        <section id="reseaux" className="section reseaux">
+          <div className="wrap">
+            <h2 data-reveal className="reveal">Suivez Exoticas</h2>
+            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
+              Les plantes, le café et la vie de la boutique au quotidien.
+            </p>
+            <a
+              className="insta-card rv-zoom"
+              data-reveal
+              href={BRAND.instagram}
+              target="_blank"
+              rel="noopener me"
+              style={{ "--d": "120ms" } as React.CSSProperties}
+            >
+              <span className="insta-ico"><InstagramIcon size={44} /></span>
+              <span className="insta-txt">
+                <strong>Instagram</strong>
+                <span>@exoticasbj</span>
+              </span>
+              <span className="insta-go">Suivre le compte →</span>
             </a>
+            <div className="reseaux-liste">
+              {[
+                { href: BRAND.fiche, icone: <PinIcon size={22} />, titre: "Google Maps", sous: "Fiche, avis et itinéraire", ext: true },
+                { href: waLink("Bonjour Exoticas,"), icone: <WhatsAppIcon size={22} />, titre: "WhatsApp", sous: "Écrire à Exoticas", ext: true },
+                { href: BRAND.telHref, icone: <PhoneIcon size={22} />, titre: "Téléphone", sous: BRAND.tel, ext: false },
+                { href: `mailto:${BRAND.mail}`, icone: <MailIcon size={22} />, titre: "E-mail", sous: BRAND.mail, ext: false },
+              ].map((r, i) => (
+                <a
+                  key={r.titre}
+                  className="res-card rv-pop"
+                  data-reveal
+                  href={r.href}
+                  {...(r.ext ? { target: "_blank", rel: "noopener me" } : {})}
+                  style={{ "--d": `${220 + i * 90}ms` } as React.CSSProperties}
+                >
+                  <span className="res-ico">{r.icone}</span>
+                  <span className="res-txt">
+                    <strong>{r.titre}</strong>
+                    <span>{r.sous}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -799,13 +859,17 @@ export default function Home() {
             </p>
             <p>
               <strong>Réseaux</strong>
-              <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-social">
-                <InstagramIcon size={16} /> Instagram @exoticasbj
-              </a>
-              <br />
-              <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-social">
-                <PinIcon size={16} /> Google Maps
-              </a>
+              <span className="foot-pills">
+                <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-pill foot-pill-insta">
+                  <InstagramIcon size={18} /> Instagram
+                </a>
+                <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-pill">
+                  <PinIcon size={18} /> Google Maps
+                </a>
+                <a href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener me" className="foot-pill">
+                  <WhatsAppIcon size={18} /> WhatsApp
+                </a>
+              </span>
             </p>
           </div>
           <div data-reveal className="reveal foot-col" style={{ "--d": "180ms" } as React.CSSProperties}>
@@ -889,12 +953,8 @@ img{display:block;max-width:100%}
 .wrap.head-in{max-width:1080px}
 .muted{color:var(--muted)}
 a[href^="tel"]{font-variant-numeric:tabular-nums}
-/* titres de section : filet au-dessus, ancre dégagée sous l'en-tête fixe */
+/* ancre dégagée sous l'en-tête fixe */
 section[id]{scroll-margin-top:88px}
-h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-accent);
-  margin:0 0 20px;transform-origin:0 50%;transition:transform .7s var(--ease-out) .12s}
-.js h2::before{transform:scaleX(0)}
-.js .in h2::before,.js h2.in::before{transform:scaleX(1)}
 
 /* ---------- barre de progression ---------- */
 .progress{position:fixed;inset:0 auto auto 0;height:2px;width:100%;z-index:60;
@@ -1002,6 +1062,13 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .js [data-reveal]{opacity:0;transform:translateY(26px);
   transition:opacity .8s var(--ease-out) var(--d,0ms),transform .8s var(--ease-out) var(--d,0ms)}
 .js [data-reveal].in{opacity:1;transform:none}
+.js .rv-left{transform:translateX(-56px)}
+.js .rv-right{transform:translateX(56px)}
+.js .rv-zoom{transform:scale(.9) translateY(34px);transition-duration:1s}
+.js .rv-pop{transform:translateY(14px) scale(.92)}
+/* léger parallaxe sur le collage du hero */
+.collage-a{transform:translateY(calc(var(--sy,0) * -.03px))}
+.collage-b{transform:translateY(calc(var(--sy,0) * -.09px))}
 
 /* ---------- sections ---------- */
 .section{padding:clamp(64px,8vw,104px) 0}
@@ -1018,9 +1085,8 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 
 /* ---------- le lieu ---------- */
 .lieu-in{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,5vw,72px);align-items:center}
-.puces{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
-.puces li{position:relative;padding-left:26px}
-.puces li::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--moutarde)}
+.puces{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.puces li{padding:7px 15px;border-radius:99px;font-size:.92rem;background:#fff;border:1px solid var(--line)}
 .lieu-photos{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px;height:clamp(380px,46vw,560px)}
 .lieu-p{width:100%;height:100%;min-height:0;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(20,35,12,.2)}
 .lieu-p0{grid-row:1 / span 2;border-radius:120px 120px var(--r) var(--r)}
@@ -1041,7 +1107,6 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .menu-chips{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .menu-chips li{padding:6px 14px;border-radius:99px;font-size:.9rem;
   border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92)}
-.prix{margin:20px 0 22px;font-size:.92rem;color:rgba(255,255,255,.7)}
 .btn-moutarde{background:var(--moutarde);color:var(--vert-nuit);font-weight:600}
 .btn-moutarde:hover{background:#EDB544}
 
@@ -1148,6 +1213,49 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
 .foot-bottom{margin-top:28px;padding-top:14px;border-top:1px solid rgba(255,255,255,.16);
   font-size:.82rem;color:rgba(255,255,255,.62)}
 
+
+.centre{text-align:center;margin-top:8px}
+.head-nav .head-insta{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--terre),var(--moutarde));color:#fff;
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out)}
+.head-nav .head-insta::after{display:none}
+.head-nav .head-insta:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+
+/* ---------- réseaux ---------- */
+.reseaux{background:var(--creme)}
+.insta-card{display:flex;align-items:center;gap:22px;margin:30px 0 16px;padding:26px clamp(22px,4vw,40px);
+  border-radius:16px;text-decoration:none;color:#fff;
+  background:linear-gradient(120deg,var(--vert) 0%,#34574F 38%,var(--terre) 78%,var(--moutarde) 100%);
+  box-shadow:0 18px 44px rgba(20,35,12,.25);
+  transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
+.insta-card:hover{transform:translateY(-4px)!important;box-shadow:0 26px 56px rgba(20,35,12,.32)}
+.insta-ico{display:grid;place-items:center;width:76px;height:76px;border-radius:20px;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);flex:none}
+.insta-txt{display:grid;gap:2px;min-width:0}
+.insta-txt strong{font:500 clamp(1.5rem,3vw,2.1rem)/1.1 var(--serif)}
+.insta-txt span{font-size:1.1rem;opacity:.92}
+.insta-go{margin-left:auto;padding:12px 20px;border-radius:99px;background:#fff;color:var(--vert);
+  font-weight:600;font-size:.95rem;white-space:nowrap}
+.reseaux-liste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.res-card{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--r);text-decoration:none;
+  background:var(--glace);border:var(--glace-bord);box-shadow:var(--glace-relu),var(--glace-ombre);min-width:0}
+.res-card:hover{transform:translateY(-3px)!important;background:var(--glace-forte);box-shadow:var(--glace-relu),var(--glace-ombre-h)}
+.res-ico{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--vert);color:#fff;flex:none}
+.res-txt{display:grid;min-width:0}
+.res-txt strong{font-weight:600}
+.res-txt span{font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.foot-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
+  border:1px solid rgba(255,255,255,.35);font-size:.92rem}
+.foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
+.foot-col a.foot-pill-insta{background:linear-gradient(120deg,var(--terre),var(--moutarde));border-color:transparent;font-weight:600}
+@media (max-width:900px){
+  .reseaux-liste{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:520px){.reseaux-liste{grid-template-columns:1fr}}
+  .insta-card{flex-wrap:wrap}
+  .insta-go{margin-left:0;width:100%;text-align:center}
+}
+
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
   background:var(--vert);color:#fff;display:grid;place-items:center;text-decoration:none;
@@ -1182,7 +1290,7 @@ h2::before{content:"";display:block;width:44px;height:1px;background:var(--vert-
   .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .hero-cta .btn{padding:12px 10px;font-size:.9rem}
   .head-nav{gap:12px;font-size:.88rem}
-  .head-nav a:not(.btn){display:none}
+  .head-nav a:not(.btn):not(.head-insta){display:none}
   .lieu-photos,.cafe-photos{height:420px}
   .section{padding:48px 0}
   .grid{grid-template-columns:repeat(3,1fr);gap:12px}
