@@ -18,11 +18,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
    sitemap, robots, données structurées).
 ------------------------------------------------------------------ */ const SITE = "https://exoticas.bj";
 const NOM = "Exoticas";
-const TITRE = "Exoticas — Plantes, paysagisme et plants café à Cotonou";
-const DESCRIPTION = "Plantes rares, paysagisme et plants café à Tokpa-hoho, Cotonou (Bénin). " + "49 plantes photographiées à la boutique. Devis sur WhatsApp ou par téléphone.";
+const TITRE = "Exoticas — Plantes rares, café et coworking à Cotonou";
+const DESCRIPTION = "Boutique de plantes rares, coin café et coworking à Tokpa-hoho, Cotonou (Bénin). " + "Brunch, paysagisme, plants café. Devis sur WhatsApp ou par téléphone.";
 const ADRESSE_LONGUE = "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club";
 const TEL = "+2290153300000";
 const MAIL = "exoticasbj@gmail.com";
+const FICHE_MAPS = "https://www.google.com/maps/place/exoticas/data=!4m2!3m1!1s0x102355007b48f569:0x6ecd9c011dacc305";
+const INSTAGRAM = "https://www.instagram.com/exoticasbj/";
 const GEO = {
     lat: 6.35601,
     lng: 2.4371
@@ -41,7 +43,15 @@ const metadata = {
         "décoration végétale Cotonou",
         "aménagement paysager Bénin",
         "plantes d'intérieur Cotonou",
-        "Tokpa-hoho"
+        "Tokpa-hoho",
+        "monstera Cotonou",
+        "orchidées Cotonou",
+        "anthurium Bénin",
+        "bonsaï Cotonou",
+        "philodendron Bénin",
+        "coworking Cotonou",
+        "café Cotonou",
+        "brunch Cotonou"
     ],
     authors: [
         {
@@ -53,8 +63,18 @@ const metadata = {
     publisher: NOM,
     category: "shopping",
     alternates: {
-        canonical: "/"
+        canonical: "/",
+        languages: {
+            "fr-BJ": "/",
+            "x-default": "/"
+        }
     },
+    formatDetection: {
+        telephone: true,
+        email: true,
+        address: true
+    },
+    manifest: "/manifest.webmanifest",
     robots: {
         index: true,
         follow: true,
@@ -127,9 +147,11 @@ const viewport = {
 };
 /* Fiche entreprise lue par Google (résultats locaux, Maps) — mêmes
    informations que le flyer : rien d'inventé, les horaires restent absents
-   tant qu'ils ne sont pas connus. */ const FICHE = {
-    "@context": "https://schema.org",
-    "@type": "Florist",
+   tant qu'ils ne sont pas connus. */ const BOUTIQUE = {
+    "@type": [
+        "Florist",
+        "CafeOrCoffeeShop"
+    ],
     "@id": `${SITE}/#boutique`,
     name: NOM,
     alternateName: "Exoticas — La vie en vert",
@@ -141,6 +163,10 @@ const viewport = {
     ],
     telephone: TEL,
     email: MAIL,
+    sameAs: [
+        INSTAGRAM,
+        FICHE_MAPS
+    ],
     address: {
         "@type": "PostalAddress",
         streetAddress: `${ADRESSE_LONGUE}, Tokpa-hoho`,
@@ -153,7 +179,7 @@ const viewport = {
         latitude: GEO.lat,
         longitude: GEO.lng
     },
-    hasMap: `https://www.google.com/maps/dir/?api=1&destination=${GEO.lat},${GEO.lng}`,
+    hasMap: FICHE_MAPS,
     areaServed: {
         "@type": "City",
         name: "Cotonou"
@@ -164,6 +190,74 @@ const viewport = {
         "plants café",
         "décoration végétale",
         "aménagement de terrasses"
+    ]
+};
+const SERVICES = [
+    "Plantes rares et d'intérieur",
+    "Paysagisme et aménagement paysager",
+    "Plants café",
+    "Décoration végétale"
+];
+const FICHE = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            ...BOUTIQUE,
+            contactPoint: {
+                "@type": "ContactPoint",
+                telephone: TEL,
+                email: MAIL,
+                contactType: "customer service",
+                areaServed: "BJ",
+                availableLanguage: [
+                    "fr"
+                ]
+            },
+            hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Produits et services Exoticas",
+                itemListElement: SERVICES.map((name)=>({
+                        "@type": "Offer",
+                        itemOffered: {
+                            "@type": "Service",
+                            name,
+                            provider: {
+                                "@id": `${SITE}/#boutique`
+                            }
+                        }
+                    }))
+            }
+        },
+        {
+            "@type": "WebSite",
+            "@id": `${SITE}/#site`,
+            url: SITE,
+            name: NOM,
+            inLanguage: "fr-BJ",
+            publisher: {
+                "@id": `${SITE}/#boutique`
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": `${SITE}/#page`,
+            url: SITE,
+            name: TITRE,
+            description: DESCRIPTION,
+            inLanguage: "fr-BJ",
+            isPartOf: {
+                "@id": `${SITE}/#site`
+            },
+            about: {
+                "@id": `${SITE}/#boutique`
+            },
+            primaryImageOfPage: {
+                "@type": "ImageObject",
+                url: `${SITE}/og.png`,
+                width: 1200,
+                height: 630
+            }
+        }
     ]
 };
 function RootLayout({ children }) {
@@ -177,7 +271,7 @@ function RootLayout({ children }) {
                         href: "https://tile.openstreetmap.org"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 142,
+                        lineNumber: 209,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
@@ -188,26 +282,26 @@ function RootLayout({ children }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 143,
+                        lineNumber: 210,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 141,
+                lineNumber: 208,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
                 children: children
             }, void 0, false, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 149,
+                lineNumber: 216,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 140,
+        lineNumber: 207,
         columnNumber: 5
     }, this);
 }

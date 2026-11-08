@@ -3,281 +3,109 @@
 import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------
-   Informations récupérées du flyer Exoticas (Cotonou, Bénin)
+   Modèle de site pour un restaurant japonais (rouge et blanc).
+   ► Tout ce qui est propre au restaurant est dans BRAND, PLATS et CARTE :
+     remplacer les valeurs « à remplacer » par les vraies informations.
 ------------------------------------------------------------------ */
 
 const BRAND = {
-  nom: "exoticas",
-  signature: "La vie en vert",
-  tel: "01 53 30 00 00",
-  telHref: "tel:+2290153300000",
-  wa: "2290153300000",
-  mail: "exoticasbj@gmail.com",
-  instagram: "https://www.instagram.com/exoticasbj/",
-  fiche:
-    "https://www.google.com/maps/place/exoticas/data=!4m2!3m1!1s0x102355007b48f569:0x6ecd9c011dacc305",
-  adresseCourte: "Tokpa-hoho, 5ème arrondissement, Cotonou",
-  adresseLongue:
-    "2ème rue après Acropole, à 1 min de l'échangeur Ganhi, face à la boîte de nuit Z Club",
+  nom: "akai",
+  signature: "Cuisine japonaise",
+  /* À REMPLACER : coordonnées du restaurant */
+  tel: "00 00 00 00 00",
+  telHref: "tel:+0000000000",
+  wa: "0000000000",
+  mail: "contact@exemple.com",
+  instagram: "https://www.instagram.com/",
+  adresse: "Adresse du restaurant, Ville",
 };
 
-/* Position d'Exoticas. « Tokpa-hoho » n'existe dans aucune base de géocodage :
-   ce point est le milieu entre les deux repères cités sur ton flyer et tous deux
-   géocodés par OpenStreetMap — Acropole (6.35726, 2.43610) et l'échangeur Ganhi
-   (6.35476, 2.43810). Il pilote la carte, le marqueur et l'itinéraire.
-   Pour la corriger : Google Maps → appui long sur la porte d'entrée → remplace les
-   deux valeurs ci-dessous. */
-const MAP = { lat: 6.35601, lng: 2.4371 };
-const ZOOM = 16;
+type Cat = "sushi" | "maki" | "chaud" | "dessert";
 
-function itinLink(depuis?: { lat: number; lng: number }) {
-  const d = `destination=${MAP.lat},${MAP.lng}`;
-  const o = depuis ? `origin=${depuis.lat},${depuis.lng}&` : "";
-  return `https://www.google.com/maps/dir/?api=1&${o}${d}`;
-}
+/* Catégories : libellé, kanji de la tuile, style de tuile */
+const CAT: Record<Cat, { t: string; k: string; style: string }> = {
+  sushi: { t: "Sushis et sashimis", k: "寿司", style: "t-rouge" },
+  maki: { t: "Makis et rolls", k: "巻", style: "t-blanc" },
+  chaud: { t: "Plats chauds", k: "麺", style: "t-sombre" },
+  dessert: { t: "Desserts", k: "甘", style: "t-rose" },
+};
 
-/* distance à vol d'oiseau, en km */
-function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
-  const rad = Math.PI / 180;
-  const dLat = (b.lat - a.lat) * rad;
-  const dLng = (b.lng - a.lng) * rad;
-  const m =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
-  return 6371 * 2 * Math.atan2(Math.sqrt(m), Math.sqrt(1 - m));
-}
-
-/* Plantes photographiées à la boutique. Les noms sont repris tels quels des
-   fichiers fournis (dossier Drive drive-download-20261028T191730Z-1-001) ; les HEIC
-   ont été convertis en JPEG sans recadrage ni retouche : mini/ = 640 px pour la
-   grille, pleine/ = 1600 px ouverte au clic. Les originaux restent sur le disque. */
-const PLANTES = [
-  { n: "Alocasia sanderiana nain ou oreille d’âne", s: "alocasia-sanderiana-nain-ou-oreille-d-ane" },
-  { n: "Anthurium hookeri black", s: "anthurium-hookeri-black" },
-  { n: "Anthurium hookerie aurea", s: "anthurium-hookerie-aurea" },
-  { n: "Anthurium", s: "anthurium" },
-  { n: "Anthurium", s: "anthurium-2" },
-  { n: "Asparagus", s: "asparagus" },
-  { n: "Bégonia masoniana ou bégonia croix de fer", s: "begonia-masoniana-ou-begonia-croix-de-fer" },
-  { n: "Bonsaï Araucaria Cunninghamii", s: "bonsai-araucaria-cunninghamii" },
-  { n: "Bonsai", s: "bonsai" },
-  { n: "Bonsaï", s: "bonsai-2" },
-  { n: "Bonsai", s: "bonsai-3" },
-  { n: "Bonsaï", s: "bonsai-4" },
-  { n: "Cocotier", s: "cocotier" },
-  { n: "colocasia cintho aloha", s: "colocasia-cintho-aloha" },
-  { n: "Dendrobium", s: "dendrobium" },
-  { n: "Epipremnum", s: "epipremnum" },
-  { n: "Epipremnum", s: "epipremnum-2" },
-  { n: "Epiprenum variegata", s: "epiprenum-variegata" },
-  { n: "Frangipanier", s: "frangipanier" },
-  { n: "Goyavier blanc", s: "goyavier-blanc" },
-  { n: "Goyavier", s: "goyavier" },
-  { n: "Grenadier", s: "grenadier" },
-  { n: "Hosta africain", s: "hosta-africain" },
-  { n: "Lys du Bengale variegata", s: "lys-du-bengale-variegata" },
-  { n: "Monstera adansonii", s: "monstera-adansonii" },
-  { n: "Monstera Albo", s: "monstera-albo" },
-  { n: "Monstera burle marx", s: "monstera-burle-marx" },
-  { n: "Monstera delicioca variegata", s: "monstera-delicioca-variegata" },
-  { n: "Monstera deliciosa", s: "monstera-deliciosa" },
-  { n: "Monstera deliciosa", s: "monstera-deliciosa-2" },
-  { n: "Monstera thai constellation", s: "monstera-thai-constellation" },
-  { n: "Murier platane rouge et blanc", s: "murier-platane-rouge-et-blanc" },
-  { n: "Orchidée chauve souris", s: "orchidee-chauve-souris" },
-  { n: "Orchidée dendrobium", s: "orchidee-dendrobium" },
-  { n: "Orchidée dendrobium", s: "orchidee-dendrobium-2" },
-  { n: "Orchidée phalaenopsis", s: "orchidee-phalaenopsis" },
-  { n: "Papayer", s: "papayer" },
-  { n: "Peperomia lemon lime", s: "peperomia-lemon-lime" },
-  { n: "Peperomia raindrop", s: "peperomia-raindrop" },
-  { n: "Phalaenopsis", s: "phalaenopsis" },
-  { n: "Phalaenopsis", s: "phalaenopsis-2" },
-  { n: "Phalaenopsis", s: "phalaenopsis-3" },
-  { n: "Philodendron erubescens", s: "philodendron-erubescens" },
-  { n: "Philodendron pink princess", s: "philodendron-pink-princess" },
-  { n: "Philodendron xanadu", s: "philodendron-xanadu" },
-  { n: "Pink princess", s: "pink-princess" },
-  { n: "Spathiphyllium", s: "spathiphyllium" },
-  { n: "Tradescantia zebrina", s: "tradescantia-zebrina" },
-];
-/* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
-   (l'avis de Hadyr K est traduit de l'anglais). Mettre à jour « quand » de temps en temps. */
-const AVIS = [
-  {
-    nom: "Claudia Jordá",
-    etoiles: 5,
-    lang: "fr",
-    quand: "il y a 10 mois",
-    texte:
-      "Excellente boutique de plantes, sans aucun doute le meilleur endroit au Bénin pour trouver des espèces exotiques. Ils ont également un coin café parfait pour se détendre et profiter de l’ambiance : un petit paradis caché. Le manager est très sympathique et toujours attentif, ce qui rend la visite encore plus agréable. Je recommande vivement !",
-    notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
-  },
-  {
-    nom: "Hamza Lechhb",
-    etoiles: 5,
-    lang: "fr",
-    quand: "il y a 6 mois",
-    texte:
-      "Endroit super agréable avec beaucoup de plantes, ambiance relaxante et un iced latte parfait pour se poser.",
-    notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
-  },
-  {
-    nom: "Hadyr K",
-    etoiles: 4,
-    lang: "fr",
-    quand: "il y a 5 mois",
-    texte:
-      "Les plats étaient bons, surtout la salade. Seul bémol : ça a pris beaucoup de temps, je m’attendais à plus de rapidité pour un coffee restaurant. L’intérieur est magnifique avec beaucoup de verdure ; de meilleures chaises et tables seraient un plus, car ce n’est pas très confortable pour travailler longtemps sur ordinateur. (Traduit de l’anglais)",
-    notes: "Cuisine 4/5 · Service 4/5 · Ambiance 3/5",
-  },
-];
-
-
-/* Fiches de la galerie : descriptions générales de chaque plante (rien sur
-   les prix ni les stocks : on les confirme par WhatsApp). */
-const CAT = {
-  interieur: { t: "Plante d'intérieur", l: "Lumière vive, sans soleil direct", a: "Substrat légèrement humide", lc: "Lumière vive", ac: "Arrosage modéré", f: "interieur" },
-  rare: { t: "Plante rare", l: "Lumière vive, sans soleil direct", a: "Laisser sécher le dessus du terreau", lc: "Lumière vive", ac: "Arrosage prudent", f: "rare" },
-  orchidee: { t: "Orchidée", l: "Lumière vive, sans soleil direct", a: "Peu d'eau, bien drainée", lc: "Lumière vive", ac: "Peu d'eau", f: "orchidee" },
-  bonsai: { t: "Bonsaï", l: "Lumière vive, un peu de soleil", a: "Arroser dès que le terreau sèche", lc: "Lumière vive", ac: "Arrosage régulier", f: "bonsai" },
-  arbre: { t: "Arbre tropical", l: "Plein soleil", a: "Arrosage régulier", lc: "Plein soleil", ac: "Arrosage régulier", f: "arbre" },
-  retombante: { t: "Plante retombante", l: "Lumière vive à mi-ombre", a: "Arrosage modéré", lc: "Lumière vive", ac: "Arrosage modéré", f: "interieur" },
-} as const;
-
-/* Filtres de la galerie */
 const FILTRES = [
-  { k: "toutes", n: "Toutes" },
-  { k: "interieur", n: "D'intérieur" },
-  { k: "rare", n: "Rares" },
-  { k: "orchidee", n: "Orchidées" },
-  { k: "bonsai", n: "Bonsaïs" },
-  { k: "arbre", n: "Arbres" },
+  { k: "toutes", n: "Tous" },
+  { k: "sushi", n: "Sushis" },
+  { k: "maki", n: "Makis" },
+  { k: "chaud", n: "Plats chauds" },
+  { k: "dessert", n: "Desserts" },
 ] as const;
 
-const INFOS: Record<string, [keyof typeof CAT, string]> = {
-  "alocasia-sanderiana-nain-ou-oreille-d-ane": ["rare", "Feuilles en fer de lance vert sombre, aux nervures blanches très contrastées. Elle aime l'humidité ambiante."],
-  "anthurium-hookeri-black": ["rare", "Variété d'anthurium hookeri : une rosette dense de grandes feuilles brillantes, au port spectaculaire."],
-  "anthurium-hookerie-aurea": ["rare", "Variété d'anthurium hookeri à rosette de grandes feuilles lancéolées, très décorative en intérieur lumineux."],
-  "anthurium": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
-  "anthurium-2": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
-  "asparagus": ["retombante", "Un feuillage fin et plumeux, aérien, qui s'étale ou retombe en cascade. Facile à vivre en pot suspendu."],
-  "begonia-masoniana-ou-begonia-croix-de-fer": ["rare", "Feuilles bosselées vert vif marquées d'une croix brun-pourpre en leur centre, d'où son nom de bégonia croix de fer."],
-  "bonsai-araucaria-cunninghamii": ["bonsai", "Un araucaria cunninghamii (pin de Moreton Bay) conduit en bonsaï : silhouette de conifère en miniature."],
-  "bonsai": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-2": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-3": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-4": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "cocotier": ["arbre", "Le palmier emblématique des côtes tropicales, ici en jeune plant : feuilles arquées et silhouette élancée."],
-  "colocasia-cintho-aloha": ["rare", "Un colocasia aux grandes feuilles en forme de cœur, qui donne un effet jungle immédiat. Il apprécie un sol frais."],
-  "dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
-  "epipremnum": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
-  "epipremnum-2": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
-  "epiprenum-variegata": ["retombante", "Un pothos panaché : des feuilles marbrées de crème ou de jaune, qui éclairent un coin sombre."],
-  "frangipanier": ["arbre", "L'arbuste aux fleurs parfumées des tropiques, utilisé en bouquets et en jardins. Il aime le plein soleil."],
-  "goyavier-blanc": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
-  "goyavier": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
-  "grenadier": ["arbre", "Un arbuste fruitier aux fleurs orangées qui donne des grenades. Idéal en grand pot ou au jardin."],
-  "hosta-africain": ["interieur", "Un feuillage décoratif qui se plaît à la mi-ombre : une valeur sûre pour garnir un coin de terrasse."],
-  "lys-du-bengale-variegata": ["interieur", "Un feuillage panaché élégant, qui apporte de la lumière dans un massif ou un grand pot."],
-  "monstera-adansonii": ["interieur", "Le monstera aux feuilles percées de trous, qui grimpe ou retombe. Très graphique sur une étagère."],
-  "monstera-albo": ["rare", "Une variété panachée de blanc, très recherchée par les collectionneurs. Chaque feuille est unique."],
-  "monstera-burle-marx": ["rare", "Un feuillage découpé, graphique et compact, très prisé des amateurs de plantes tropicales."],
-  "monstera-delicioca-variegata": ["rare", "Le monstera deliciosa en version panachée : de grandes feuilles découpées marbrées de crème."],
-  "monstera-deliciosa": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
-  "monstera-deliciosa-2": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
-  "monstera-thai-constellation": ["rare", "Une variété panachée aux feuilles étoilées de crème, comme un ciel de constellations. Rare et très décorative."],
-  "murier-platane-rouge-et-blanc": ["arbre", "Un mûrier à grandes feuilles, aussi beau qu'utile : il donne des mûres sucrées."],
-  "orchidee-chauve-souris": ["rare", "Une plante surprenante aux fleurs sombres à longs filaments, qui évoquent des ailes de chauve-souris."],
-  "orchidee-dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
-  "orchidee-dendrobium-2": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
-  "orchidee-phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "papayer": ["arbre", "Un papayer, à croissance rapide : un arbre fruitier tropical au feuillage découpé très décoratif."],
-  "peperomia-lemon-lime": ["interieur", "Un petit péperomia au feuillage vert tendre et citron, compact et facile. Il éclaire n'importe quelle étagère."],
-  "peperomia-raindrop": ["interieur", "Des feuilles rondes et charnues, en forme de gouttes de pluie. Compact, facile et très mignon sur un bureau."],
-  "phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "phalaenopsis-2": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "phalaenopsis-3": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "philodendron-erubescens": ["rare", "Un philodendron aux tiges et feuilles teintées de rouge-bordeaux, au port grimpant et élégant."],
-  "philodendron-pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
-  "philodendron-xanadu": ["interieur", "Un philodendron touffu aux feuilles lobées, au port compact. Très généreux en volume, facile à vivre."],
-  "pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
-  "spathiphyllium": ["interieur", "Le « lys de la paix » : feuillage vert profond et fleurs blanches, qui supporte les pièces peu éclairées."],
-  "tradescantia-zebrina": ["retombante", "Des feuilles rayées d'argent et de violet, qui retombent en cascade. Se bouture très facilement."],
-};
-
-/* Photos du lieu (fiche Google Maps) : boutique, salle, coin café. */
-const LIEU = {
-  arbre: { src: "/lieu/boutique-arbre.webp", w: 382, h: 510, alt: "Salle d'Exoticas : grand arbre, étagères de plantes et fauteuil, à Cotonou" },
-  tasses: { src: "/lieu/salle-tasses.webp", w: 382, h: 510, alt: "Table avec deux cafés au milieu des plantes chez Exoticas, Cotonou" },
-  etageres: { src: "/lieu/boutique-etageres.webp", w: 382, h: 510, alt: "Étagères de plantes en pots et tables du coin café d'Exoticas" },
-  brunch: { src: "/lieu/cafe-brunch.webp", w: 382, h: 510, alt: "Brunch chez Exoticas : gaufres au chocolat, croissant, omelette, jus et café" },
-  crepes: { src: "/lieu/cafe-crepes-sandwich.webp", w: 287, h: 510, alt: "Crêpes, sandwich grillé et jus frais au café d'Exoticas" },
-  jus: { src: "/lieu/cafe-jus.webp", w: 287, h: 510, alt: "Jus frais devant les étagères de plantes du café Exoticas" },
-};
-
-/* Carte du café : aperçu des plats vus sur place et cités dans les avis (sans prix) */
-const CARTE = [
-  { t: "Brunch et salé", items: ["Brunch", "Omelette", "Sandwichs grillés", "Salades"] },
-  { t: "Sucré", items: ["Gaufres", "Crêpes", "Croissant"] },
-  { t: "Boissons", items: ["Jus frais", "Iced latte", "Café"] },
+/* La carte. « photo » (facultatif) : chemin d'une photo du plat dans public/plats/ ;
+   sans photo, la tuile affiche le kanji de la catégorie. Aucun prix ici. */
+type Plat = { n: string; c: Cat; d: string; photo?: string };
+const PLATS: Plat[] = [
+  { n: "Nigiri saumon", c: "sushi", d: "Une fine tranche de saumon posée sur une boule de riz vinaigré." },
+  { n: "Nigiri thon", c: "sushi", d: "Du thon rouge sur du riz vinaigré, le classique des amateurs de poisson cru." },
+  { n: "Sashimi assortiment", c: "sushi", d: "Des tranches de poisson cru servies sans riz, avec wasabi et gingembre mariné." },
+  { n: "Chirashi", c: "sushi", d: "Un bol de riz vinaigré garni de poissons crus variés." },
+  { n: "Maki concombre", c: "maki", d: "Du riz et du concombre roulés dans une feuille de nori, frais et léger." },
+  { n: "Maki saumon", c: "maki", d: "Du saumon cru roulé dans le riz et le nori, coupé en petites bouchées." },
+  { n: "California roll", c: "maki", d: "Un rouleau inversé, riz à l'extérieur, avec avocat, surimi et concombre." },
+  { n: "Spicy tuna roll", c: "maki", d: "Du thon relevé d'une sauce pimentée, roulé dans le riz." },
+  { n: "Temaki", c: "maki", d: "Un cornet de nori garni de riz et de poisson, à manger avec les doigts." },
+  { n: "Ramen shoyu", c: "chaud", d: "Des nouilles dans un bouillon corsé à la sauce soja, avec œuf mollet et ciboule." },
+  { n: "Ramen miso", c: "chaud", d: "Un bouillon réconfortant parfumé à la pâte de miso, nouilles et garnitures." },
+  { n: "Udon", c: "chaud", d: "De grosses nouilles de blé moelleuses dans un bouillon doux." },
+  { n: "Katsu curry", c: "chaud", d: "Une escalope panée croustillante, du riz et un curry japonais doux." },
+  { n: "Tempura de crevettes", c: "chaud", d: "Des crevettes enrobées d'une pâte légère, frites jusqu'à être croustillantes." },
+  { n: "Yakitori", c: "chaud", d: "Des brochettes de poulet grillées, laquées d'une sauce sucrée-salée." },
+  { n: "Gyoza", c: "chaud", d: "Des raviolis farcis, dorés d'un côté et tendres de l'autre." },
+  { n: "Mochi", c: "dessert", d: "Une pâte de riz moelleuse et fourrée, tendre et sucrée." },
+  { n: "Dorayaki", c: "dessert", d: "Deux petits pancakes moelleux fourrés de pâte de haricots rouges." },
+  { n: "Glace matcha", c: "dessert", d: "Une glace au thé vert matcha, légèrement amère et très parfumée." },
 ];
 
-/* Réalisations d'aménagement paysager (avant / après). Vide pour l'instant :
-   déposer les photos dans public/realisations/ puis ajouter ici
-   { avant: "/realisations/x-avant.jpg", apres: "/realisations/x-apres.jpg", alt: "…" }.
-   Le comparateur s'affiche dès qu'il y a au moins une entrée. */
-const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
+/* Un mot japonais par plat, affiché sur sa tuile (à défaut : le kanji de la catégorie) */
+const KANJI: Record<string, string> = {
+  "Nigiri saumon": "握鮭", "Nigiri thon": "握鮪", "Sashimi assortiment": "刺身", "Chirashi": "散",
+  "Maki concombre": "胡瓜", "Maki saumon": "鮭巻", "California roll": "巻", "Spicy tuna roll": "辛",
+  "Temaki": "手巻", "Ramen shoyu": "醤油", "Ramen miso": "味噌", "Udon": "うどん", "Katsu curry": "カレー",
+  "Tempura de crevettes": "天", "Yakitori": "焼鳥", "Gyoza": "餃子", "Mochi": "餅", "Dorayaki": "餡", "Glace matcha": "抹茶",
+};
+const kanjiDe = (p: Plat) => KANJI[p.n] ?? CAT[p.c].k;
 
-/* Vidéos du site. Vide pour l'instant : la section « Le lieu en vidéo » (et son
-   lien dans le menu) n'apparaît que lorsqu'il y a au moins une entrée.
-   • Fichier du site : déposer le .mp4 dans public/videos/ (court, ≤ 720 p, idéalement
-     < 6 Mo) et une image d'aperçu .jpg, puis ajouter
-     { src: "/videos/cafe.mp4", poster: "/videos/cafe.jpg", titre: "Le café d'Exoticas" }.
-   • YouTube (vidéos longues ou lourdes) : { youtube: "ID_DE_LA_VIDEO", titre: "…" }.
-     Le lecteur YouTube ne se charge qu'au clic (pas de suivi avant). */
-type Video = { titre: string; src?: string; poster?: string; youtube?: string };
-const VIDEOS: Video[] = [];
+/* Aperçu de la carte (déduit des plats ci-dessus) */
+const CARTE = (Object.keys(CAT) as Cat[]).map((c) => ({
+  t: CAT[c].t,
+  items: PLATS.filter((p) => p.c === c).map((p) => p.n),
+}));
 
-/* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
-   nom existe plusieurs fois, pour que les liens et les textes alternatifs
-   ne soient jamais identiques. */
-function nomUnique(i: number) {
-  const n = PLANTES[i].n;
-  const total = PLANTES.filter((x) => x.n.toLowerCase() === n.toLowerCase()).length;
-  if (total < 2) return n;
-  const rang = PLANTES.slice(0, i + 1).filter((x) => x.n.toLowerCase() === n.toLowerCase()).length;
-  return `${n} (photo ${rang})`;
-}
+/* « Omotenashi » : les valeurs affichées à la place des avis clients */
+const VALEURS = [
+  { k: "鮮", t: "Fraîcheur", d: "Des produits choisis pour leur fraîcheur, préparés à la minute." },
+  { k: "技", t: "Savoir-faire", d: "Des gestes précis, hérités d'une longue tradition culinaire." },
+  { k: "和", t: "Harmonie", d: "Une table pensée pour partager, dans une ambiance chaleureuse." },
+];
 
 function waLink(message: string) {
   return `https://wa.me/${BRAND.wa}?text=${encodeURIComponent(message)}`;
 }
 
 /* ------------------------------------------------------------------
-   Logo : le symbole recadré depuis le fichier fourni
-   « Exoticas logo H1.png » (279 × 289 px, vert #237F3C), décliné en blanc
-   pour les fonds verts. Aucune retouche de tracé : recadrage seul.
+   Pictogrammes et motifs
 ------------------------------------------------------------------ */
 
+/* Marque : le soleil rouge (hinomaru), décliné en blanc sur les fonds rouges */
 function Logo({ size = 34 }: { size?: number }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      className="mark"
-      src="/logo/marque-blanche.png"
-      alt=""
-      width={size}
-      height={Math.round((size * 289) / 279)}
-      aria-hidden="true"
-      decoding="async"
-    />
+    <svg className="mark" width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" strokeWidth="2" />
+      <circle cx="20" cy="20" r="9" fill="currentColor" />
+    </svg>
   );
 }
 
-function Wordmark({ light = true }: { light?: boolean }) {
+function Wordmark() {
   return (
-    <span className="wordmark" style={{ color: light ? "#fff" : "#1E2B28" }}>
+    <span className="wordmark" style={{ color: "#fff" }}>
       <Logo size={30} />
       <span className="wordmark-text">
         <span className="wordmark-nom">{BRAND.nom}</span>
@@ -313,185 +141,37 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-/* Feuille décorative : très discrète, ondule lentement et suit un peu le défilement */
-function Feuille({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`feuille ${className}`} viewBox="0 0 120 160" aria-hidden="true" focusable="false">
-      <path d="M60 4C102 40 114 94 60 156 6 94 18 40 60 4Z" fill="currentColor" />
-      <path d="M60 28V150M60 70 34 52M60 96 30 76M60 70l26-18M60 96l30-20" stroke="rgba(255,255,255,.35)" strokeWidth="2" fill="none" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/* Comparateur avant / après au curseur (clavier compris) */
-function AvantApres({ avant, apres, alt }: { avant: string; apres: string; alt: string }) {
-  const [pos, setPos] = useState(50);
-  return (
-    <div className="aa" style={{ "--p": `${pos}%` } as React.CSSProperties}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="aa-apres" src={apres} alt={`${alt} — après`} loading="lazy" decoding="async" />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="aa-avant" src={avant} alt={`${alt} — avant`} loading="lazy" decoding="async" />
-      <span className="aa-tag aa-tag-a">Avant</span>
-      <span className="aa-tag aa-tag-b">Après</span>
-      <span className="aa-poignee" aria-hidden="true" />
-      <input
-        type="range"
-        min={0}
-        max={100}
-        value={pos}
-        onChange={(e) => setPos(+e.target.value)}
-        aria-label="Comparer l'avant et l'après"
-      />
-    </div>
-  );
-}
-
-/* Lecteur vidéo léger : rien ne se télécharge avant d'être proche de l'écran ;
-   un fichier local joue en boucle, muet, uniquement quand on le voit ; un clic
-   donne le son et les commandes. Mouvement réduit : pas de lecture automatique. */
-function LecteurVideo({ v }: { v: Video }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [actif, setActif] = useState(false); // YouTube chargé / commandes affichées
-  const [lecture, setLecture] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !v.src) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          el.preload = "auto";
-          el.play().then(() => setLecture(true)).catch(() => {});
-        } else {
-          el.pause();
-          setLecture(false);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [v.src]);
-
-  if (v.youtube) {
-    return (
-      <div className="video">
-        {actif ? (
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&rel=0`}
-            title={v.titre}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <button type="button" className="video-facade" onClick={() => setActif(true)} aria-label={`Lire la vidéo : ${v.titre}`}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`https://i.ytimg.com/vi/${v.youtube}/hqdefault.jpg`} alt="" loading="lazy" />
-            <span className="video-play" aria-hidden="true">▶</span>
-          </button>
-        )}
-        <span className="video-titre">{v.titre}</span>
-      </div>
-    );
-  }
-  return (
-    <div className="video">
-      <video
-        ref={ref}
-        src={v.src}
-        poster={v.poster}
-        muted={!actif}
-        controls={actif}
-        loop
-        playsInline
-        preload="none"
-        aria-label={v.titre}
-        onClick={() => {
-          if (!actif) {
-            setActif(true);
-            if (ref.current) ref.current.muted = false;
-          }
-        }}
-      />
-      {!actif && !lecture && <span className="video-play" aria-hidden="true">▶</span>}
-      <span className="video-titre">{v.titre}</span>
-    </div>
-  );
-}
-
 function PinIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
+      <path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
       <circle cx="12" cy="10" r="2.6" fill="currentColor" />
     </svg>
   );
 }
 
-/* tuile OSM contenant un point (projection web mercator) */
-function tuileDe(lat: number, lng: number, z: number) {
-  const n = 2 ** z;
-  const x = ((lng + 180) / 360) * n;
-  const s = Math.sin((lat * Math.PI) / 180);
-  const y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
-  return { x, y };
+/* Soleil décoratif : un disque qui flotte lentement et suit un peu le défilement */
+function Soleil({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`feuille ${className}`} viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <circle cx="50" cy="50" r="48" fill="currentColor" />
+    </svg>
+  );
 }
 
-/* Carte composée de 9 tuiles OSM : pas de WebGL, pas de cookie, cliquable vers Google Maps */
-function Plan({ lat, lng }: { lat: number; lng: number }) {
-  const { x, y } = tuileDe(lat, lng, ZOOM);
-  const x0 = Math.floor(x) - 1;
-  const y0 = Math.floor(y) - 1;
-  const u = (x - x0) / 3;
-  const v = (y - y0) / 3;
-  const tuiles = [];
-  for (let j = 0; j < 3; j++) {
-    for (let i = 0; i < 3; i++) {
-      tuiles.push(
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={`${i}-${j}`}
-          src={`https://tile.openstreetmap.org/${ZOOM}/${x0 + i}/${y0 + j}.png`}
-          width={256}
-          height={256}
-          alt=""
-        />
-      );
-    }
-  }
+/* Tuile illustrée : remplace une photo tant qu'il n'y en a pas (kanji sur fond uni
+   ou motif de cercles). Jamais de fausse photo. */
+function Tuile({ k, style, className = "", label, d }: { k: string; style: string; className?: string; label?: string; d?: number }) {
   return (
-    <a
-      className="map"
-      href={itinLink()}
-      target="_blank"
-      rel="noopener"
-      aria-label="Ouvrir l'accès à Exoticas dans Google Maps"
+    <div
+      className={`tuile ${style} ${className}${d !== undefined ? " rv-photo" : ""}`}
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
+      {...(d !== undefined ? { "data-reveal": "", style: { "--d": `${d}ms` } as React.CSSProperties } : {})}
     >
-      <span
-        className="map-layer"
-        style={
-          {
-            left: `${(0.5 - 1.5 * u) * 100}%`,
-            top: `${(0.5 - 1.5 * v) * 100}%`,
-            transformOrigin: `${u * 100}% ${v * 100}%`,
-          } as React.CSSProperties
-        }
-      >
-        {tuiles}
-      </span>
-      <span className="map-pin">
-        <PinIcon size={28} />
-      </span>
-      <span className="map-cta">Ouvrir dans Google Maps</span>
-      <span className="map-cred">© OpenStreetMap</span>
-    </a>
+      <b lang="ja" style={{ "--n": [...k].length } as React.CSSProperties}>{k}</b>
+    </div>
   );
 }
 
@@ -499,28 +179,17 @@ function Plan({ lat, lng }: { lat: number; lng: number }) {
    Page
 ------------------------------------------------------------------ */
 
-type Geo = {
-  etat: "repos" | "demande" | "ok" | "refus" | "absent";
-  lat?: number;
-  lng?: number;
-  km?: number;
-};
-
 export default function Home() {
-  const [form, setForm] = useState({ nom: "", contact: "", objet: "Aménagement paysager (devis)", message: "" });
+  const [form, setForm] = useState({ nom: "", contact: "", objet: "Réservation", message: "" });
   const [envoye, setEnvoye] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
   const [filtre, setFiltre] = useState<string>("toutes");
-  /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
+  /* carte en images : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
   const [cols, setCols] = useState(4);
   const [paliers, setPaliers] = useState(1);
-  /* indices (dans PLANTES) des plantes du filtre ; « affichees » = celles montrées */
-  const visibles = PLANTES.map((p, i) => i).filter(
-    (i) => filtre === "toutes" || CAT[(INFOS[PLANTES[i].s] ?? ["interieur"])[0]].f === filtre
-  );
+  const visibles = PLATS.map((p, i) => i).filter((i) => filtre === "toutes" || PLATS[i].c === filtre);
   const affiche = cols * 2 * paliers;
   const affichees = visibles.slice(0, affiche);
 
@@ -537,7 +206,7 @@ export default function Home() {
     };
   }, [menu]);
 
-  /* nombre de colonnes de la galerie, aux mêmes seuils que le CSS */
+  /* nombre de colonnes de la grille, aux mêmes seuils que le CSS */
   useEffect(() => {
     const calc = () => setCols(window.innerWidth > 900 ? 4 : window.innerWidth > 620 ? 3 : 2);
     calc();
@@ -545,12 +214,10 @@ export default function Home() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  /* fiche plante : Échap, flèches, et page figée derrière */
+  /* fiche d'un plat : Échap, flèches, et page figée derrière */
   useEffect(() => {
     if (fiche === null) return;
-    const liste = PLANTES.map((p, i) => i).filter(
-      (i) => filtre === "toutes" || CAT[(INFOS[PLANTES[i].s] ?? ["interieur"])[0]].f === filtre
-    );
+    const liste = PLATS.map((p, i) => i).filter((i) => filtre === "toutes" || PLATS[i].c === filtre);
     const n = liste.length;
     const pas = (i: number | null, d: number) => {
       if (i === null || n === 0) return i;
@@ -571,15 +238,8 @@ export default function Home() {
     };
   }, [fiche, filtre]);
 
-  /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
-     couleur du hero porte le texte qui se tape caractère par caractère, puis se
-     lève et les entrées du hero jouent (elles sont en pause tant qu'il est up).
-     Le passage est marqué dans localStorage ; prefers-reduced-motion coupe tout,
-     et un localStorage inaccessible (navigation privée) n'empêche pas l'affichage.
-     Volontairement sans cleanup : en dev, StrictMode montez/démontez reminderait
-     l'effet après que la trace a été posée, et le rideau resterait baissé sans
-     que rien ne se tape. Le garde en ref ne lance la séquence qu'une fois, et les
-     trois temporaires se terminent d'eux-mêmes en moins de 3 s. */
+  /* Bienvenue dactylographiée, à la première visite seulement (rideau rouge qui
+     se lève). prefers-reduced-motion et localStorage inaccessible sont gérés. */
   const [bienvenue, setBienvenue] = useState<"off" | "frappe" | "leve">("off");
   const [frappe, setFrappe] = useState("");
   const lancee = useRef(false);
@@ -588,21 +248,20 @@ export default function Home() {
     if (lancee.current) return;
     let dejaVue = false;
     try {
-      dejaVue = localStorage.getItem("exo-bienvenue") === "1";
+      dejaVue = localStorage.getItem("resto-bienvenue") === "1";
     } catch {
       dejaVue = false;
     }
-    if (dejaVue || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return;
+    if (dejaVue || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     lancee.current = true;
     try {
-      localStorage.setItem("exo-bienvenue", "1");
+      localStorage.setItem("resto-bienvenue", "1");
     } catch {
       /* pas de trace : la bienvenue se rejouera, ce n'est pas grave */
     }
-    const chars = [..."Bienvenue à Exoticas"];
-    const PAS = 62; // ms entre deux caractères
-    const FIN = chars.length * PAS + 900; // + une pose avant que le rideau se lève
+    const chars = [..."ようこそ — Bienvenue"];
+    const PAS = 70;
+    const FIN = chars.length * PAS + 900;
     setBienvenue("frappe");
     let i = 0;
     const typer = window.setInterval(() => {
@@ -614,48 +273,20 @@ export default function Home() {
     window.setTimeout(() => setBienvenue("off"), FIN + 800);
   }, []);
 
-  function localiser() {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setGeo({ etat: "absent" });
-      return;
-    }
-    setGeo({ etat: "demande" });
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
-        const { latitude: lat, longitude: lng } = p.coords;
-        setGeo({ etat: "ok", lat, lng, km: distanceKm({ lat, lng }, MAP) });
-      },
-      () => setGeo({ etat: "refus" }),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-    );
-  }
-
-  /* révélation au scroll : chaque élément apparaît quand il entre à l'écran.
-     Sans IntersectionObserver (très vieux navigateur), tout est montré d'emblée,
-     pour que le contenu ne reste jamais caché. */
+  /* révélation au scroll : chaque élément apparaît quand il entre à l'écran */
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("js");
-    const cibles = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-reveal]")
-    );
-    /* « in » lance l'apparition ; « done » (une fois finie) rend aux cartes leurs
-       transitions de survol, sans le délai d'échelonnage. */
+    const cibles = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     const montrer = (el: Element) => {
       if (el.classList.contains("in")) return;
       el.classList.add("in");
       const d = parseInt((el as HTMLElement).style.getPropertyValue("--d")) || 0;
       window.setTimeout(() => el.classList.add("done"), d + 1500);
     };
-
-    // déjà visible au chargement -> on révèle tout de suite
-    const dansVue = () => {
-      cibles.forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight * 0.92) montrer(el);
-      });
-    };
-    dansVue();
-
+    cibles.forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) montrer(el);
+    });
     let io: IntersectionObserver | null = null;
     if (!("IntersectionObserver" in window)) {
       cibles.forEach(montrer);
@@ -673,7 +304,6 @@ export default function Home() {
       );
       cibles.forEach((el) => io?.observe(el));
     }
-
     return () => io?.disconnect();
   }, [affiche, filtre]);
 
@@ -689,7 +319,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function set(k: keyof typeof form) {
+  function set(k: "nom" | "contact" | "message") {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
   }
@@ -697,7 +327,7 @@ export default function Home() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const msg =
-      `Bonjour Exoticas,\n\n` +
+      `Bonjour ${BRAND.nom},\n\n` +
       `Objet : ${form.objet}\n` +
       `Je m'appelle ${form.nom || "—"}. ${form.message}\n\n` +
       `Me joindre : ${form.contact || "—"}`;
@@ -705,26 +335,30 @@ export default function Home() {
     setEnvoye(true);
   }
 
+  const NAV: [string, string][] = [
+    ["#lieu", "Le lieu"],
+    ["#carte", "La carte"],
+    ["#reservation", "Réserver"],
+    ["#traiteur", "Traiteur"],
+    ["#plats", "Les plats"],
+    ["#contact", "Contact"],
+  ];
+
   return (
     <>
       <style>{css}</style>
 
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
-          <a href="#top" className="head-logo" aria-label="Exoticas, accueil">
+          <a href="#top" className="head-logo" aria-label={`${BRAND.nom}, accueil`}>
             <Logo size={28} />
-            <span className="head-nom">exoticas</span>
+            <span className="head-nom">{BRAND.nom}</span>
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
-            <a href="#lieu">Le lieu</a>
-            {VIDEOS.length > 0 && <a href="#videos">Vidéos</a>}
-            <a href="#cafe">Café</a>
-            <a href="#coworking">Coworking</a>
-            <a href="#paysagisme">Paysagisme</a>
-            <a href="#galerie">Plantes</a>
-            <a href="#avis">Avis</a>
-            <a href="#contact">Contact</a>
-            <a className="btn btn-light btn-sm" href={BRAND.telHref} aria-label="Appeler Exoticas">
+            {NAV.map(([h, n]) => (
+              <a key={h} href={h}>{n}</a>
+            ))}
+            <a className="btn btn-light btn-sm" href={BRAND.telHref} aria-label={`Appeler ${BRAND.nom}`}>
               <PhoneIcon size={16} /> <span className="btn-txt">Appeler</span>
             </a>
             <button
@@ -743,22 +377,14 @@ export default function Home() {
 
       <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
         <nav aria-label="Menu mobile">
-          {[
-            ["#lieu", "Le lieu"],
-            ["#cafe", "Café"],
-            ["#coworking", "Coworking"],
-            ["#paysagisme", "Paysagisme"],
-            ["#galerie", "Plantes"],
-            ["#avis", "Avis"],
-            ["#contact", "Contact"],
-          ].map(([h, n], i) => (
+          {NAV.map(([h, n], i) => (
             <a key={h} href={h} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
               {n}
             </a>
           ))}
         </nav>
         <div className="menu-cta">
-          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener">
+          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener">
             <WhatsAppIcon size={18} /> Écrire sur WhatsApp
           </a>
           <a className="btn btn-ghost" tabIndex={menu ? 0 : -1} href={BRAND.telHref}>
@@ -769,57 +395,48 @@ export default function Home() {
 
       <main id="top">
         {/* HERO */}
-        <section
-          className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}
-          style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
-        >
-          <div className="hero-bg" aria-hidden="true" />
-          <Feuille className="feuille-h1" />
-          <Feuille className="feuille-h2" />
+        <section className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}>
           {bienvenue !== "off" && (
-            <div
-              className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
-              aria-hidden="true"
-            >
+            <div className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`} aria-hidden="true">
               <p className="welcome-texte">
                 {frappe}
                 <span className="welcome-caret" />
               </p>
             </div>
           )}
+          <Soleil className="feuille-h1" />
+          <Soleil className="feuille-h2" />
           <div className="wrap hero-in">
             <div className="hero-copy">
               <span className="rise" style={{ "--d": "60ms" } as React.CSSProperties}>
                 <Wordmark />
               </span>
               <p className="eyebrow eyebrow-clair rise" style={{ "--d": "110ms" } as React.CSSProperties}>
-                Tokpa-hoho · Cotonou
+                Restaurant japonais
               </p>
               <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
-                Aménagement paysager et plantes rares à Cotonou.
+                Cuisine japonaise, des sushis aux ramen.
               </h1>
               <p className="rise" style={{ "--d": "260ms" } as React.CSSProperties}>
-                Un lieu unique où la nature rencontre l'élégance : espaces verts
-                sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
+                Sushis, makis, ramen et grillades préparés à la minute. Sur place,
+                à emporter ou en traiteur, pour partager un moment simple et soigné.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-                <a className="btn btn-moutarde btn-fl" href="#contact">
-                  Demander un devis
+                <a className="btn btn-moutarde btn-fl" href={waLink("Bonjour, je souhaite réserver une table.")} target="_blank" rel="noopener">
+                  Réserver une table
                 </a>
-                <a className="btn btn-ghost btn-fl" href="#galerie">
-                  Voir les plantes
+                <a className="btn btn-ghost btn-fl" href="#carte">
+                  Voir la carte
                 </a>
               </div>
               <p className="hero-adr rise" style={{ "--d": "460ms" } as React.CSSProperties}>
-                {BRAND.adresseCourte}
+                {BRAND.adresse}
               </p>
             </div>
             <div className="hero-photo rise" style={{ "--d": "320ms" } as React.CSSProperties}>
               <div className="collage">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-a" src={LIEU.tasses.src} width={LIEU.tasses.w} height={LIEU.tasses.h} alt={LIEU.tasses.alt} fetchPriority="high" decoding="async" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} decoding="async" />
+                <Tuile k="寿司" style="t-blanc" className="collage-a" label="Sushis" />
+                <Tuile k="麺" style="t-sombre" className="collage-b" label="Ramen" />
               </div>
             </div>
           </div>
@@ -829,10 +446,10 @@ export default function Home() {
         <nav className="bande" aria-label="Nos activités">
           <div className="wrap bande-in">
             {[
-              { h: "#paysagisme", n: "Espaces verts sur mesure" },
-              { h: "#cafe", n: "Terrasse café conviviale" },
-              { h: "#coworking", n: "Coworking" },
-              { h: "#galerie", n: "Plantes rares et locales" },
+              { h: "#plats", n: "Sushis et makis" },
+              { h: "#carte", n: "Ramen et plats chauds" },
+              { h: "#reservation", n: "Sur place et à emporter" },
+              { h: "#traiteur", n: "Traiteur et événements" },
             ].map((a, i) => (
               <a key={a.h} href={a.h} data-reveal className="rv-pop" style={{ "--d": `${i * 80}ms` } as React.CSSProperties}>
                 {a.n}
@@ -846,60 +463,40 @@ export default function Home() {
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
               <p className="eyebrow">Le lieu</p>
-              <h2>Un lieu unique où la nature rencontre l'élégance</h2>
+              <h2>Une table japonaise, simple et chaleureuse</h2>
               <p className="lede">
-                Exoticas, votre partenaire nature et design : une boutique de
-                plantes rares et locales, une terrasse café conviviale et un
-                espace de coworking, dans un décor de murs vert profond, de bois
-                brut et d'étagères de plantes.
+                Un décor épuré aux tons rouge et blanc, du bois clair et des
+                lanternes : l'esprit des izakaya japonais, pour un déjeuner rapide
+                comme pour un dîner entre amis.
               </p>
               <ul className="puces">
-                {["Espaces verts sur mesure", "Terrasse café conviviale", "Coworking", "Plantes rares et locales"].map((t, i) => (
+                {["Sushis et sashimis", "Ramen et plats chauds", "Desserts japonais", "Sur place et à emporter"].map((t, i) => (
                   <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
                 ))}
               </ul>
             </div>
             <div className="lieu-photos">
-              {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`lieu-p lieu-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
+              <Tuile k="和" style="t-rouge" className="lieu-p lieu-p0" d={0} label="Motif japonais : harmonie" />
+              <Tuile k="灯" style="t-rose" className="lieu-p lieu-p1" d={140} label="Motif japonais : lanterne" />
+              <Tuile k="茶" style="t-sombre" className="lieu-p lieu-p2" d={280} label="Motif japonais : thé" />
             </div>
           </div>
         </section>
 
-        {/* VIDÉOS (affichée seulement s'il y en a) */}
-        {VIDEOS.length > 0 && (
-          <section id="videos" className="section">
-            <div className="wrap">
-              <p data-reveal className="eyebrow reveal">En mouvement</p>
-              <h2 data-reveal className="reveal">Le lieu en vidéo</h2>
-              <div className="videos">
-                {VIDEOS.map((v, i) => (
-                  <div key={v.src ?? v.youtube} data-reveal className="rv-photo" style={{ "--d": `${i * 120}ms` } as React.CSSProperties}>
-                    <LecteurVideo v={v} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* LE CAFÉ */}
-        <section id="cafe" className="section cafe">
+        {/* LA CARTE */}
+        <section id="carte" className="section cafe">
           <div className="wrap cafe-in">
             <div className="cafe-photos">
-              {[LIEU.brunch, LIEU.crepes, LIEU.jus].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`cafe-p cafe-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
+              <Tuile k="寿司" style="t-blanc" className="cafe-p cafe-p0" d={0} label="Sushis" />
+              <Tuile k="巻" style="t-rose" className="cafe-p cafe-p1" d={140} label="Makis" />
+              <Tuile k="麺" style="t-sombre" className="cafe-p cafe-p2" d={280} label="Ramen" />
             </div>
             <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
-              <p className="eyebrow eyebrow-clair">Le café</p>
-              <h2>Brunch, douceurs et boissons fraîches</h2>
+              <p className="eyebrow eyebrow-clair">La carte</p>
+              <h2>Sushis, makis, ramen et gourmandises</h2>
               <p className="lede">
-                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et café :
-                à savourer dans un décor de plantes et de bois brut.
+                Une carte courte, centrée sur la fraîcheur : poisson cru, plats
+                chauds réconfortants et desserts japonais.
               </p>
               <div className="carte" data-reveal style={{ "--d": "240ms" } as React.CSSProperties}>
                 <h3>La carte</h3>
@@ -913,30 +510,28 @@ export default function Home() {
                     </ul>
                   </div>
                 ))}
-                <p className="carte-note">Carte et prix sur place.</p>
+                <p className="carte-note">Prix et menus du jour sur place.</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* COWORKING */}
-        <section id="coworking" className="section cow">
+        {/* RÉSERVATION */}
+        <section id="reservation" className="section cow">
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
-              <p className="eyebrow">Coworking</p>
-              <h2>Travaillez entouré de verdure</h2>
+              <p className="eyebrow">Réservation</p>
+              <h2>Réservez votre table</h2>
               <p className="lede">
-                Exoticas met un espace de travail à disposition dans la
-                boutique-jardin, avec le coin café à deux pas. Un cadre
-                végétal et apaisant pour avancer sur vos dossiers, recevoir un
-                client ou changer d'air.
+                Pour un dîner à deux, un repas entre amis ou un groupe : écrivez-nous
+                sur WhatsApp, nous confirmons votre table.
               </p>
               <div className="cow-cards">
                 {[
-                  { t: "Cadre végétal", d: "Murs verts, bois brut et plantes" },
-                  { t: "Café sur place", d: "Brunch, jus frais et café" },
-                  { t: "Stationnement gratuit", d: "Parking devant la boutique" },
-                  { t: "Facile à trouver", d: "À 1 min de l'échangeur Ganhi" },
+                  { t: "Sur place", d: "Comptoir et tables" },
+                  { t: "À emporter", d: "Commandez, puis récupérez" },
+                  { t: "Groupes", d: "Menus à partager" },
+                  { t: "Réponse rapide", d: "Par WhatsApp ou téléphone" },
                 ].map((c, i) => (
                   <div key={c.t} className="cow-card rv-pop" data-reveal style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>
                     <strong>{c.t}</strong>
@@ -944,49 +539,37 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="cow-note">Tarifs, horaires et réservation d'un poste : demandez-nous.</p>
-              <a
-                className="btn btn-moutarde"
-                href={waLink("Bonjour Exoticas, je voudrais des informations sur le coworking (tarifs, horaires).")}
-                target="_blank"
-                rel="noopener"
-              >
-                <WhatsAppIcon size={18} /> Se renseigner sur le coworking
+              <p className="cow-note">Horaires, tarifs et disponibilités : demandez-nous.</p>
+              <a className="btn btn-moutarde" href={waLink("Bonjour, je souhaite réserver une table.")} target="_blank" rel="noopener">
+                <WhatsAppIcon size={18} /> Réserver sur WhatsApp
               </a>
             </div>
             <div className="cow-photos">
-              {[LIEU.etageres, LIEU.tasses].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 160}ms` } as React.CSSProperties} className={`cow-p cow-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
+              <Tuile k="食" style="t-rouge" className="cow-p cow-p0" d={0} label="Motif japonais : manger" />
+              <Tuile k="席" style="t-blanc" className="cow-p cow-p1" d={160} label="Motif japonais : table" />
             </div>
           </div>
         </section>
 
-        {/* AMÉNAGEMENT PAYSAGER */}
-        <section id="paysagisme" className="section pays">
-          <Feuille className="feuille-p1" />
+        {/* TRAITEUR */}
+        <section id="traiteur" className="section pays">
+          <Soleil className="feuille-p1" />
           <div className="wrap lieu-in">
             <div data-reveal className="reveal rv-left">
-              <p className="eyebrow eyebrow-clair">Aménagement paysager</p>
-              <h2>Un jardin sur mesure, sur devis</h2>
+              <p className="eyebrow eyebrow-clair">Traiteur et événements</p>
+              <h2>Vos événements, à la japonaise</h2>
               <p className="lede">
-                Terrasse, jardin, cour ou espace d'accueil : Exoticas conçoit
-                et plante des espaces verts à Cotonou. Décrivez-nous votre
-                projet, nous revenons vers vous avec un devis.
+                Anniversaire, repas d'entreprise, cocktail : plateaux de sushis et
+                menus sur mesure, préparés pour vous. Décrivez-nous votre
+                événement, nous revenons vers vous avec un devis.
               </p>
               <ul className="puces">
-                {["Terrasses et jardins", "Cours et intérieurs", "Commerces et bureaux"].map((t, i) => (
+                {["Plateaux de sushis", "Menus sur mesure", "Entreprises et particuliers"].map((t, i) => (
                   <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
                 ))}
               </ul>
               <div className="pays-cta">
-                <a
-                  className="btn btn-moutarde"
-                  href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")}
-                  target="_blank"
-                  rel="noopener"
-                >
+                <a className="btn btn-moutarde" href={waLink("Bonjour, je souhaite un devis pour un événement.")} target="_blank" rel="noopener">
                   <WhatsAppIcon size={18} /> Demander un devis
                 </a>
                 <a className="btn btn-ghost" href={BRAND.telHref}>
@@ -995,26 +578,20 @@ export default function Home() {
               </div>
             </div>
             <div className="pays-visuel" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
-              {REALISATIONS.length > 0 ? (
-                REALISATIONS.map((r) => <AvantApres key={r.avant} {...r} />)
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
-              )}
+              <Tuile k="祝" style="t-blanc" className="pays-tuile" label="Motif japonais : célébration" />
             </div>
           </div>
         </section>
 
-        {/* GALERIE */}
-        <section id="galerie" className="section">
+        {/* LES PLATS */}
+        <section id="plats" className="section">
           <div className="wrap">
-            <p data-reveal className="eyebrow reveal">La boutique</p>
-            <h2 data-reveal className="reveal">Galerie de plantes rares et d'intérieur</h2>
+            <p data-reveal className="eyebrow reveal">Les plats</p>
+            <h2 data-reveal className="reveal">Notre carte en images</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              {visibles.length} plantes de la boutique, photographiées ici. Touchez une
-              carte pour voir sa fiche.
+              {visibles.length} plats à découvrir. Touchez une carte pour voir le détail.
             </p>
-            <div className="filtres" role="group" aria-label="Filtrer les plantes">
+            <div className="filtres" role="group" aria-label="Filtrer les plats">
               {FILTRES.map((f) => (
                 <button
                   key={f.k}
@@ -1032,16 +609,16 @@ export default function Home() {
             </div>
             <div className="grid">
               {affichees.map((i) => {
-                const p = PLANTES[i];
-                const [cat] = INFOS[p.s] ?? ["interieur"];
+                const p = PLATS[i];
+                const c = CAT[p.c];
                 return (
                   <a
                     className="card reveal"
                     data-reveal
-                    style={{ "--d": `${(i % 4) * 70}ms` } as React.CSSProperties}
-                    href={`/galerie/pleine/${p.s}.jpg`}
-                    key={p.s}
-                    aria-label={`Voir la fiche : ${nomUnique(i)}`}
+                    style={{ "--d": `${(affichees.indexOf(i) % 4) * 70}ms` } as React.CSSProperties}
+                    href="#plats"
+                    key={p.n}
+                    aria-label={`Voir le détail : ${p.n}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setFiche(i);
@@ -1049,25 +626,17 @@ export default function Home() {
                     aria-haspopup="dialog"
                   >
                     <span className="card-img">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/galerie/mini/${p.s}.jpg`}
-                        alt={`${nomUnique(i)}, plante de la boutique Exoticas à Cotonou`}
-                        title={nomUnique(i)}
-                        width={480}
-                        height={640}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <span className="card-voir" aria-hidden="true">Voir la fiche</span>
+                      {p.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.photo} alt={p.n} width={480} height={640} loading="lazy" decoding="async" />
+                      ) : (
+                        <span className={`tuile ${c.style}`} aria-hidden="true"><b lang="ja" style={{ "--n": [...kanjiDe(p)].length } as React.CSSProperties}>{kanjiDe(p)}</b></span>
+                      )}
+                      <span className="card-voir" aria-hidden="true">Voir le détail</span>
                     </span>
                     <span className="card-cap">
-                      <span className="card-tag">{CAT[cat].t}</span>
+                      <span className="card-tag">{c.t}</span>
                       <span className="card-nom">{p.n}</span>
-                      <span className="card-soins">
-                        <span>{CAT[cat].lc}</span>
-                        <span>{CAT[cat].ac}</span>
-                      </span>
                     </span>
                   </a>
                 );
@@ -1076,48 +645,33 @@ export default function Home() {
             {visibles.length > affiche && (
               <div className="centre voir-plus">
                 <button type="button" className="btn btn-primary" onClick={() => setPaliers((n) => n + 1)}>
-                  Voir plus de plantes
-                  <span className="voir-plus-reste">{visibles.length - affiche} restantes</span>
+                  Voir plus de plats
+                  <span className="voir-plus-reste">{visibles.length - affiche} restants</span>
                 </button>
               </div>
             )}
           </div>
         </section>
 
-        {/* AVIS */}
-        <section id="avis" className="section">
+        {/* OMOTENASHI */}
+        <section id="accueil" className="section">
           <div className="wrap">
-            <p data-reveal className="eyebrow reveal">Avis</p>
-            <h2 data-reveal className="reveal">Avis clients</h2>
+            <p data-reveal className="eyebrow reveal">Omotenashi</p>
+            <h2 data-reveal className="reveal">L'accueil à la japonaise</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
-              Ce que disent nos clients sur Google.
+              L'omotenashi, c'est l'art d'accueillir avec attention. Trois idées
+              guident notre cuisine.
             </p>
             <div className="avis-liste">
-              {AVIS.map((a, i) => (
-                <blockquote
-                  data-reveal
-                  className="reveal avis"
-                  style={{ "--d": `${140 + i * 80}ms` } as React.CSSProperties}
-                  key={a.nom}
-                >
-                  <p className="avis-etoiles" role="img" aria-label={`${a.etoiles} étoiles sur 5`}>
-                    {"★".repeat(a.etoiles)}
-                    <span>{"★".repeat(5 - a.etoiles)}</span>
-                  </p>
-                  <p lang={a.lang}>« {a.texte} »</p>
-                  <footer>
-                    <strong>{a.nom}</strong>, Local Guide Google · {a.quand}
-                    <span className="avis-notes">{a.notes}</span>
-                  </footer>
-                </blockquote>
+              {VALEURS.map((v, i) => (
+                <div key={v.t} data-reveal className="reveal avis valeur" style={{ "--d": `${140 + i * 80}ms` } as React.CSSProperties}>
+                  <b className="valeur-k" lang="ja" aria-hidden="true">{v.k}</b>
+                  <h3>{v.t}</h3>
+                  <p>{v.d}</p>
+                </div>
               ))}
             </div>
-            <p className="avis-hint">Faites glisser pour lire les autres avis</p>
-            <div className="centre">
-              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
-                <PinIcon size={18} /> Voir tous les avis sur Google
-              </a>
-            </div>
+            <p className="avis-hint">Faites glisser pour voir la suite</p>
           </div>
         </section>
 
@@ -1129,141 +683,58 @@ export default function Home() {
               <h2>Venez nous voir</h2>
               <p className="lede">
                 Écrivez-nous sur WhatsApp : remplissez le formulaire, votre
-                message s'ouvre prêt à envoyer, et on vous répond rapidement.
+                message s'ouvre prêt à envoyer, et nous vous répondons rapidement.
               </p>
               <form onSubmit={onSubmit} className="form">
                 <label>
                   Nom
-                  <input
-                    required
-                    value={form.nom}
-                    onChange={set("nom")}
-                    placeholder="Votre nom"
-                    autoComplete="name"
-                  />
+                  <input required value={form.nom} onChange={set("nom")} placeholder="Votre nom" autoComplete="name" />
                 </label>
                 <label>
                   Téléphone ou e-mail
-                  <input
-                    required
-                    value={form.contact}
-                    onChange={set("contact")}
-                    placeholder="01 …  ou  vous@exemple.com"
-                    autoComplete="tel"
-                  />
+                  <input required value={form.contact} onChange={set("contact")} placeholder="00 00 00 00 00  ou  vous@exemple.com" autoComplete="tel" />
                 </label>
                 <label>
                   Objet
-                  <select
-                    value={form.objet}
-                    onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}
-                  >
-                    {["Aménagement paysager (devis)", "Coworking", "Café et brunch", "Plantes", "Autre"].map((o) => (
+                  <select value={form.objet} onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}>
+                    {["Réservation", "À emporter", "Traiteur (devis)", "Autre"].map((o) => (
                       <option key={o}>{o}</option>
                     ))}
                   </select>
                 </label>
                 <label>
                   Message
-                  <textarea
-                    required
-                    rows={4}
-                    value={form.message}
-                    onChange={set("message")}
-                    placeholder="Je souhaite aménager une terrasse de 40 m²…"
-                  />
+                  <textarea required rows={4} value={form.message} onChange={set("message")} placeholder="Une table pour 4 personnes, samedi soir à 20 h…" />
                 </label>
                 <p className="form-hint">
-                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
-                  avec votre message déjà écrit. Il n'est envoyé qu'une fois
-                  validé dans WhatsApp.
+                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp avec
+                  votre message déjà écrit. Il n'est envoyé qu'une fois validé
+                  dans WhatsApp.
                 </p>
                 <button className="btn btn-moutarde" type="submit">
                   <WhatsAppIcon size={18} /> Continuer sur WhatsApp
                 </button>
                 <p className={`note${envoye ? " show" : ""}`} role="status">
-                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer. Vous pouvez aussi nous appeler au{" "}
-                  <a href={BRAND.telHref}>{BRAND.tel}</a> ou écrire à{" "}
-                  <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
+                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer.
+                  Vous pouvez aussi nous appeler au <a href={BRAND.telHref}>{BRAND.tel}</a> ou
+                  écrire à <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
                 </p>
               </form>
             </div>
 
-            <aside data-reveal className="reveal rv-right coords" style={{ "--d": "160ms" } as React.CSSProperties}>
-              <Plan lat={MAP.lat} lng={MAP.lng} />
-
+            <aside data-reveal className="reveal rv-right coords coords-simple" style={{ "--d": "160ms" } as React.CSSProperties}>
               <dl>
                 <dt>Téléphone</dt>
-                <dd>
-                  <a href={BRAND.telHref}>{BRAND.tel}</a>
-                </dd>
+                <dd><a href={BRAND.telHref}>{BRAND.tel}</a></dd>
                 <dt>Courriel</dt>
-                <dd>
-                  <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
-                </dd>
+                <dd><a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a></dd>
                 <dt>Adresse</dt>
-                <dd>{BRAND.adresseCourte}</dd>
-                <dd className="muted">{BRAND.adresseLongue}</dd>
+                <dd>{BRAND.adresse}</dd>
+                <dt>Instagram</dt>
+                <dd><a href={BRAND.instagram} target="_blank" rel="noopener me">@{BRAND.nom}</a></dd>
               </dl>
-
-              <div className="geo">
-                <button
-                  type="button"
-                  className="btn btn-geo"
-                  onClick={localiser}
-                  disabled={geo.etat === "demande"}
-                >
-                  <PinIcon size={17} />
-                  {geo.etat === "demande" ? "Localisation en cours…" : "Itinéraire depuis ma position"}
-                </button>
-                <p className="geo-msg" role="status" key={geo.etat}>
-                  {geo.etat === "ok" && (
-                    <>
-                      Exoticas est à environ{" "}
-                      <strong>{geo.km! < 10 ? geo.km!.toFixed(1).replace(".", ",") : Math.round(geo.km!)} km</strong>{" "}
-                      de toi (à vol d'oiseau).{" "}
-                      <a href={itinLink({ lat: geo.lat!, lng: geo.lng! })} target="_blank" rel="noopener">
-                        Ouvrir l'itinéraire
-                      </a>
-                    </>
-                  )}
-                  {geo.etat === "refus" && (
-                    <>
-                      Position indisponible — autorise l'accès, ou lance l'itinéraire et indique ton
-                      départ.{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        Ouvrir Google Maps
-                      </a>
-                    </>
-                  )}
-                  {geo.etat === "demande" && (
-                    <>Calcul de la distance depuis ta position…</>
-                  )}
-                  {geo.etat === "absent" && (
-                    <>
-                      Ce navigateur ne fournit pas de position.{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        Ouvrir Google Maps
-                      </a>
-                    </>
-                  )}
-                  {geo.etat === "repos" && (
-                    <>
-                      Le repère sur la carte est approximatif :{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        itinéraire vers Exoticas
-                      </a>
-                      .
-                    </>
-                  )}
-                </p>
-              </div>
-
-              <a className="btn btn-wa" href={waLink("Bonjour Exoticas, j'aimerais avoir des informations.")} target="_blank" rel="noopener">
+              <a className="btn btn-wa" href={waLink(`Bonjour ${BRAND.nom}, j'aimerais avoir des informations.`)} target="_blank" rel="noopener">
                 <WhatsAppIcon size={18} /> Écrire sur WhatsApp
-              </a>
-              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me" style={{ marginTop: 10 }}>
-                <PinIcon size={18} /> Voir la fiche Google Maps
               </a>
             </aside>
           </div>
@@ -1290,10 +761,7 @@ export default function Home() {
                 <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-pill foot-pill-insta">
                   <InstagramIcon size={18} /> Instagram
                 </a>
-                <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-pill">
-                  <PinIcon size={18} /> Google Maps
-                </a>
-                <a href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener me" className="foot-pill">
+                <a href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener me" className="foot-pill">
                   <WhatsAppIcon size={18} /> WhatsApp
                 </a>
               </span>
@@ -1302,55 +770,47 @@ export default function Home() {
           <div data-reveal className="reveal foot-col" style={{ "--d": "180ms" } as React.CSSProperties}>
             <p>
               <strong>Adresse</strong>
-              {BRAND.adresseCourte}
-              <span className="muted">{BRAND.adresseLongue}</span>
+              {BRAND.adresse}
             </p>
           </div>
         </div>
         <div className="wrap foot-bottom">
-          <span>© {new Date().getFullYear()} Exoticas — votre partenaire nature &amp; design</span>
+          <span>© {new Date().getFullYear()} {BRAND.nom} — {BRAND.signature}</span>
         </div>
       </footer>
 
       {fiche !== null && (() => {
-        const p = PLANTES[fiche];
-        const [cat, desc] = INFOS[p.s] ?? ["interieur", ""];
-        const c = CAT[cat];
+        const p = PLATS[fiche];
+        const c = CAT[p.c];
         const pos = Math.max(0, visibles.indexOf(fiche));
-        const aller = (d: number) =>
-          setFiche(visibles[(pos + d + visibles.length) % visibles.length]);
+        const aller = (d: number) => setFiche(visibles[(pos + d + visibles.length) % visibles.length]);
         return (
           <div
             className="fiche-fond"
             role="dialog"
             aria-modal="true"
-            aria-label={`Fiche : ${nomUnique(fiche)}`}
+            aria-label={`Détail : ${p.n}`}
             onClick={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
           >
             <div className="fiche">
-              <button className="fiche-x" onClick={() => setFiche(null)} aria-label="Fermer la fiche">×</button>
+              <button className="fiche-x" onClick={() => setFiche(null)} aria-label="Fermer">×</button>
               <div className="fiche-photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img key={p.s} src={`/galerie/pleine/${p.s}.jpg`} alt={`${nomUnique(fiche)}, plante de la boutique Exoticas à Cotonou`} />
-                <button className="fiche-nav fiche-prec" onClick={() => aller(-1)} aria-label="Plante précédente">‹</button>
-                <button className="fiche-nav fiche-suiv" onClick={() => aller(1)} aria-label="Plante suivante">›</button>
+                {p.photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={p.n} src={p.photo} alt={p.n} />
+                ) : (
+                  <div key={p.n} className={`tuile ${c.style} fiche-tuile`} aria-hidden="true"><b lang="ja" style={{ "--n": [...kanjiDe(p)].length } as React.CSSProperties}>{kanjiDe(p)}</b></div>
+                )}
+                <button className="fiche-nav fiche-prec" onClick={() => aller(-1)} aria-label="Plat précédent">‹</button>
+                <button className="fiche-nav fiche-suiv" onClick={() => aller(1)} aria-label="Plat suivant">›</button>
               </div>
-              <div className="fiche-txt" key={`t-${p.s}`}>
+              <div className="fiche-txt" key={`t-${p.n}`}>
                 <span className="card-tag">{c.t}</span>
                 <h3>{p.n}</h3>
-                <p>{desc}</p>
-                <ul className="fiche-soin">
-                  <li><strong>Lumière</strong>{c.l}</li>
-                  <li><strong>Arrosage</strong>{c.a}</li>
-                </ul>
-                <p className="fiche-note">Photographiée à la boutique. Prix et disponibilité : demandez-nous sur WhatsApp.</p>
-                <a
-                  className="btn btn-moutarde"
-                  href={waLink(`Bonjour Exoticas, je suis intéressé(e) par : ${p.n}. Est-elle disponible ?`)}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <WhatsAppIcon size={18} /> Demander cette plante
+                <p>{p.d}</p>
+                <p className="fiche-note">Prix, allergènes et disponibilité : demandez-nous sur WhatsApp ou sur place.</p>
+                <a className="btn btn-moutarde" href={waLink(`Bonjour ${BRAND.nom}, je souhaite commander : ${p.n}.`)} target="_blank" rel="noopener">
+                  <WhatsAppIcon size={18} /> Commander ce plat
                 </a>
                 <span className="fiche-compte">{pos + 1} / {visibles.length}</span>
               </div>
@@ -1359,13 +819,7 @@ export default function Home() {
         );
       })()}
 
-      <a
-        className="wa-fixed"
-        href={waLink("Bonjour Exoticas,")}
-        target="_blank"
-        rel="noopener"
-        aria-label="Écrire sur WhatsApp"
-      >
+      <a className="wa-fixed" href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp">
         <WhatsAppIcon size={24} />
       </a>
     </>
@@ -1378,18 +832,19 @@ export default function Home() {
 
 const css = `
 :root{
-  /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
-  --vert:#466931;
-  --vert-fonce:#3A5528;
-  --vert-nuit:#2C4220;
-  --vert-accent:#E1A32D;
-  --moutarde:#E1A32D;
-  --terre:#B25832;
+  /* palette : rouge japonais (akai) et blanc washi */
+  --vert:#B5122B;
+  --vert-fonce:#8F0E22;
+  --vert-nuit:#5E0816;
+  --vert-accent:#D9A441;
+  --moutarde:#D9A441;
+  --terre:#B5122B;
   --bois:#8B5A34;
-  --creme:#F6EFE2;
-  --texte:#1E2B28;
-  --muted:#6B726B;
-  --line:#E3DACA;
+  --creme:#FBF7F2;
+  --texte:#1E1416;
+  --muted:#6F6266;
+  --line:#EBDFD6;
+  --kanji:"Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","Noto Serif JP",var(--font-serif),serif;
   --serif:var(--font-serif),"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --sans:var(--font-sans),ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --r:8px;
@@ -1417,7 +872,7 @@ body{
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 h1,h2,h3{margin:0 0 .55rem;font-weight:550;text-wrap:balance}
-h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500;font-variation-settings:"SOFT" 100}
+h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500}
 h1{font-size:clamp(2.35rem,4.6vw,3.45rem);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(1.65rem,2.6vw,2.15rem);line-height:1.1;letter-spacing:-.03em}
 h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
@@ -1469,7 +924,7 @@ section[id]{scroll-margin-top:0}
 .btn:hover::after{transform:translateX(0)}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.98)}
-.btn:focus-visible{outline:3px solid #F0C469;outline-offset:3px}
+.btn:focus-visible{outline:3px solid #1E1416;outline-offset:3px;box-shadow:0 0 0 3px #fff}
 /* flèche qui glisse au survol */
 .btn-fl::before{content:"→";order:2;display:inline-block;transition:transform .3s var(--ease-out)}
 .btn-fl:hover::before{transform:translateX(5px)}
@@ -1606,7 +1061,7 @@ section[id]{scroll-margin-top:0}
 
 /* collage du hero */
 .collage{position:relative;width:min(100%,400px);aspect-ratio:1/1.12}
-.collage img{position:absolute;object-fit:cover;border-radius:var(--r);
+.collage>.tuile{position:absolute;border-radius:var(--r);
   border:3px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(8,20,18,.45)}
 .collage-a{left:0;top:0;width:66%;height:84%;border-radius:140px 140px var(--r) var(--r)!important}
 .collage-b{right:0;bottom:0;width:50%;height:58%}
@@ -1771,14 +1226,14 @@ section[id]{scroll-margin-top:0}
 
 /* ---------- surtitres ---------- */
 .eyebrow{margin:0 0 12px;font:700 .74rem/1.2 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--terre)}
-.eyebrow-clair{color:#F0C469}
-.hero-copy .eyebrow{margin:18px 0 -6px;font-size:.74rem;line-height:1.2;color:#F0C469}
+.eyebrow-clair{color:#FFD9DE}
+.hero-copy .eyebrow{margin:18px 0 -6px;font-size:.74rem;line-height:1.2;color:#FFD9DE}
 
 /* ---------- bande des activités ---------- */
 .bande{background:var(--vert-fonce);color:#fff}
 .bande-in{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
 .bande a{text-decoration:none;font-size:.95rem;font-weight:600;position:relative;padding:4px 0}
-.bande a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:#F0C469;
+.bande a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:#fff;
   transform:scaleX(0);transform-origin:0 50%;transition:transform .35s var(--ease-out)}
 .bande a:hover::after{transform:scaleX(1)}
 
@@ -1826,7 +1281,7 @@ section[id]{scroll-margin-top:0}
 .pays .lede{color:rgba(255,255,255,.82)}
 .pays .puces li{background:transparent;border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.92)}
 .pays-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-.pays-visuel img{width:100%;max-height:520px;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.pays-tuile{width:100%;aspect-ratio:4/3;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .aa{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:var(--r);user-select:none}
 .aa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .aa-avant{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
@@ -1847,7 +1302,7 @@ section[id]{scroll-margin-top:0}
 .hero-in{z-index:1}
 
 /* ---------- formulaire : indication WhatsApp ---------- */
-.form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(225,163,45,.14);border-radius:var(--r)}
+.form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(181,18,43,.07);border-radius:var(--r)}
 
 .foot-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
@@ -1856,7 +1311,33 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
 /* ---------- texture : feuilles au trait, seulement sur le hero et l'aménagement paysager ---------- */
-.hero,.pays{background-image:url(/texture-claire.svg);background-size:520px 520px}
+.hero,.pays{background-image:url(/texture-claire.svg);background-size:120px 120px}
+
+
+/* ---------- tuiles illustrées (kanji) à la place des photos ---------- */
+.tuile{position:relative;display:grid;place-items:center;overflow:hidden;container-type:size;
+  font-family:var(--kanji);background:var(--vert);color:#fff}
+.tuile::before{content:"";position:absolute;inset:0;background-image:url(/texture-claire.svg);background-size:120px 120px}
+.tuile b{position:relative;font-weight:700;line-height:1;letter-spacing:.04em;font-size:3rem;font-size:min(calc(68cqw / var(--n,2)),30cqh,7rem)}
+.t-rouge{background:var(--vert);color:#fff}
+.t-blanc{background:#fff;color:var(--vert);box-shadow:inset 0 0 0 3px var(--vert)}
+.t-rose{background:#F8E1E4;color:var(--vert)}
+.t-sombre{background:var(--vert-nuit);color:#fff}
+.t-blanc::before,.t-rose::before{background-image:url(/texture-rouge.svg)}
+.card-img .tuile,.fiche-tuile{position:absolute;inset:0}
+.coords-simple{padding:24px 26px}
+.coords-simple dl{margin-top:0}
+
+/* ---------- omotenashi : les trois valeurs ---------- */
+.valeur{display:grid;gap:6px;align-content:start}
+.valeur-k{font:700 4rem/1 var(--kanji);color:var(--vert);margin-bottom:6px}
+.valeur h3{margin:0;font:500 1.4rem/1.2 var(--serif)}
+.valeur p{margin:0!important;color:var(--muted)}
+
+
+/* sur fond rouge, le bouton d'action devient blanc */
+.hero .btn-moutarde,.cafe .btn-moutarde,.pays .btn-moutarde,.menu-mobile .btn-moutarde{background:#fff;color:var(--vert);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.hero .btn-moutarde:hover,.cafe .btn-moutarde:hover,.pays .btn-moutarde:hover,.menu-mobile .btn-moutarde:hover{background:#FBE9EC;box-shadow:0 12px 28px rgba(0,0,0,.3)}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
@@ -1946,9 +1427,9 @@ section[id]{scroll-margin-top:0}
 .burger.ouvert span:nth-child(1){top:21px;transform:rotate(45deg)}
 .burger.ouvert span:nth-child(2){opacity:0}
 .burger.ouvert span:nth-child(3){top:21px;transform:rotate(-45deg)}
-.burger:focus-visible{outline:3px solid #F0C469;outline-offset:2px}
+.burger:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .menu-mobile{position:fixed;inset:0;z-index:49;display:flex;flex-direction:column;justify-content:center;gap:28px;
-  padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-claire.svg);background-size:520px 520px;
+  padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-claire.svg);background-size:120px 120px;
   color:#fff;visibility:hidden;opacity:0;transform:translateY(-12px);
   transition:opacity .35s var(--ease),transform .45s var(--ease-out),visibility 0s linear .45s}
 .menu-mobile.ouvert{visibility:visible;opacity:1;transform:none;transition-delay:0s}

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 /* Domaine public — même valeur que dans app/layout.tsx */
-const SITE = "https://exoticas.bj";
+const SITE = "https://exemple.com";
 
 /* Site d'une seule page : l'accueil. L'image Open Graph est déclarée en
    sitemap d'images pour qu'elle serve aussi de vignette dans les résultats. */
