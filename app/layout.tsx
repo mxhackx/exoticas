@@ -1,17 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Shippori_Mincho, Zen_Kaku_Gothic_New } from "next/font/google";
+import localFont from "next/font/local";
 
 /* Titres : mincho (serif japonais). Texte : gothique doux, très lisible.
-   Polices téléchargées à la compilation et servies par le site lui-même. */
-const serif = Shippori_Mincho({
-  subsets: ["latin"],
-  weight: ["500", "700"],
+   Polices (licence OFL) embarquées dans app/fonts : le site ne dépend d'aucun
+   appel à Google, ni à la compilation ni chez le visiteur. */
+const serif = localFont({
+  src: [
+    { path: "./fonts/ShipporiMincho-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/ShipporiMincho-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-serif",
   display: "swap",
 });
-const sans = Zen_Kaku_Gothic_New({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+const sans = localFont({
+  src: [
+    { path: "./fonts/ZenKakuGothicNew-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ZenKakuGothicNew-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/ZenKakuGothicNew-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-sans",
   display: "swap",
 });
