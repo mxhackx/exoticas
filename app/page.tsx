@@ -1378,10 +1378,10 @@ export default function Home() {
 
 const css = `
 :root{
-  /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
-  --vert:#466931;
-  --vert-fonce:#3A5528;
-  --vert-nuit:#2C4220;
+  /* palette : bleu-vert sombre (vert sapin des murs), avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
+  --vert:#23403B;
+  --vert-fonce:#1A322E;
+  --vert-nuit:#122421;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#B25832;
@@ -1475,8 +1475,8 @@ section[id]{scroll-margin-top:0}
 .btn-fl:hover::before{transform:translateX(5px)}
 .btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
 .btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
-.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(70,105,49,.3)}
-.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(70,105,49,.35)}
+.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(35,64,59,.3)}
+.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(35,64,59,.35)}
 .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
 .btn-ghost:hover{background:#fff;color:var(--vert);border-color:#fff}
 .btn-sm{padding:9px 18px;min-height:40px;font-size:.9rem}
