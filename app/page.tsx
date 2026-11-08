@@ -1891,18 +1891,22 @@ section[id]{scroll-margin-top:0}
   .bande-in{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:14px;padding-bottom:14px}
   .bande a{text-align:center;padding:10px 8px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:.85rem}
   .bande a::after{display:none}
-  /* Mobile : l'image est le fond de tout le hero, qui prend la hauteur de
-     l'écran comme en PC. Le texte ne pose plus sur une nappe qui la recouvre :
-     la bande verte est calée en bas, à la hauteur du bloc de texte, et la
-     photo se lit au-dessus (≈180 px sur un 390×844). align-content:end ne fait
-     rien si le contenu dépasse 100svh : le hero s'allonge et la bande suit. */
-  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:end;padding:96px 0 26px}
-  .hero-bg{opacity:1;animation:zoom 26s var(--ease) infinite alternate}
-  @keyframes zoom{from{transform:scale(1)}to{transform:scale(1.12)}}
-  .hero-in{grid-template-columns:1fr;gap:0}
-  .hero-copy{background:var(--vert);padding:24px 20px;border-radius:12px;
-    box-shadow:0 18px 44px rgba(15,30,8,.28)}
-  .hero-photo{display:none}
+  /* Mobile : la photo (collage) et le texte tiennent ensemble sur le premier écran.
+     Le logo du hero et l'adresse, déjà présents dans l'en-tête et le pied de page,
+     sont masqués pour gagner de la place. */
+  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:84px 0 22px}
+  .hero-bg{opacity:0}
+  .hero-in{grid-template-columns:1fr;gap:16px}
+  .hero-photo{display:flex;order:-1;justify-content:center}
+  .collage{width:min(100%,330px);aspect-ratio:1/.6}
+  .collage-a{width:42%;height:100%;border-radius:90px 90px var(--r) var(--r)!important}
+  .collage-b{width:62%;height:80%}
+  .hero-copy{background:none;padding:0;box-shadow:none}
+  .hero-copy .wordmark,.hero-adr{display:none}
+  .hero-copy .eyebrow{margin:0 0 6px}
+  .hero-copy h1{margin:0 0 10px;font-size:clamp(1.85rem,8.4vw,2.4rem);max-width:none}
+  .hero-copy p{font-size:1rem;line-height:1.5}
+  .hero-cta{margin-top:18px}
   .hero-cta{display:grid;grid-template-columns:1fr;gap:10px}
   .hero-cta .btn{padding:14px 16px}
   .head-nav{gap:12px;font-size:.88rem}
@@ -1917,6 +1921,13 @@ section[id]{scroll-margin-top:0}
 }
 @media (max-width:460px){
   .hero-cta{grid-template-columns:1fr}
+}
+/* tablettes en portrait : collage et titre plus grands */
+@media (min-width:600px) and (max-width:820px){
+  .collage{width:min(100%,520px)}
+  .hero-copy h1{font-size:2.8rem}
+  .hero-copy p{font-size:1.1rem;max-width:52ch}
+  .hero-cta{grid-template-columns:1fr 1fr}
 }
 /* très petits écrans : l'en-tête garde le logo lisible, « Appeler » ne garde que son icône */
 @media (max-width:400px){
