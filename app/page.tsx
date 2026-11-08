@@ -185,6 +185,10 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
   const [fiche, setFiche] = useState<number | null>(null);
+  const ficheOuverte = fiche !== null;
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const retourFiche = useRef<HTMLElement | null>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const [filtre, setFiltre] = useState<string>("toutes");
   /* carte en images : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
   const [cols, setCols] = useState(4);
@@ -193,10 +197,24 @@ export default function Home() {
   const affiche = cols * 2 * paliers;
   const affichees = visibles.slice(0, affiche);
 
+  /* fiche d'un plat : le focus entre dans la fenêtre à l'ouverture et revient
+     sur la carte cliquée à la fermeture (clavier et lecteurs d'écran) */
+  useEffect(() => {
+    if (!ficheOuverte) return;
+    retourFiche.current = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+    return () => retourFiche.current?.focus?.();
+  }, [ficheOuverte]);
+
   /* menu mobile : Échap pour fermer, page figée derrière */
   useEffect(() => {
     if (!menu) return;
-    const touche = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
+    const touche = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenu(false);
+        burgerRef.current?.focus();
+      }
+    };
     window.addEventListener("keydown", touche);
     const avant = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -348,7 +366,7 @@ export default function Home() {
     <>
       <style>{css}</style>
 
-      <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
+      <header className={`site-head${scrolled ? " is-scrolled" : ""}`} inert={ficheOuverte}>
         <div className="wrap head-in">
           <a href="#top" className="head-logo" aria-label={`${BRAND.nom}, accueil`}>
             <Logo size={28} />
@@ -362,6 +380,7 @@ export default function Home() {
               <PhoneIcon size={16} /> <span className="btn-txt">Appeler</span>
             </a>
             <button
+              ref={burgerRef}
               type="button"
               className={`burger${menu ? " ouvert" : ""}`}
               aria-label={menu ? "Fermer le menu" : "Ouvrir le menu"}
@@ -375,25 +394,25 @@ export default function Home() {
         </div>
       </header>
 
-      <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
+      <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} inert={!menu}>
         <nav aria-label="Menu mobile">
           {NAV.map(([h, n], i) => (
-            <a key={h} href={h} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
+            <a key={h} href={h} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
               {n}
             </a>
           ))}
         </nav>
         <div className="menu-cta">
-          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener">
+          <a className="btn btn-moutarde" href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener">
             <WhatsAppIcon size={18} /> Écrire sur WhatsApp
           </a>
-          <a className="btn btn-ghost" tabIndex={menu ? 0 : -1} href={BRAND.telHref}>
+          <a className="btn btn-ghost" href={BRAND.telHref}>
             <PhoneIcon size={16} /> {BRAND.tel}
           </a>
         </div>
       </div>
 
-      <main id="top">
+      <main id="top" inert={ficheOuverte}>
         {/* HERO */}
         <section className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}>
           {bienvenue !== "off" && (
@@ -688,15 +707,15 @@ export default function Home() {
               <form onSubmit={onSubmit} className="form">
                 <label>
                   Nom
-                  <input required value={form.nom} onChange={set("nom")} placeholder="Votre nom" autoComplete="name" />
+                  <input required name="nom" value={form.nom} onChange={set("nom")} placeholder="Votre nom" autoComplete="name" />
                 </label>
                 <label>
                   Téléphone ou e-mail
-                  <input required value={form.contact} onChange={set("contact")} placeholder="00 00 00 00 00  ou  vous@exemple.com" autoComplete="tel" />
+                  <input required name="contact" value={form.contact} onChange={set("contact")} placeholder="00 00 00 00 00  ou  vous@exemple.com" autoComplete="on" />
                 </label>
                 <label>
                   Objet
-                  <select value={form.objet} onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}>
+                  <select name="objet" value={form.objet} onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}>
                     {["Réservation", "À emporter", "Traiteur (devis)", "Autre"].map((o) => (
                       <option key={o}>{o}</option>
                     ))}
@@ -704,7 +723,7 @@ export default function Home() {
                 </label>
                 <label>
                   Message
-                  <textarea required rows={4} value={form.message} onChange={set("message")} placeholder="Une table pour 4 personnes, samedi soir à 20 h…" />
+                  <textarea required name="message" rows={4} value={form.message} onChange={set("message")} placeholder="Une table pour 4 personnes, samedi soir à 20 h…" />
                 </label>
                 <p className="form-hint">
                   Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp avec
@@ -741,7 +760,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-foot">
+      <footer className="site-foot" inert={ficheOuverte}>
         <div className="wrap foot-in">
           <div data-reveal className="reveal">
             <Wordmark />
@@ -787,12 +806,10 @@ export default function Home() {
         return (
           <div
             className="fiche-fond"
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Détail : ${p.n}`}
-            onClick={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
+            role="presentation"
+            onMouseDown={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
           >
-            <div className="fiche">
+            <div className="fiche" role="dialog" aria-modal="true" aria-label={`Détail : ${p.n}`} tabIndex={-1} ref={dialogRef}>
               <button className="fiche-x" onClick={() => setFiche(null)} aria-label="Fermer">×</button>
               <div className="fiche-photo">
                 {p.photo ? (
@@ -819,7 +836,7 @@ export default function Home() {
         );
       })()}
 
-      <a className="wa-fixed" href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp">
+      <a className="wa-fixed" inert={ficheOuverte} href={waLink(`Bonjour ${BRAND.nom},`)} target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp">
         <WhatsAppIcon size={24} />
       </a>
     </>
