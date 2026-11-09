@@ -1353,7 +1353,7 @@ const css = `
   --vert-nuit:#134A24;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
-  --terre:#B25832;
+  --terre:#E56717;
   --bois:#8B5A34;
   --creme:#F6EFE2;
   --texte:#1E2B28;
@@ -1570,8 +1570,8 @@ section[id]{scroll-margin-top:0}
 .cafe-p{width:100%;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .cafe-p{height:100%;min-height:0}
 .cafe-p0{grid-row:1 / span 2}
-.btn-moutarde{background:var(--terre);color:#fff;box-shadow:0 6px 18px rgba(178,88,50,.38)}
-.btn-moutarde:hover{background:#9A4A27;box-shadow:0 12px 28px rgba(178,88,50,.42)}
+.btn-moutarde{background:var(--terre);color:#fff;box-shadow:0 6px 18px rgba(229,103,23,.38)}
+.btn-moutarde:hover{background:#C9560F;box-shadow:0 12px 28px rgba(229,103,23,.42)}
 
 
 /* ---------- galerie : planche-contact sur plaque de glace ----------
