@@ -588,7 +588,7 @@ export default function Home() {
   /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
   useEffect(() => {
     if (pause || fiche !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => setVedette((v) => v + 1), 2800);
+    const t = window.setInterval(() => setVedette((v) => v + 1), 280*4);
     return () => window.clearInterval(t);
   }, [pause, fiche]);
 
@@ -930,15 +930,6 @@ export default function Home() {
               <div className="vit-plus">
                 <a className="btn btn-primary" href="#galerie">Voir plus de plantes</a>
               </div>
-            </div>
-            <div id="paysagisme" className="paysa rv-pop" data-reveal>
-              <div>
-                <strong>Aménagement paysager sur devis</strong>
-                <span>Conception et plantation d'espaces verts : décrivez-nous votre projet.</span>
-              </div>
-              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")} target="_blank" rel="noopener">
-                Demander un devis
-              </a>
             </div>
           </div>
         </section>
