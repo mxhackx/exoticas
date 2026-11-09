@@ -1,17 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Nunito_Sans } from "next/font/google";
+import { Fraunces } from "next/font/google";
+import localFont from "next/font/local";
 
-/* Titres : empattements doux (Fraunces). Texte : sans empattement très lisible
-   (Nunito Sans). Les polices sont téléchargées à la compilation et servies par
-   le site lui-même : aucun appel à Google côté visiteur. */
+/* Titres : empattements doux (Fraunces). Texte : Futura Std, en Book (normal) et
+   Medium (tout ce qui est en gras s'affiche en Medium : pas de faux gras).
+   Fraunces est téléchargée à la compilation, Futura vient de app/fonts : le site
+   ne dépend d'aucun appel à Google côté visiteur. */
 const serif = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
   axes: ["SOFT", "opsz"],
 });
-const sans = Nunito_Sans({
-  subsets: ["latin"],
+const sans = localFont({
+  src: [
+    { path: "./fonts/FuturaStd-Book.woff2", weight: "300 400", style: "normal" },
+    { path: "./fonts/FuturaStd-Medium.woff2", weight: "500 900", style: "normal" },
+  ],
   variable: "--font-sans",
   display: "swap",
 });

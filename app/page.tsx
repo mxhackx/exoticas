@@ -2015,7 +2015,7 @@ section[id]{scroll-margin-top:16px}
 /* ---------- finitions « maquette » ---------- */
 /* section des cartes promo : fond vert très pâle, cartes grises */
 .promos{background:#DCE8D4;padding:clamp(36px,4vw,52px) 0}
-.promo{background:#E2E2DC;border:0}
+.promo{background:#fff;border:0}
 .promo-k{font-family:var(--serif);font-weight:500;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
 .promo-txt strong{font-size:clamp(1.6rem,2.6vw,2.2rem)}
 /* titre de la galerie : filet court dessous, comme la maquette */
