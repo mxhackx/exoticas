@@ -791,10 +791,10 @@ export default function Home() {
               sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
             </p>
             <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-              <a className="btn btn-moutarde btn-fl" href="#contact">
+              <a className="btn btn-moutarde" href="#contact">
                 Demander un devis
               </a>
-              <a className="btn btn-ghost btn-fl" href="#galerie">
+              <a className="btn btn-ghost" href="#galerie">
                 Voir les plantes
               </a>
             </div>
@@ -1450,9 +1450,6 @@ section[id]{scroll-margin-top:0}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.98)}
 .btn:focus-visible{outline:3px solid #F0C469;outline-offset:3px}
-/* flèche qui glisse au survol */
-.btn-fl::before{content:"→";order:2;display:inline-block;transition:transform .3s var(--ease-out)}
-.btn-fl:hover::before{transform:translateX(5px)}
 .btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
 .btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
 .btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(35,127,60,.3)}
