@@ -1815,7 +1815,7 @@ section[id]{scroll-margin-top:16px}
 @keyframes balance{from{transform:rotate(-7deg)}to{transform:rotate(8deg)}}
 
 /* ---------- formulaire : indication WhatsApp ---------- */
-.form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(225,163,45,.14);border-radius:var(--r)}
+.form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:#F0F3EA;border-radius:var(--r)}
 
 .foot-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .foot-col a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
@@ -2082,10 +2082,10 @@ section[id]{scroll-margin-top:16px}
 .ct-form{width:100%;max-width:none;margin:0;padding:clamp(20px,3vw,32px);background:#fff;border:0;border-radius:24px;
   box-shadow:0 14px 40px rgba(20,35,12,.16);backdrop-filter:none;-webkit-backdrop-filter:none;gap:16px}
 .ct-form label{font:700 .88rem/1.2 var(--sans);letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
-.ct-form input,.ct-form select,.ct-form textarea{background:#F3EEDC;border:1.5px dashed #8A8A5A;border-radius:20px;box-shadow:none;
+.ct-form input,.ct-form select,.ct-form textarea{background:#fff;border:1.5px dashed #8A8A5A;border-radius:20px;box-shadow:none;
   padding:12px 18px;font-weight:400}
 .ct-form textarea{border-radius:22px;resize:vertical}
-.ct-form input:hover,.ct-form select:hover,.ct-form textarea:hover{background:#F6F2E4;border-color:#6B6B3E}
+.ct-form input:hover,.ct-form select:hover,.ct-form textarea:hover{background:#fff;border-color:#6B6B3E}
 .ct-form input:focus,.ct-form select:focus,.ct-form textarea:focus{background:#fff;border-style:solid;border-color:var(--vert);
   box-shadow:0 0 0 3px rgba(35,127,60,.2)}
 @media (max-width:900px){.contact-in{grid-template-columns:1fr}.ct-droite{order:-1}}
