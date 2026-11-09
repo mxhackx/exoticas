@@ -1,16 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces } from "next/font/google";
 import localFont from "next/font/local";
 
-/* Titres : empattements doux (Fraunces). Texte : Futura Std, en Book (normal) et
-   Medium (tout ce qui est en gras s'affiche en Medium : pas de faux gras).
-   Fraunces est téléchargée à la compilation, Futura vient de app/fonts : le site
-   ne dépend d'aucun appel à Google côté visiteur. */
-const serif = Fraunces({
-  subsets: ["latin"],
+/* Titres : Chapaza. Texte : Futura Std (Book en normal, Medium pour tout ce qui est
+   en gras). Les deux polices sont des fichiers du projet (app/fonts) : le site ne
+   dépend d'aucun appel à Google. Chapaza n'existe qu'en un seul graisse : la plage
+   « 100 900 » évite tout faux gras du navigateur. */
+const serif = localFont({
+  src: [{ path: "./fonts/Chapaza.woff2", weight: "100 900", style: "normal" }],
   variable: "--font-serif",
   display: "swap",
-  axes: ["SOFT", "opsz"],
 });
 const sans = localFont({
   src: [

@@ -36,17 +36,6 @@ function itinLink(depuis?: { lat: number; lng: number }) {
   return `https://www.google.com/maps/dir/?api=1&${o}${d}`;
 }
 
-/* distance à vol d'oiseau, en km */
-function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
-  const rad = Math.PI / 180;
-  const dLat = (b.lat - a.lat) * rad;
-  const dLng = (b.lng - a.lng) * rad;
-  const m =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
-  return 6371 * 2 * Math.atan2(Math.sqrt(m), Math.sqrt(1 - m));
-}
-
 /* Plantes photographiées à la boutique. Les noms sont repris tels quels des
    fichiers fournis (dossier Drive drive-download-20261028T191730Z-1-001) ; les HEIC
    ont été convertis en JPEG sans recadrage ni retouche : mini/ = 640 px pour la
@@ -239,6 +228,13 @@ const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
      Le lecteur YouTube ne se charge qu'au clic (pas de suivi avant). */
 type Video = { titre: string; src?: string; poster?: string; youtube?: string };
 const VIDEOS: Video[] = [];
+
+/* Plantes mises à la une dans la vitrine (identifiants de PLANTES, par nom de fichier) */
+const VITRINE_SLUGS = [
+  "monstera-albo", "philodendron-pink-princess", "anthurium-hookeri-black", "orchidee-phalaenopsis",
+  "monstera-thai-constellation", "frangipanier", "alocasia-sanderiana-nain-ou-oreille-d-ane", "bonsai-araucaria-cunninghamii",
+];
+const VITRINE = VITRINE_SLUGS.map((sl) => PLANTES.findIndex((p) => p.s === sl)).filter((i) => i >= 0);
 
 /* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
    nom existe plusieurs fois, pour que les liens et les textes alternatifs
@@ -566,20 +562,18 @@ function Plan({ lat, lng }: { lat: number; lng: number }) {
    Page
 ------------------------------------------------------------------ */
 
-type Geo = {
-  etat: "repos" | "demande" | "ok" | "refus" | "absent";
-  lat?: number;
-  lng?: number;
-  km?: number;
-};
-
 export default function Home() {
   const [form, setForm] = useState({ nom: "", contact: "", objet: "Aménagement paysager (devis)", message: "" });
   const [envoye, setEnvoye] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [geo, setGeo] = useState<Geo>({ etat: "repos" });
   const [fiche, setFiche] = useState<number | null>(null);
+  const [vedette, setVedette] = useState(0);
+  const [pause, setPause] = useState(false);
+  const ouvrirPlante = (i: number) => {
+    setFiltre("toutes");
+    setFiche(i);
+  };
   const [filtre, setFiltre] = useState<string>("toutes");
   /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
   const [cols, setCols] = useState(3);
@@ -590,6 +584,13 @@ export default function Home() {
   );
   const affiche = cols * 2 * paliers;
   const affichees = visibles.slice(0, affiche);
+
+  /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
+  useEffect(() => {
+    if (pause || fiche !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setInterval(() => setVedette((v) => (v + 1) % VITRINE.length), 4500);
+    return () => window.clearInterval(t);
+  }, [pause, fiche]);
 
   /* menu mobile : Échap pour fermer, page figée derrière */
   useEffect(() => {
@@ -680,22 +681,6 @@ export default function Home() {
     window.setTimeout(() => setBienvenue("leve"), FIN);
     window.setTimeout(() => setBienvenue("off"), FIN + 800);
   }, []);
-
-  function localiser() {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setGeo({ etat: "absent" });
-      return;
-    }
-    setGeo({ etat: "demande" });
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
-        const { latitude: lat, longitude: lng } = p.coords;
-        setGeo({ etat: "ok", lat, lng, km: distanceKm({ lat, lng }, MAP) });
-      },
-      () => setGeo({ etat: "refus" }),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-    );
-  }
 
   /* révélation au scroll : chaque élément apparaît quand il entre à l'écran.
      Sans IntersectionObserver (très vieux navigateur), tout est montré d'emblée,
@@ -895,25 +880,79 @@ export default function Home() {
           </div>
         </div>
 
-        {/* CARTES PROMO */}
-        <div className="promos">
-          <div className="wrap promos-in">
-            {[
-              { id: "paysagisme", k: "Sur devis", t: "Aménagement paysager", l: "Demander un devis", h: waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager."), img: "/galerie/mini/philodendron-xanadu.jpg", alt: "Philodendron xanadu" },
-              { id: "plantes-rares", k: "Boutique", t: "Plantes rares et locales", l: "Voir les plantes", h: "#galerie", img: "/galerie/mini/monstera-deliciosa.jpg", alt: "Monstera deliciosa" },
-            ].map((c, i) => (
-              <div key={c.id} id={c.id} className="promo rv-pop" data-reveal style={{ "--d": `${i * 120}ms` } as React.CSSProperties}>
-                <div className="promo-txt">
-                  <span className="promo-k">{c.k}</span>
-                  <strong>{c.t}</strong>
-                  <a href={c.h} {...(c.h.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>{c.l}</a>
+        {/* VITRINE : plante à la une + défilé de plantes */}
+        <section id="vitrine" className="vitrine" onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
+          <div className="wrap">
+            <div className="vit-panneau">
+              <div className="vit-tete">
+                <div>
+                  <p className="vit-k">À la boutique</p>
+                  <h2>Le monde des plantes rares</h2>
                 </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.img} width={480} height={640} alt={c.alt} loading="lazy" decoding="async" />
+                <p className="vit-intro">
+                  Découvrez les plantes de la boutique, leurs besoins et leurs
+                  petites habitudes : chacune se choisit et s'entretient avec
+                  nos conseils.
+                </p>
               </div>
-            ))}
+              <p className="vit-label">À la une cette semaine</p>
+              <div className="vit-scene" aria-roledescription="carrousel" aria-label="Plantes à la une">
+                <button
+                  type="button"
+                  className="vit-vedette"
+                  key={`v-${vedette}`}
+                  onClick={() => ouvrirPlante(VITRINE[vedette % VITRINE.length])}
+                  aria-label={`Voir la fiche : ${nomUnique(VITRINE[vedette % VITRINE.length])}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/galerie/pleine/${PLANTES[VITRINE[vedette % VITRINE.length]].s}.jpg`} alt={`${nomUnique(VITRINE[vedette % VITRINE.length])}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} decoding="async" />
+                  <span className="vit-vedette-txt">
+                    <strong>{PLANTES[VITRINE[vedette % VITRINE.length]].n}</strong>
+                    <span>{INFOS[PLANTES[VITRINE[vedette % VITRINE.length]].s]?.[1]}</span>
+                    <em>Voir la fiche →</em>
+                  </span>
+                </button>
+                <div className="vit-piste" key={`p-${vedette}`}>
+                  {[1, 2, 3, 4].map((k) => {
+                    const idx = VITRINE[(vedette + k) % VITRINE.length];
+                    return (
+                      <button
+                        type="button"
+                        className="vit-carte"
+                        key={idx}
+                        style={{ "--k": k } as React.CSSProperties}
+                        onClick={() => ouvrirPlante(idx)}
+                        aria-label={`Voir la fiche : ${nomUnique(idx)}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`/galerie/mini/${PLANTES[idx].s}.jpg`} alt={`${nomUnique(idx)}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} loading="lazy" decoding="async" />
+                        <span>{PLANTES[idx].n}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="vit-commandes">
+                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v - 1 + VITRINE.length) % VITRINE.length)} aria-label="Plante précédente">‹</button>
+                <span className="vit-points" aria-hidden="true">
+                  {VITRINE.map((_, i) => (
+                    <i key={i} className={i === vedette % VITRINE.length ? "on" : ""} />
+                  ))}
+                </span>
+                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v + 1) % VITRINE.length)} aria-label="Plante suivante">›</button>
+              </div>
+            </div>
+            <div id="paysagisme" className="paysa rv-pop" data-reveal>
+              <div>
+                <strong>Aménagement paysager sur devis</strong>
+                <span>Conception et plantation d'espaces verts : décrivez-nous votre projet.</span>
+              </div>
+              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")} target="_blank" rel="noopener">
+                Demander un devis
+              </a>
+            </div>
           </div>
-        </div>
+        </section>
 
         {/* VIDÉOS (affichée seulement s'il y en a) */}
         {VIDEOS.length > 0 && (
@@ -1143,54 +1182,9 @@ export default function Home() {
               <div className="loc-map">
                 <Plan lat={MAP.lat} lng={MAP.lng} />
               </div>
-              <div className="geo">
-                <button
-                  type="button"
-                  className="btn btn-geo"
-                  onClick={localiser}
-                  disabled={geo.etat === "demande"}
-                >
-                  <PinIcon size={17} />
-                  {geo.etat === "demande" ? "Localisation en cours…" : "Itinéraire depuis ma position"}
-                </button>
-                <p className="geo-msg" role="status" key={geo.etat}>
-                  {geo.etat === "ok" && (
-                    <>
-                      Exoticas est à environ{" "}
-                      <strong>{geo.km! < 10 ? geo.km!.toFixed(1).replace(".", ",") : Math.round(geo.km!)} km</strong>{" "}
-                      de toi (à vol d'oiseau).{" "}
-                      <a href={itinLink({ lat: geo.lat!, lng: geo.lng! })} target="_blank" rel="noopener">
-                        Ouvrir l'itinéraire
-                      </a>
-                    </>
-                  )}
-                  {geo.etat === "refus" && (
-                    <>
-                      Position indisponible — autorise l'accès, ou lance l'itinéraire et indique ton
-                      départ.{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        Ouvrir Google Maps
-                      </a>
-                    </>
-                  )}
-                  {geo.etat === "demande" && (
-                    <>Calcul de la distance depuis ta position…</>
-                  )}
-                  {geo.etat === "absent" && (
-                    <>
-                      Ce navigateur ne fournit pas de position.{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        Ouvrir Google Maps
-                      </a>
-                    </>
-                  )}
-                </p>
-              </div>
-
             </div>
 
             <div data-reveal className="reveal rv-right ct-droite" style={{ "--d": "160ms" } as React.CSSProperties}>
-              <span className="ct-pastille">Contact</span>
               <h2 className="ct-grand">Contactez-nous !</h2>
               <form onSubmit={onSubmit} className="form ct-form">
                 <label>
@@ -1382,7 +1376,7 @@ body{
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 h1,h2,h3{margin:0 0 .55rem;font-weight:550;text-wrap:balance}
-h1,h2,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500;font-variation-settings:"SOFT" 100}
+h1,h2,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:400}
 h1{font-size:clamp(2.35rem,4.6vw,3.45rem);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(1.65rem,2.6vw,2.15rem);line-height:1.1;letter-spacing:-.03em}
 h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
@@ -1390,7 +1384,6 @@ p{margin:0 0 1rem;text-wrap:pretty}
 a{color:inherit}
 img{display:block;max-width:100%}
 .wrap{max-width:1240px;margin:0 auto;padding:0 20px}
-.wrap.head-in{max-width:1080px}
 .muted{color:var(--muted)}
 a[href^="tel"]{font-variant-numeric:tabular-nums}
 /* Chaque section occupe au moins toute la hauteur de l'écran (svh : tient compte
@@ -1969,16 +1962,6 @@ section[id]{scroll-margin-top:16px}
 
 
 /* ---------- page « boutique de plantes » : cartes promo, galerie, duo, avis ---------- */
-.promos{background:var(--creme);padding:clamp(40px,5vw,64px) 0}
-.promos-in{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.promo{display:flex;align-items:stretch;justify-content:space-between;gap:12px;min-height:190px;overflow:hidden;
-  border-radius:14px;background:#DDE6D4;border:1px solid rgba(35,127,60,.12)}
-.promo-txt{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:22px 0 22px 26px;min-width:0}
-.promo-k{font:700 .72rem/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.promo-txt strong{font:500 clamp(1.3rem,2.2vw,1.8rem)/1.15 var(--serif);color:var(--vert-nuit)}
-.promo-txt a{align-self:flex-start;margin-top:6px;font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--terre);text-decoration:none;border-bottom:2px solid var(--terre)}
-.promo img{width:42%;flex:none;height:auto;object-fit:cover;object-position:50% 60%}
 .galerie .eyebrow,.galerie h2,.galerie .lede{text-align:center}
 .galerie .lede{margin-left:auto;margin-right:auto}
 .galerie .filtres{justify-content:center}
@@ -2005,8 +1988,7 @@ section[id]{scroll-margin-top:16px}
 .foot-pages{display:grid;gap:6px;align-content:start;justify-items:start}
 .foot-pages strong{margin-bottom:4px}
 @media (max-width:900px){
-  .promos-in{grid-template-columns:1fr}
-  .duo-in{grid-template-columns:1fr}
+    .duo-in{grid-template-columns:1fr}
   .foot-in{grid-template-columns:1fr}
   .foot-pages{justify-items:center}
 }
@@ -2014,10 +1996,6 @@ section[id]{scroll-margin-top:16px}
 
 /* ---------- finitions « maquette » ---------- */
 /* section des cartes promo : fond vert très pâle, cartes grises */
-.promos{background:#DCE8D4;padding:clamp(36px,4vw,52px) 0}
-.promo{background:#fff;border:0}
-.promo-k{font-family:var(--serif);font-weight:500;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
-.promo-txt strong{font-size:clamp(1.6rem,2.6vw,2.2rem)}
 /* titre de la galerie : filet court dessous, comme la maquette */
 .galerie h2::after{content:"";display:block;width:72px;height:2px;margin:12px auto 0;background:var(--vert)}
 .galerie .eyebrow{display:none}
@@ -2079,10 +2057,9 @@ section[id]{scroll-margin-top:16px}
 
 /* ---------- harmonisation : mêmes rayons, mêmes ombres, mêmes titres, fonds alternés ---------- */
 :root{--r-carte:16px;--ombre-carte:0 10px 28px rgba(20,35,12,.10)}
-.promo,.card-img,.duo-in,.avis,.conseil,.loc-map,.loc-map .map,.carte{border-radius:var(--r-carte)}
+.card-img,.duo-in,.avis,.conseil,.loc-map,.loc-map .map,.carte{border-radius:var(--r-carte)}
 .ct-form{border-radius:20px}
-.promo,.avis,.duo-in,.loc-map{box-shadow:var(--ombre-carte)}
-.promo{border:0}
+.avis,.duo-in,.loc-map{box-shadow:var(--ombre-carte)}
 /* titres de section : même taille, même filet court sous les titres centrés */
 .galerie h2,.conseils h2,.avisband h2{font-size:clamp(1.8rem,3vw,2.4rem)}
 .conseils h2::after,.avisband h2::after{content:"";display:block;width:72px;height:2px;margin:12px auto 0;background:var(--vert)}
@@ -2100,6 +2077,56 @@ section[id]{scroll-margin-top:16px}
 .btn-wa:hover{background:var(--vert);color:#fff;border-color:var(--vert)}
 .btn-geo{background:#fff;color:var(--vert);border:1.5px solid var(--vert);box-shadow:none}
 .btn-geo:hover:not(:disabled){background:var(--vert);color:#fff}
+
+/* ---------- vitrine de plantes (plante à la une + défilé) ---------- */
+.vitrine{background:var(--creme);padding:clamp(40px,5vw,64px) 0}
+.vit-panneau{background:#DDE8E1;border-radius:26px;padding:clamp(22px,3.4vw,44px);overflow:hidden}
+.vit-tete{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(20px,4vw,56px);align-items:end}
+.vit-k{margin:0 0 6px;font-family:var(--serif);font-size:1.35rem;color:var(--vert)}
+.vit-tete h2{margin:0;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.04;color:var(--vert-nuit)}
+.vit-intro{margin:0;color:#4B5A52;max-width:40ch}
+.vit-label{margin:26px 0 12px;font-weight:700;font-size:.9rem;color:var(--vert-nuit)}
+.vit-scene{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,2.6fr);gap:clamp(14px,2vw,26px);align-items:end}
+.vit-vedette,.vit-carte{font:inherit;color:inherit;cursor:pointer;border:0;padding:0;text-align:left}
+.vit-vedette{position:relative;display:block;border-radius:20px;overflow:hidden;background:#EAF1EC;
+  box-shadow:0 18px 40px rgba(20,35,12,.18);aspect-ratio:3/4;animation:vitEntree .7s var(--ease-out) both}
+.vit-vedette img{width:100%;height:100%;object-fit:cover;display:block;animation:vitZoom 5s ease-out both}
+.vit-vedette-txt{position:absolute;inset:auto 0 0 0;display:grid;gap:4px;padding:46px 16px 16px;
+  background:linear-gradient(to top,rgba(11,36,23,.78),rgba(11,36,23,0));color:#fff}
+.vit-vedette-txt strong{font:400 1.3rem/1.15 var(--serif)}
+.vit-vedette-txt span{font-size:.85rem;line-height:1.4;color:rgba(255,255,255,.88);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.vit-vedette-txt em{font-style:normal;font-weight:700;font-size:.82rem;color:#F6C26B}
+.vit-piste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.6vw,20px)}
+.vit-carte{display:grid;gap:10px;justify-items:start;background:#EAF1EC;border-radius:16px;padding:10px 10px 14px;
+  box-shadow:0 10px 26px rgba(20,35,12,.10);animation:vitGlisse .65s var(--ease-out) both;animation-delay:calc(var(--k) * 70ms);
+  transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out)}
+.vit-carte:hover,.vit-carte:focus-visible{transform:translateY(-6px);box-shadow:0 18px 36px rgba(20,35,12,.2)}
+.vit-carte img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:11px;display:block}
+.vit-carte span{font:700 .88rem/1.25 var(--sans);color:var(--vert-nuit);padding:0 4px}
+.vit-commandes{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
+.vit-fleche{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--vert);
+  background:#fff;color:var(--vert);font-size:1.4rem;line-height:1;cursor:pointer;transition:background .25s,color .25s}
+.vit-fleche:hover{background:var(--vert);color:#fff}
+.vit-points{display:flex;gap:7px}
+.vit-points i{width:8px;height:8px;border-radius:50%;background:#B9CBBF;transition:width .35s var(--ease-out),background .3s}
+.vit-points i.on{width:24px;border-radius:99px;background:var(--vert)}
+@keyframes vitEntree{from{opacity:0;transform:translateX(-26px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes vitGlisse{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+@keyframes vitZoom{from{transform:scale(1.12)}to{transform:scale(1)}}
+.paysa{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:20px 26px;
+  background:#fff;border-radius:var(--r-carte,16px);box-shadow:var(--ombre-carte,0 10px 28px rgba(20,35,12,.1))}
+.paysa strong{display:block;font:400 1.4rem/1.2 var(--serif);color:var(--vert-nuit)}
+.paysa span{color:var(--muted);font-size:.94rem}
+@media (max-width:900px){
+  .vit-tete{grid-template-columns:1fr}
+  .vit-scene{grid-template-columns:1fr}
+  .vit-vedette{aspect-ratio:4/3}
+  .vit-piste{grid-template-columns:repeat(4,64%);overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
+    margin:0 calc(-1 * clamp(22px,3.4vw,44px));padding:4px clamp(22px,3.4vw,44px) 14px;scrollbar-width:none}
+  .vit-piste::-webkit-scrollbar{display:none}
+  .vit-carte{scroll-snap-align:start}
+  .paysa{flex-direction:column;align-items:flex-start}
+}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
