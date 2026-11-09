@@ -1416,11 +1416,13 @@ a[href^="tel"]{font-variant-numeric:tabular-nums}
    des barres d'adresse mobiles), en-tête fixe compris : le contenu est centré
    dans la zone visible sous l'en-tête. Une section plus longue que l'écran
    (galerie, contact) grandit simplement. */
-main>section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
-main>section.section{padding-top:calc(76px + clamp(20px,3.5vw,48px));padding-bottom:clamp(40px,6vw,80px)}
+/* Design « boutique » : seul le hero occupe tout l'écran ; les autres sections
+   ont une hauteur naturelle, avec des marges régulières entre elles. */
+main>section.hero{min-height:100vh;min-height:100svh}
+main>section.section{padding-top:clamp(44px,5vw,72px);padding-bottom:clamp(44px,5vw,72px)}
 main{overflow-x:clip}
 main>section>.wrap{width:100%}
-section[id]{scroll-margin-top:0}
+section[id]{scroll-margin-top:16px}
 
 
 /* ---------- header ---------- */
@@ -2033,7 +2035,7 @@ section[id]{scroll-margin-top:0}
 
 /* ---------- finitions « maquette » ---------- */
 /* section des cartes promo : fond vert très pâle, cartes grises */
-.promos{background:#DCE8D4}
+.promos{background:#DCE8D4;padding:clamp(36px,4vw,52px) 0}
 .promo{background:#E2E2DC;border:0}
 .promo-k{font-family:var(--serif);font-weight:500;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
 .promo-txt strong{font-size:clamp(1.6rem,2.6vw,2.2rem)}
