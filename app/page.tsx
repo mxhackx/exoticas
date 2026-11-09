@@ -827,11 +827,6 @@ export default function Home() {
                 espace de coworking, dans un décor de murs vert profond, de bois
                 brut et d'étagères de plantes.
               </p>
-              <ul className="puces">
-                {["Espaces verts sur mesure", "Terrasse café conviviale", "Coworking", "Plantes rares et locales"].map((t, i) => (
-                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
-                ))}
-              </ul>
             </div>
             <div className="lieu-photos">
               {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
@@ -1819,8 +1814,11 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
 /* ---------- texture : grandes feuilles en filigrane (fournie), sur le hero, l'en-tête, le café et l'aménagement paysager ---------- */
-.hero,.cafe,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
-.site-head::before{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+.cafe,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+/* header et hero partagent UNE seule texture : même taille, même point d'ancrage
+   (haut de la page), donc le motif se prolonge sans coupure sous le header */
+:root{--tex-w:max(100vw,calc(140svh * .797))}
+.hero,.site-head::before{background-image:url(/texture-feuilles.png);background-size:var(--tex-w) auto;background-position:center top;background-repeat:no-repeat}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
