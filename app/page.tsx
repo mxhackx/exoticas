@@ -565,7 +565,7 @@ export default function Home() {
   const [fiche, setFiche] = useState<number | null>(null);
   const [filtre, setFiltre] = useState<string>("toutes");
   /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
-  const [cols, setCols] = useState(4);
+  const [cols, setCols] = useState(3);
   const [paliers, setPaliers] = useState(1);
   /* indices (dans PLANTES) des plantes du filtre ; « affichees » = celles montrées */
   const visibles = PLANTES.map((p, i) => i).filter(
@@ -589,7 +589,7 @@ export default function Home() {
 
   /* nombre de colonnes de la galerie, aux mêmes seuils que le CSS */
   useEffect(() => {
-    const calc = () => setCols(window.innerWidth > 900 ? 4 : window.innerWidth > 620 ? 3 : 2);
+    const calc = () => setCols(window.innerWidth > 620 ? 3 : 2);
     calc();
     window.addEventListener("resize", calc);
     return () => window.removeEventListener("resize", calc);
@@ -791,7 +791,6 @@ export default function Home() {
       <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
         <nav aria-label="Menu mobile">
           {[
-            ["#lieu", "Le lieu"],
             ["#cafe", "Café"],
             ["#coworking", "Coworking"],
             ["#paysagisme", "Paysagisme"],
@@ -879,27 +878,25 @@ export default function Home() {
           </div>
         </div>
 
-        {/* LE LIEU */}
-        <section id="lieu" className="section">
-          <div className="wrap lieu-in">
-            <div data-reveal className="reveal rv-left">
-              <p className="eyebrow">Le lieu</p>
-              <h2>Un lieu unique où la nature rencontre l'élégance</h2>
-              <p className="lede">
-                Exoticas, votre partenaire nature et design : une boutique de
-                plantes rares et locales, une terrasse café conviviale et un
-                espace de coworking, dans un décor de murs vert profond, de bois
-                brut et d'étagères de plantes.
-              </p>
-            </div>
-            <div className="lieu-photos">
-              {[LIEU.arbre, LIEU.tasses, LIEU.etageres].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`lieu-p lieu-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
-            </div>
+        {/* CARTES PROMO */}
+        <div className="promos">
+          <div className="wrap promos-in">
+            {[
+              { id: "paysagisme", k: "Sur devis", t: "Aménagement paysager", l: "Demander un devis", h: waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager."), img: "/galerie/mini/philodendron-xanadu.jpg", alt: "Philodendron xanadu" },
+              { id: "plantes-rares", k: "Boutique", t: "Plantes rares et locales", l: "Voir les plantes", h: "#galerie", img: "/galerie/mini/monstera-deliciosa.jpg", alt: "Monstera deliciosa" },
+            ].map((c, i) => (
+              <div key={c.id} id={c.id} className="promo rv-pop" data-reveal style={{ "--d": `${i * 120}ms` } as React.CSSProperties}>
+                <div className="promo-txt">
+                  <span className="promo-k">{c.k}</span>
+                  <strong>{c.t}</strong>
+                  <a href={c.h} {...(c.h.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>{c.l}</a>
+                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.img} width={480} height={640} alt={c.alt} loading="lazy" decoding="async" />
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
 
         {/* VIDÉOS (affichée seulement s'il y en a) */}
         {VIDEOS.length > 0 && (
@@ -918,131 +915,11 @@ export default function Home() {
           </section>
         )}
 
-        {/* LE CAFÉ */}
-        <section id="cafe" className="section cafe">
-          <div className="wrap cafe-in">
-            <div className="cafe-photos">
-              {[LIEU.brunch, LIEU.crepes, LIEU.jus].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 140}ms` } as React.CSSProperties} className={`cafe-p cafe-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
-            </div>
-            <div data-reveal className="rv-right" style={{ "--d": "120ms" } as React.CSSProperties}>
-              <p className="eyebrow eyebrow-clair">Le café</p>
-              <h2>Brunch, douceurs et boissons fraîches</h2>
-              <p className="lede">
-                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et café :
-                à savourer dans un décor de plantes et de bois brut.
-              </p>
-              <div className="carte" data-reveal style={{ "--d": "240ms" } as React.CSSProperties}>
-                <h3>La carte</h3>
-                {CARTE.map((g) => (
-                  <div key={g.t} className="carte-groupe">
-                    <h4>{g.t}</h4>
-                    <ul>
-                      {g.items.map((m) => (
-                        <li key={m}>{m}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-                <p className="carte-note">Carte et prix sur place.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* COWORKING */}
-        <section id="coworking" className="section cow">
-          <div className="wrap lieu-in">
-            <div data-reveal className="reveal rv-left">
-              <p className="eyebrow">Coworking</p>
-              <h2>Travaillez entouré de verdure</h2>
-              <p className="lede">
-                Exoticas met un espace de travail à disposition dans la
-                boutique-jardin, avec le coin café à deux pas. Un cadre
-                végétal et apaisant pour avancer sur vos dossiers, recevoir un
-                client ou changer d'air.
-              </p>
-              <div className="cow-cards">
-                {[
-                  { t: "Cadre végétal", d: "Murs verts, bois brut et plantes" },
-                  { t: "Café sur place", d: "Brunch, jus frais et café" },
-                  { t: "Stationnement gratuit", d: "Parking devant la boutique" },
-                  { t: "Facile à trouver", d: "À 1 min de l'échangeur Ganhi" },
-                ].map((c, i) => (
-                  <div key={c.t} className="cow-card rv-pop" data-reveal style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>
-                    <strong>{c.t}</strong>
-                    <span>{c.d}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="cow-note">Tarifs, horaires et réservation d'un poste : demandez-nous.</p>
-              <a
-                className="btn btn-moutarde"
-                href={waLink("Bonjour Exoticas, je voudrais des informations sur le coworking (tarifs, horaires).")}
-                target="_blank"
-                rel="noopener"
-              >
-                <WhatsAppIcon size={18} /> Se renseigner sur le coworking
-              </a>
-            </div>
-            <div className="cow-photos">
-              {[LIEU.etageres, LIEU.tasses].map((im, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={im.src} data-reveal style={{ "--d": `${i * 160}ms` } as React.CSSProperties} className={`cow-p cow-p${i} rv-photo`} src={im.src} width={im.w} height={im.h} alt={im.alt} loading="lazy" decoding="async" />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* AMÉNAGEMENT PAYSAGER */}
-        <section id="paysagisme" className="section pays">
-          <Feuille className="feuille-p1" />
-          <div className="wrap lieu-in">
-            <div data-reveal className="reveal rv-left">
-              <p className="eyebrow eyebrow-clair">Aménagement paysager</p>
-              <h2>Un jardin sur mesure, sur devis</h2>
-              <p className="lede">
-                Terrasse, jardin, cour ou espace d'accueil : Exoticas conçoit
-                et plante des espaces verts à Cotonou. Décrivez-nous votre
-                projet, nous revenons vers vous avec un devis.
-              </p>
-              <ul className="puces">
-                {["Terrasses et jardins", "Cours et intérieurs", "Commerces et bureaux"].map((t, i) => (
-                  <li key={t} data-reveal className="rv-pop" style={{ "--d": `${200 + i * 90}ms` } as React.CSSProperties}>{t}</li>
-                ))}
-              </ul>
-              <div className="pays-cta">
-                <a
-                  className="btn btn-moutarde"
-                  href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <WhatsAppIcon size={18} /> Demander un devis
-                </a>
-                <a className="btn btn-ghost" href={BRAND.telHref}>
-                  <PhoneIcon size={16} /> {BRAND.tel}
-                </a>
-              </div>
-            </div>
-            <div className="pays-visuel" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
-              {REALISATIONS.length > 0 ? (
-                REALISATIONS.map((r) => <AvantApres key={r.avant} {...r} />)
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
-              )}
-            </div>
-          </div>
-        </section>
-
         {/* GALERIE */}
-        <section id="galerie" className="section">
+        <section id="galerie" className="section galerie">
           <div className="wrap">
             <p data-reveal className="eyebrow reveal">La boutique</p>
-            <h2 data-reveal className="reveal">Galerie de plantes rares et d'intérieur</h2>
+            <h2 data-reveal className="reveal">Nos plantes</h2>
             <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
               {visibles.length} plantes de la boutique, photographiées ici. Touchez une
               carte pour voir sa fiche.
@@ -1164,8 +1041,33 @@ export default function Home() {
           </div>
         </section>
 
+        {/* IMAGE + TEXTE : café et coworking */}
+        <section id="cafe" className="section duo">
+          <span id="coworking" aria-hidden="true" />
+          <div className="wrap">
+           <div className="duo-in">
+            <div className="duo-photo rv-photo" data-reveal>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={LIEU.brunch.src} width={LIEU.brunch.w} height={LIEU.brunch.h} alt={LIEU.brunch.alt} loading="lazy" decoding="async" />
+            </div>
+            <div className="duo-carte rv-right" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+              <h2>Terrasse café et coworking, au milieu des plantes</h2>
+              <p>
+                Brunch, gaufres, crêpes, sandwichs grillés, jus frais et café, à
+                savourer dans un décor de plantes et de bois brut. Un espace de
+                coworking est aussi à votre disposition dans la boutique-jardin.
+              </p>
+              <p className="duo-note">Carte, tarifs et horaires : demandez-nous.</p>
+              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je voudrais des informations sur le café et le coworking.")} target="_blank" rel="noopener">
+                <WhatsAppIcon size={18} /> Se renseigner
+              </a>
+            </div>
+           </div>
+          </div>
+        </section>
+
         {/* AVIS */}
-        <section id="avis" className="section">
+        <section id="avis" className="section avisband">
           <div className="wrap">
             <p data-reveal className="eyebrow reveal">Avis</p>
             <h2 data-reveal className="reveal">Avis clients</h2>
@@ -1352,39 +1254,41 @@ export default function Home() {
 
       <footer className="site-foot">
         <div className="wrap foot-in">
-          <div data-reveal className="reveal">
-            <Wordmark />
-          </div>
-          <div data-reveal className="reveal foot-col" style={{ "--d": "90ms" } as React.CSSProperties}>
-            <p>
-              <strong>Téléphone</strong>
-              <a href={BRAND.telHref}>{BRAND.tel}</a>
-            </p>
-            <p>
-              <strong>Courriel</strong>
-              <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
-            </p>
-            <p>
-              <strong>Réseaux</strong>
-              <span className="foot-pills">
-                <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-pill foot-pill-insta">
-                  <InstagramIcon size={18} /> Instagram
-                </a>
-                <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-pill">
-                  <PinIcon size={18} /> Google Maps
-                </a>
-                <a href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener me" className="foot-pill">
-                  <WhatsAppIcon size={18} /> WhatsApp
-                </a>
-              </span>
-            </p>
-          </div>
-          <div data-reveal className="reveal foot-col" style={{ "--d": "180ms" } as React.CSSProperties}>
+          <div data-reveal className="reveal foot-col">
             <p>
               <strong>Adresse</strong>
               {BRAND.adresseCourte}
               <span className="muted">{BRAND.adresseLongue}</span>
             </p>
+            <p>
+              <strong>Contact</strong>
+              <a href={BRAND.telHref}>{BRAND.tel}</a>
+              <br />
+              <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
+            </p>
+          </div>
+          <div data-reveal className="reveal foot-marque" style={{ "--d": "90ms" } as React.CSSProperties}>
+            <Wordmark />
+            <p>Un lieu unique où la nature rencontre l'élégance : espaces verts sur mesure, terrasse café et coworking à Tokpa-hoho, Cotonou.</p>
+            <span className="foot-pills">
+              <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-pill foot-pill-insta">
+                <InstagramIcon size={18} /> Instagram
+              </a>
+              <a href={BRAND.fiche} target="_blank" rel="noopener me" className="foot-pill">
+                <PinIcon size={18} /> Google Maps
+              </a>
+              <a href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener me" className="foot-pill">
+                <WhatsAppIcon size={18} /> WhatsApp
+              </a>
+            </span>
+          </div>
+          <div data-reveal className="reveal foot-col foot-pages" style={{ "--d": "180ms" } as React.CSSProperties}>
+            <strong>Pages</strong>
+            <a href="#galerie">Plantes</a>
+            <a href="#cafe">Café et coworking</a>
+            <a href="#paysagisme">Paysagisme</a>
+            <a href="#avis">Avis</a>
+            <a href="#contact">Contact</a>
           </div>
         </div>
         <div className="wrap foot-bottom">
@@ -1459,9 +1363,9 @@ export default function Home() {
 const css = `
 :root{
   /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
-  --vert:#17432C;
-  --vert-fonce:#103321;
-  --vert-nuit:#0B2417;
+  --vert:#237F3C;
+  --vert-fonce:#1B6430;
+  --vert-nuit:#134A24;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#E56717;
@@ -1555,8 +1459,8 @@ section[id]{scroll-margin-top:0}
 .btn:focus-visible{outline:3px solid #F0C469;outline-offset:3px}
 .btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
 .btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
-.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(23,67,44,.3)}
-.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(23,67,44,.35)}
+.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(35,127,60,.3)}
+.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(35,127,60,.35)}
 .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
 .btn-ghost:hover{background:#fff;color:var(--vert);border-color:#fff}
 .btn-sm{padding:9px 18px;min-height:40px;font-size:.9rem}
@@ -1688,7 +1592,7 @@ section[id]{scroll-margin-top:0}
 /* ---------- galerie : planche-contact sur plaque de glace ----------
    La photo garde son ratio 3:4 (aucun recadrage) et ne recoit ni filtre ni nappe :
    c'est la plaque autour qui est translucide, éclairée par un liseré intérieur. */
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
 .card{display:flex;flex-direction:column;text-decoration:none;color:inherit;overflow:hidden;
   background:#fff;border:1px solid var(--line);border-radius:14px;
   box-shadow:0 1px 2px rgba(20,35,12,.05),0 10px 26px rgba(20,35,12,.08);
@@ -1696,7 +1600,7 @@ section[id]{scroll-margin-top:0}
 .card:hover{transform:translateY(-6px)!important;
   box-shadow:0 2px 4px rgba(20,35,12,.06),0 22px 44px rgba(20,35,12,.18)}
 .card:focus-visible{outline:2px solid var(--moutarde);outline-offset:3px}
-.card-img{position:relative;display:block;overflow:hidden;aspect-ratio:3/4;background:var(--creme)}
+.card-img{position:relative;display:block;overflow:hidden;aspect-ratio:1/1;background:var(--creme)}
 .card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease-out)}
 .card:hover .card-img img{transform:scale(1.07)}
 .card-voir{position:absolute;left:50%;bottom:14px;z-index:1;transform:translate(-50%,12px);opacity:0;
@@ -2080,6 +1984,50 @@ section[id]{scroll-margin-top:0}
   .conseils-grille{grid-template-columns:1fr}
   .pastille-ronde{width:72px;height:72px;left:0}
   .arche{width:min(100%,250px)}
+}
+
+
+/* ---------- page « boutique de plantes » : cartes promo, galerie, duo, avis ---------- */
+.promos{background:var(--creme);padding:clamp(40px,5vw,64px) 0}
+.promos-in{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.promo{display:flex;align-items:stretch;justify-content:space-between;gap:12px;min-height:190px;overflow:hidden;
+  border-radius:14px;background:#DDE6D4;border:1px solid rgba(35,127,60,.12)}
+.promo-txt{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:22px 0 22px 26px;min-width:0}
+.promo-k{font:700 .72rem/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.promo-txt strong{font:500 clamp(1.3rem,2.2vw,1.8rem)/1.15 var(--serif);color:var(--vert-nuit)}
+.promo-txt a{align-self:flex-start;margin-top:6px;font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--terre);text-decoration:none;border-bottom:2px solid var(--terre)}
+.promo img{width:42%;flex:none;height:auto;object-fit:cover;object-position:50% 60%}
+.galerie .eyebrow,.galerie h2,.galerie .lede{text-align:center}
+.galerie .lede{margin-left:auto;margin-right:auto}
+.galerie .filtres{justify-content:center}
+.avisband{background:#DDE0D7}
+.avisband .eyebrow,.avisband h2,.avisband .lede{text-align:center}
+.avisband .lede{margin-left:auto;margin-right:auto}
+.duo{background:var(--creme)}
+.duo-in{display:grid;grid-template-columns:1.1fr 1fr;gap:0;align-items:stretch;border-radius:16px;overflow:hidden;background:#E3E5DC}
+.duo-photo{position:relative;min-height:380px}
+.duo-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.duo-carte{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;padding:clamp(24px,4vw,48px)}
+.duo-carte h2{margin:0;font-size:clamp(1.4rem,2.4vw,2rem)}
+.duo-carte p{margin:0;color:var(--muted)}
+.duo-note{font-size:.9rem}
+.conseil{background:transparent;border:0;padding:10px 18px}
+.conseils .eyebrow,.conseils h2,.conseils .lede{text-align:center}
+.conseils .lede{margin-left:auto;margin-right:auto}
+.site-foot a.foot-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.35);font-size:.92rem;text-decoration:none}
+.site-foot a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
+.site-foot a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
+.foot-in{grid-template-columns:1.1fr 1.3fr .7fr}
+.foot-marque{display:grid;gap:12px;justify-items:center;text-align:center}
+.foot-marque p{margin:0;max-width:34ch;color:rgba(255,255,255,.8);font-size:.95rem}
+.foot-pages{display:grid;gap:6px;align-content:start;justify-items:start}
+.foot-pages strong{margin-bottom:4px}
+@media (max-width:900px){
+  .promos-in{grid-template-columns:1fr}
+  .duo-in{grid-template-columns:1fr}
+  .foot-in{grid-template-columns:1fr}
+  .foot-pages{justify-items:center}
 }
 
 /* ---------- accessibilité : mouvement réduit ---------- */
