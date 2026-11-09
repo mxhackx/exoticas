@@ -772,8 +772,6 @@ export default function Home() {
           style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
         >
           <div className="hero-bg" aria-hidden="true" />
-          <Feuille className="feuille-h1" />
-          <Feuille className="feuille-h2" />
           {bienvenue !== "off" && (
             <div
               className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
@@ -816,26 +814,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* ACTIVITÉS */}
-        <nav className="bande" aria-label="Nos activités">
-          <div className="bande-piste">
-            {[0, 1].map((copie) => (
-              <div className="bande-groupe" key={copie} aria-hidden={copie === 1 ? true : undefined}>
-                {[
-                  { h: "#paysagisme", n: "Espaces verts sur mesure" },
-                  { h: "#cafe", n: "Terrasse café conviviale" },
-                  { h: "#coworking", n: "Coworking" },
-                  { h: "#galerie", n: "Plantes rares et locales" },
-                ].map((a) => (
-                  <a key={a.h} href={a.h} tabIndex={copie === 1 ? -1 : undefined}>
-                    {a.n}
-                  </a>
-                ))}
-              </div>
-            ))}
-          </div>
-        </nav>
 
         {/* LE LIEU */}
         <section id="lieu" className="section">
@@ -1770,16 +1748,6 @@ section[id]{scroll-margin-top:0}
 .eyebrow{margin:0 0 12px;font:700 .74rem/1.2 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--terre)}
 .eyebrow-clair{color:#F0C469}
 
-/* ---------- bande des activités ---------- */
-/* bande qui défile : le groupe est écrit deux fois, la piste glisse d'une moitié puis boucle */
-.bande{background:var(--vert-fonce);color:#fff;overflow:hidden;padding:16px 0}
-.bande-piste{display:flex;width:max-content;animation:defile 30s linear infinite}
-.bande:hover .bande-piste,.bande:focus-within .bande-piste{animation-play-state:paused}
-.bande-groupe{display:flex;flex:none}
-.bande a{display:inline-flex;align-items:center;text-decoration:none;font-size:1rem;font-weight:600;white-space:nowrap;padding:6px 0}
-.bande a::after{content:"";display:inline-block;width:7px;height:7px;margin:0 34px;border-radius:50%;background:#F0C469}
-.bande a:hover{text-decoration:underline;text-underline-offset:6px}
-@keyframes defile{to{transform:translateX(-50%)}}
 
 /* ---------- coworking : points forts ---------- */
 .cow-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 0}
@@ -1839,8 +1807,6 @@ section[id]{scroll-margin-top:0}
 .feuille{position:absolute;z-index:0;pointer-events:none;color:#fff;opacity:.09;
   animation:balance 9s ease-in-out infinite alternate;
   translate:0 calc(var(--sy,0) * -.04px)}
-.feuille-h1{width:150px;right:6%;top:14%;transform-origin:50% 100%}
-.feuille-h2{width:90px;right:34%;bottom:9%;animation-duration:12s;animation-delay:-4s;transform-origin:50% 100%}
 .feuille-p1{width:200px;left:-40px;bottom:-30px;transform-origin:50% 100%;opacity:.07}
 @keyframes balance{from{transform:rotate(-7deg)}to{transform:rotate(8deg)}}
 
@@ -1854,7 +1820,7 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
 /* ---------- texture : grandes feuilles en filigrane (fournie), sur les fonds verts (sauf l'en-tête) ---------- */
-.hero,.cafe,.pays,.bande,.site-foot{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+.cafe,.pays,.site-foot{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
@@ -1951,9 +1917,6 @@ section[id]{scroll-margin-top:0}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
-  .bande-piste{width:auto;justify-content:center;flex-wrap:wrap}
-  .bande-groupe[aria-hidden]{display:none}
-  .bande-groupe{flex-wrap:wrap;justify-content:center;row-gap:6px}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .js [data-reveal]{opacity:1;transform:none;filter:none;clip-path:none}
