@@ -588,7 +588,7 @@ export default function Home() {
   /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
   useEffect(() => {
     if (pause || fiche !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => setVedette((v) => v + 1), 4500);
+    const t = window.setInterval(() => setVedette((v) => v + 1), 2800);
     return () => window.clearInterval(t);
   }, [pause, fiche]);
 
@@ -927,15 +927,6 @@ export default function Home() {
                   );
                 })}
               </div>
-              <div className="vit-commandes">
-                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => v - 1)} aria-label="Plante précédente">‹</button>
-                <span className="vit-points" aria-hidden="true">
-                  {VITRINE.map((_, i) => (
-                    <i key={i} className={i === (((vedette % VITRINE.length) + VITRINE.length) % VITRINE.length) ? "on" : ""} />
-                  ))}
-                </span>
-                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => v + 1)} aria-label="Plante suivante">›</button>
-              </div>
               <div className="vit-plus">
                 <a className="btn btn-primary" href="#galerie">Voir plus de plantes</a>
               </div>
@@ -1047,29 +1038,6 @@ export default function Home() {
             )}
           </div>
         </section>
-
-        {/* BANDEAU : une bande verte, deux photos rondes, titre, texte et bouton */}
-        <div className="bandeau">
-          <div className="wrap bandeau-in">
-            <div className="bandeau-ronds">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="rond rond-a" src="/galerie/mini/anthurium.jpg" width={480} height={640} alt="Anthurium" loading="lazy" decoding="async" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="rond rond-b" src="/galerie/mini/monstera-adansonii.jpg" width={480} height={640} alt="Monstera adansonii" loading="lazy" decoding="async" />
-            </div>
-            <h2 data-reveal className="reveal">Des plantes pour une vie plus verte</h2>
-            <div className="bandeau-txt" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
-              <p>
-                Plantes rares, plantes d'intérieur, arbres tropicaux : choisissez
-                en boutique ou écrivez-nous, nous vous conseillons la plante qui
-                convient à votre espace.
-              </p>
-              <a className="btn btn-moutarde btn-sm" href={waLink("Bonjour Exoticas, je cherche une plante pour mon espace.")} target="_blank" rel="noopener">
-                Demander conseil
-              </a>
-            </div>
-          </div>
-        </div>
 
         {/* CONSEILS */}
         <section id="conseils" className="section conseils">
@@ -1201,7 +1169,7 @@ export default function Home() {
                     ))}
                   </select>
                 </label>
-                <label>
+                <label className="ct-msg">
                   Message
                   <textarea required name="message" rows={5} value={form.message} onChange={set("message")} placeholder="Je souhaite aménager une terrasse de 40 m²…" />
                 </label>
@@ -1337,8 +1305,8 @@ const css = `
 :root{
   /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
   --vert:#237F3C;
-  --vert-fonce:#1B6430;
-  --vert-nuit:#134A24;
+  --vert-fonce:#237F3C;
+  --vert-nuit:#237F3C;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#E56717;
@@ -1928,14 +1896,6 @@ section[id]{scroll-margin-top:16px}
 .service-txt{display:grid;gap:1px;min-width:0}
 .service-txt strong{font-weight:700;font-size:.98rem}
 .service-txt span{font-size:.84rem;color:rgba(255,255,255,.72)}
-.bandeau{background:var(--vert-nuit);color:#fff}
-.bandeau h2{color:#fff}
-.bandeau .lede{color:rgba(255,255,255,.8)}
-.bandeau-in{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center}
-.bandeau-ronds{position:relative;height:clamp(260px,30vw,380px)}
-.rond{position:absolute;height:auto;border-radius:50%;object-fit:cover;border:6px solid var(--creme);box-shadow:0 18px 40px rgba(0,0,0,.4)}
-.rond-a{left:0;bottom:0;width:62%;aspect-ratio:1}
-.rond-b{right:0;top:0;width:52%;aspect-ratio:1}
 .conseils{background:var(--creme)}
 .conseils-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
 .conseil{display:grid;gap:8px;justify-items:center;text-align:center;padding:28px 22px;border-radius:14px;background:#fff;
@@ -1951,8 +1911,7 @@ section[id]{scroll-margin-top:16px}
 @media (max-width:900px){
   .services-in{grid-template-columns:1fr;gap:16px}
   .service{border-left:0;padding:0}
-  .bandeau-in{grid-template-columns:1fr}
-  .conseils-grille{grid-template-columns:1fr}
+    .conseils-grille{grid-template-columns:1fr}
   .pastille-ronde{width:72px;height:72px;right:0}
   .arche{width:min(100%,250px)}
 }
@@ -2004,23 +1963,11 @@ section[id]{scroll-margin-top:16px}
 .card:hover .card-img,.card:focus-visible .card-img{background:#8FCB7C}
 .card-cap{padding:0 4px}
 .card-soins{display:none}
-/* bandeau vert compact */
-.bandeau{padding:30px 0;overflow:hidden}
 .conseils .eyebrow,.avisband .eyebrow{display:none}
-.bandeau-in{grid-template-columns:auto 1.1fr 1.2fr;gap:clamp(20px,4vw,56px);align-items:center}
-.bandeau-ronds{position:relative;width:210px;height:130px}
-.rond{border-width:4px;box-shadow:none}
-.rond-a{left:0;bottom:0;width:104px}
-.rond-b{right:0;top:0;width:124px}
-.bandeau h2{margin:0;font-size:clamp(1.6rem,3vw,2.5rem)}
-.bandeau-txt{display:grid;gap:12px;justify-items:start}
-.bandeau-txt p{margin:0;font-size:.92rem;color:rgba(255,255,255,.82)}
 /* bloc image + texte : titre en gras, comme la maquette */
 .duo-carte h2{font-family:var(--sans);font-weight:700;font-size:clamp(1.15rem,1.9vw,1.5rem);line-height:1.3;letter-spacing:0}
 @media (max-width:900px){
-  .bandeau-in{grid-template-columns:1fr;justify-items:center;text-align:center}
-  .bandeau-txt{justify-items:center}
-}
+    }
 
 /* ---------- contact : deux colonnes, carte blanche à champs pointillés ---------- */
 .contact{background:var(--creme)}
@@ -2082,13 +2029,6 @@ section[id]{scroll-margin-top:16px}
 .vit-k{margin:0 0 6px;font-family:var(--serif);font-size:1.35rem;color:var(--vert)}
 .vit-tete h2{margin:0;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.04;color:var(--vert-nuit)}
 .vit-intro{margin:0;color:#4B5A52;max-width:40ch}
-.vit-commandes{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
-.vit-fleche{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--vert);
-  background:#fff;color:var(--vert);font-size:1.4rem;line-height:1;cursor:pointer;transition:background .25s,color .25s}
-.vit-fleche:hover{background:var(--vert);color:#fff}
-.vit-points{display:flex;gap:7px}
-.vit-points i{width:8px;height:8px;border-radius:50%;background:#B9CBBF;transition:width .35s var(--ease-out),background .3s}
-.vit-points i.on{width:24px;border-radius:99px;background:var(--vert)}
 .paysa{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:20px 26px;
   background:#fff;border-radius:var(--r-carte,16px);box-shadow:var(--ombre-carte,0 10px 28px rgba(20,35,12,.1))}
 .paysa strong{display:block;font:400 1.4rem/1.2 var(--serif);color:var(--vert-nuit)}
@@ -2123,7 +2063,7 @@ section[id]{scroll-margin-top:16px}
 .vit-rang{position:relative;height:clamp(400px,36vw,470px);margin-top:30px}
 .vit-item{position:absolute;display:block;padding:0;border:0;border-radius:18px;overflow:hidden;cursor:pointer;
   background:#EAF1EC;font:inherit;color:inherit;text-align:left;box-shadow:0 10px 26px rgba(20,35,12,.13);
-  transition:left .8s var(--ease-out),top .8s var(--ease-out),width .8s var(--ease-out),height .8s var(--ease-out),opacity .6s var(--ease),box-shadow .4s}
+  transition:left .6s var(--ease-out),top .6s var(--ease-out),width .6s var(--ease-out),height .6s var(--ease-out),opacity .45s var(--ease),box-shadow .4s}
 .vit-item img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block;transition:transform 1s var(--ease-out)}
 .vit-item:hover img{transform:scale(1.05)}
 .vit-item:focus-visible{outline:3px solid var(--terre);outline-offset:3px}
@@ -2139,7 +2079,7 @@ section[id]{scroll-margin-top:16px}
 .vit-legende strong{font:500 .86rem/1.25 var(--sans);color:var(--vert-nuit)}
 .vit-detail{display:none}
 .vit-item.on .vit-legende strong{font:400 1.4rem/1.15 var(--serif)}
-.vit-item.on .vit-detail{display:grid;gap:6px;animation:vitTexte .6s var(--ease-out) .35s both}
+.vit-item.on .vit-detail{display:grid;gap:6px;animation:vitTexte .45s var(--ease-out) .2s both}
 .vit-detail span{font-size:.88rem;line-height:1.45;color:var(--muted)}
 .vit-detail em{font-style:normal;font-weight:700;font-size:.84rem;color:var(--terre)}
 @keyframes vitTexte{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -2157,6 +2097,66 @@ section[id]{scroll-margin-top:16px}
   .vit-item:not(.on) .vit-legende strong{font-size:.72rem}
   .paysa{flex-direction:column;align-items:flex-start}
 }
+
+/* =====================================================================
+   HARMONISATION FINALE : une seule palette, une seule logique de fonds
+   - 2 verts : --vert (hero) et --vert-nuit (bandes et pied de page)
+   - 2 surfaces claires : blanc et crème, en alternance d'une section à l'autre
+   - les cartes prennent l'inverse du fond de leur section
+   - l'orange ne sert qu'aux boutons d'action, liens et surtitres
+   ===================================================================== */
+:root{
+  --creme:#F4F1E8;
+  --pale:#E3EDDF;
+  --pale-fort:#CFE3C9;
+  --ligne:#E4E0D3;
+}
+.services{background:var(--vert-nuit)}
+.site-foot{background:var(--vert-nuit)}
+.vitrine{background:#fff}
+.galerie{background:var(--creme)}
+.conseils{background:#fff}
+.duo{background:var(--creme)}
+.avisband{background:#fff}
+.contact{background:var(--creme)}
+.vit-panneau{background:var(--pale)}
+.vit-item{background:#fff}
+.paysa{background:var(--creme);box-shadow:none}
+.card-img{background:#fff}
+.card:hover .card-img,.card:focus-visible .card-img{background:var(--pale-fort)}
+.duo-in{background:#fff}
+.avis{background:var(--creme);box-shadow:none;border:1px solid var(--ligne)}
+.ct-form{background:#fff;border:0}
+.form-hint{background:var(--creme)}
+.filtre{background:#fff;border-color:var(--ligne)}
+.filtre.on{background:var(--vert);border-color:var(--vert);color:#fff}
+.vit-tete h2,.ct-titre,.ct-grand,.conseils h2,.galerie h2,.avisband h2,.duo-carte h2{color:var(--vert-nuit)}
+main>section.section{padding-top:clamp(52px,6vw,84px);padding-bottom:clamp(52px,6vw,84px)}
+.vitrine{padding:clamp(52px,6vw,84px) 0}
+
+
+/* contact : colonne de droite = même hauteur que la colonne de gauche ; le champ Message absorbe l'écart */
+@media (min-width:901px){
+  .ct-droite{display:flex;flex-direction:column;align-items:stretch}
+  .ct-droite .ct-form{flex:1;display:flex;flex-direction:column}
+  .ct-form .ct-msg{flex:1;display:grid;grid-template-rows:auto 1fr}
+  .ct-form .ct-msg textarea{height:100%;min-height:140px}
+}
+
+/* vitrine : sur fond blanc, sans panneau coloré */
+.vit-panneau{background:#fff;border-radius:0;padding:0;overflow:visible}
+.vit-tete{margin-bottom:0}
+/* contact : les deux colonnes ont la même hauteur (spécificité renforcée) */
+@media (min-width:901px){
+  section.contact .contact-in{align-items:stretch}
+  section.contact .ct-droite{display:flex;flex-direction:column}
+  section.contact .ct-droite .ct-form{flex:1}
+}
+
+/* un seul vert partout : #237F3C (survols : léger assombrissement par filtre) */
+.btn-primary:hover,.btn-light:hover{filter:brightness(.92)}
+.services{border-top:1px solid rgba(255,255,255,.28)}
+.vit-fleche:hover{filter:brightness(.92)}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
