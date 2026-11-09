@@ -102,7 +102,7 @@ const PLANTES = [
   { n: "Tradescantia zebrina", s: "tradescantia-zebrina" },
 ];
 /* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
-   (l'avis de Hadyr K est traduit de l'anglais). Mettre à jour « quand » de temps en temps. */
+   (Alain tête koussi : sans mention « Local Guide »). Mettre à jour « quand » de temps en temps. */
 const AVIS = [
   {
     nom: "Claudia Jordá",
@@ -123,13 +123,14 @@ const AVIS = [
     notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
   },
   {
-    nom: "Hadyr K",
-    etoiles: 4,
+    nom: "Alain tête koussi",
+    guide: false,
+    etoiles: 5,
     lang: "fr",
-    quand: "il y a 5 mois",
+    quand: "il y a 10 mois",
     texte:
-      "Les plats étaient bons, surtout la salade. Seul bémol : ça a pris beaucoup de temps, je m’attendais à plus de rapidité pour un coffee restaurant. L’intérieur est magnifique avec beaucoup de verdure ; de meilleures chaises et tables seraient un plus, car ce n’est pas très confortable pour travailler longtemps sur ordinateur. (Traduit de l’anglais)",
-    notes: "Cuisine 4/5 · Service 4/5 · Ambiance 3/5",
+      "Expérience au top et le gérant est vraiment un connaisseur des plantes et très sympathique ;) un plaisir de travailler dans un cadre relaxation luxuriant et une bouffée d’oxygène grâce aux plantes",
+    notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5 · Très calme · Pas d'attente",
   },
 ];
 
@@ -789,9 +790,6 @@ export default function Home() {
           )}
           <div className="wrap hero-in">
             <div className="hero-copy">
-              <span className="rise" style={{ "--d": "60ms" } as React.CSSProperties}>
-                <Wordmark />
-              </span>
               <p className="eyebrow eyebrow-clair rise" style={{ "--d": "110ms" } as React.CSSProperties}>
                 Tokpa-hoho · Cotonou
               </p>
@@ -810,9 +808,6 @@ export default function Home() {
                   Voir les plantes
                 </a>
               </div>
-              <p className="hero-adr rise" style={{ "--d": "460ms" } as React.CSSProperties}>
-                {BRAND.adresseCourte}
-              </p>
             </div>
             <div className="hero-photo rise" style={{ "--d": "320ms" } as React.CSSProperties}>
               <div className="collage">
@@ -827,16 +822,20 @@ export default function Home() {
 
         {/* ACTIVITÉS */}
         <nav className="bande" aria-label="Nos activités">
-          <div className="wrap bande-in">
-            {[
-              { h: "#paysagisme", n: "Espaces verts sur mesure" },
-              { h: "#cafe", n: "Terrasse café conviviale" },
-              { h: "#coworking", n: "Coworking" },
-              { h: "#galerie", n: "Plantes rares et locales" },
-            ].map((a, i) => (
-              <a key={a.h} href={a.h} data-reveal className="rv-pop" style={{ "--d": `${i * 80}ms` } as React.CSSProperties}>
-                {a.n}
-              </a>
+          <div className="bande-piste">
+            {[0, 1].map((copie) => (
+              <div className="bande-groupe" key={copie} aria-hidden={copie === 1 ? true : undefined}>
+                {[
+                  { h: "#paysagisme", n: "Espaces verts sur mesure" },
+                  { h: "#cafe", n: "Terrasse café conviviale" },
+                  { h: "#coworking", n: "Coworking" },
+                  { h: "#galerie", n: "Plantes rares et locales" },
+                ].map((a) => (
+                  <a key={a.h} href={a.h} tabIndex={copie === 1 ? -1 : undefined}>
+                    {a.n}
+                  </a>
+                ))}
+              </div>
             ))}
           </div>
         </nav>
@@ -1106,7 +1105,7 @@ export default function Home() {
                   </p>
                   <p lang={a.lang}>« {a.texte} »</p>
                   <footer>
-                    <strong>{a.nom}</strong>, Local Guide Google · {a.quand}
+                    <strong>{a.nom}</strong>{a.guide === false ? ", avis Google" : ", Local Guide Google"} · {a.quand}
                     <span className="avis-notes">{a.notes}</span>
                   </footer>
                 </blockquote>
@@ -1512,7 +1511,6 @@ section[id]{scroll-margin-top:0}
 .hero-copy h1{margin:24px 0 18px;max-width:15ch}
 .hero-copy p{max-width:44ch;font-size:1.06rem;line-height:1.55;color:rgba(255,255,255,.92)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-.hero-adr{margin:24px 0 0;font-size:.95rem;color:rgba(255,255,255,.82)}
 .hero-photo{display:flex;justify-content:flex-end}
 .frame{position:relative;width:100%;max-width:340px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
   border:1px solid rgba(255,255,255,.28);box-shadow:0 24px 60px rgba(15,30,8,.35);
@@ -1775,12 +1773,15 @@ section[id]{scroll-margin-top:0}
 .hero-copy .eyebrow{margin:18px 0 -6px;font-size:.74rem;line-height:1.2;color:#F0C469}
 
 /* ---------- bande des activités ---------- */
-.bande{background:var(--vert-fonce);color:#fff}
-.bande-in{display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
-.bande a{text-decoration:none;font-size:.95rem;font-weight:600;position:relative;padding:4px 0}
-.bande a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:#F0C469;
-  transform:scaleX(0);transform-origin:0 50%;transition:transform .35s var(--ease-out)}
-.bande a:hover::after{transform:scaleX(1)}
+/* bande qui défile : le groupe est écrit deux fois, la piste glisse d'une moitié puis boucle */
+.bande{background:var(--vert-fonce);color:#fff;overflow:hidden;padding:16px 0}
+.bande-piste{display:flex;width:max-content;animation:defile 30s linear infinite}
+.bande:hover .bande-piste,.bande:focus-within .bande-piste{animation-play-state:paused}
+.bande-groupe{display:flex;flex:none}
+.bande a{display:inline-flex;align-items:center;text-decoration:none;font-size:1rem;font-weight:600;white-space:nowrap;padding:6px 0}
+.bande a::after{content:"";display:inline-block;width:7px;height:7px;margin:0 34px;border-radius:50%;background:#F0C469}
+.bande a:hover{text-decoration:underline;text-underline-offset:6px}
+@keyframes defile{to{transform:translateX(-50%)}}
 
 /* ---------- coworking : points forts ---------- */
 .cow-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 0}
@@ -1871,7 +1872,6 @@ section[id]{scroll-margin-top:0}
 /* ---------- responsive ---------- */
 @media (max-width:900px){
   .lieu-in,.cafe-in{grid-template-columns:1fr}
-  .bande-in{justify-content:center}
   .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
@@ -1887,10 +1887,6 @@ section[id]{scroll-margin-top:0}
   .avis-liste::-webkit-scrollbar{display:none}
   .avis{flex:0 0 86%;scroll-snap-align:center}
   .avis-hint{display:block;margin:0 0 14px;text-align:center;font-size:.82rem;color:var(--muted)}
-  /* bande des activités : grille 2 × 2 */
-  .bande-in{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:14px;padding-bottom:14px}
-  .bande a{text-align:center;padding:10px 8px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:.85rem}
-  .bande a::after{display:none}
   /* Mobile : la photo (collage) et le texte tiennent ensemble sur le premier écran.
      Le logo du hero et l'adresse, déjà présents dans l'en-tête et le pied de page,
      sont masqués pour gagner de la place. */
@@ -1902,7 +1898,6 @@ section[id]{scroll-margin-top:0}
   .collage-a{width:42%;height:100%;border-radius:90px 90px var(--r) var(--r)!important}
   .collage-b{width:62%;height:80%}
   .hero-copy{background:none;padding:0;box-shadow:none}
-  .hero-copy .wordmark,.hero-adr{display:none}
   .hero-copy .eyebrow{margin:0 0 6px}
   .hero-copy h1{margin:0 0 10px;font-size:clamp(1.85rem,8.4vw,2.4rem);max-width:none}
   .hero-copy p{font-size:1rem;line-height:1.5}
@@ -1962,6 +1957,9 @@ section[id]{scroll-margin-top:0}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
+  .bande-piste{width:auto;justify-content:center;flex-wrap:wrap}
+  .bande-groupe[aria-hidden]{display:none}
+  .bande-groupe{flex-wrap:wrap;justify-content:center;row-gap:6px}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .js [data-reveal]{opacity:1;transform:none;filter:none;clip-path:none}
