@@ -1561,7 +1561,7 @@ section[id]{scroll-margin-top:0}
 .puces li{padding:7px 15px;border-radius:99px;font-size:.92rem;background:#fff;border:1px solid var(--line)}
 .lieu-photos{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px;height:clamp(380px,46vw,560px)}
 .lieu-p{width:100%;height:100%;min-height:0;object-fit:cover;border-radius:var(--r);box-shadow:0 14px 34px rgba(20,35,12,.2)}
-.lieu-p0{grid-row:1 / span 2;border-radius:120px 120px var(--r) var(--r)}
+.lieu-p0{grid-row:1 / span 2}
 .lieu-p1{grid-column:2;grid-row:1}
 .lieu-p2{grid-column:2;grid-row:2}
 
@@ -1741,7 +1741,7 @@ section[id]{scroll-margin-top:0}
 .collage{position:relative;width:min(100%,470px);aspect-ratio:1/1.12}
 .collage img{position:absolute;object-fit:cover;border-radius:var(--r);
   border:3px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(8,20,18,.45)}
-.collage-a{left:0;top:0;width:66%;height:84%;border-radius:140px 140px var(--r) var(--r)!important}
+.collage-a{left:0;top:0;width:66%;height:84%}
 .collage-b{right:0;bottom:0;width:50%;height:58%}
 
 /* ---------- surtitres ---------- */
@@ -1783,7 +1783,6 @@ section[id]{scroll-margin-top:0}
 .cow{background:var(--creme);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .cow-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 .cow-p{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r);box-shadow:0 10px 24px rgba(20,35,12,.18)}
-.cow-p0{border-radius:var(--r) var(--r) 120px 120px}
 .cow-p1{margin-top:40px}
 .cow-note{margin:20px 0 14px;font-size:.95rem;color:var(--muted)}
 
@@ -1864,7 +1863,7 @@ section[id]{scroll-margin-top:0}
   .hero-in{grid-template-columns:1fr;gap:16px}
   .hero-photo{display:flex;order:-1;justify-content:center}
   .collage{width:min(100%,300px);aspect-ratio:1/.78;margin:0 auto}
-  .collage-a{width:100%;height:100%;border-radius:150px 150px var(--r) var(--r)!important}
+  .collage-a{width:100%;height:100%}
   .collage-b{display:none}
   .hero-copy{background:none;padding:0;box-shadow:none}
   .hero-copy .eyebrow{margin:0 0 6px}
@@ -1920,6 +1919,13 @@ section[id]{scroll-margin-top:0}
 .menu-cta{display:grid;gap:10px}
 @media (min-width:821px){.menu-mobile{display:none}}
 .avis-hint{display:none}
+
+/* ---------- survol des images : un léger battement ----------
+   La propriété « scale » est indépendante de « transform » : elle ne gêne ni le
+   parallaxe, ni l'apparition au défilement, ni le zoom des cartes. */
+@keyframes pouls{0%,100%{scale:1}50%{scale:1.045}}
+.collage img:hover,.lieu-p:hover,.cafe-p:hover,.cow-p:hover,.pays-visuel img:hover,.video:hover{animation:pouls 1.3s ease-in-out infinite}
+.card:hover .card-img img,.card:focus-visible .card-img img{animation:pouls 1.3s ease-in-out infinite}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
