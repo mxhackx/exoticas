@@ -588,7 +588,7 @@ export default function Home() {
   /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
   useEffect(() => {
     if (pause || fiche !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => setVedette((v) => (v + 1) % VITRINE.length), 4500);
+    const t = window.setInterval(() => setVedette((v) => v + 1), 4500);
     return () => window.clearInterval(t);
   }, [pause, fiche]);
 
@@ -886,7 +886,7 @@ export default function Home() {
             <div className="vit-panneau">
               <div className="vit-tete">
                 <div>
-                  <p className="vit-k">À la boutique</p>
+                  <p className="vit-k">Notre sélection</p>
                   <h2>Le monde des plantes rares</h2>
                 </div>
                 <p className="vit-intro">
@@ -895,51 +895,49 @@ export default function Home() {
                   nos conseils.
                 </p>
               </div>
-              <p className="vit-label">À la une cette semaine</p>
-              <div className="vit-scene" aria-roledescription="carrousel" aria-label="Plantes à la une">
-                <button
-                  type="button"
-                  className="vit-vedette"
-                  key={`v-${vedette}`}
-                  onClick={() => ouvrirPlante(VITRINE[vedette % VITRINE.length])}
-                  aria-label={`Voir la fiche : ${nomUnique(VITRINE[vedette % VITRINE.length])}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/galerie/pleine/${PLANTES[VITRINE[vedette % VITRINE.length]].s}.jpg`} alt={`${nomUnique(VITRINE[vedette % VITRINE.length])}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} decoding="async" />
-                  <span className="vit-vedette-txt">
-                    <strong>{PLANTES[VITRINE[vedette % VITRINE.length]].n}</strong>
-                    <span>{INFOS[PLANTES[VITRINE[vedette % VITRINE.length]].s]?.[1]}</span>
-                    <em>Voir la fiche →</em>
-                  </span>
-                </button>
-                <div className="vit-piste" key={`p-${vedette}`}>
-                  {[1, 2, 3, 4].map((k) => {
-                    const idx = VITRINE[(vedette + k) % VITRINE.length];
-                    return (
-                      <button
-                        type="button"
-                        className="vit-carte"
-                        key={idx}
-                        style={{ "--k": k } as React.CSSProperties}
-                        onClick={() => ouvrirPlante(idx)}
-                        aria-label={`Voir la fiche : ${nomUnique(idx)}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`/galerie/mini/${PLANTES[idx].s}.jpg`} alt={`${nomUnique(idx)}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} loading="lazy" decoding="async" />
-                        <span>{PLANTES[idx].n}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="vit-rang" role="group" aria-roledescription="carrousel" aria-label="Sélection de plantes">
+                {VITRINE.map((idx, i) => {
+                  const N = VITRINE.length;
+                  const r = (((i - vedette) % N) + N) % N;
+                  /* r = place dans le défilé : 0 = à la une, 1-4 = cartes, 5-6 = hors champ à droite, N-1 = vient de sortir à gauche */
+                  const slot = r === N - 1 ? "sm" : `s${Math.min(r, 6)}`;
+                  const actif = r === 0;
+                  const visible = r <= 4;
+                  const pl = PLANTES[idx];
+                  return (
+                    <button
+                      type="button"
+                      key={idx}
+                      className={`vit-item ${slot}${actif ? " on" : ""}`}
+                      aria-hidden={visible ? undefined : true}
+                      tabIndex={visible ? 0 : -1}
+                      aria-label={actif ? `Voir la fiche : ${nomUnique(idx)}` : `Mettre en avant : ${nomUnique(idx)}`}
+                      onClick={() => (actif ? ouvrirPlante(idx) : setVedette((v) => v + r))}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`/galerie/mini/${pl.s}.jpg`} alt={`${nomUnique(idx)}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} loading="lazy" decoding="async" />
+                      <span className="vit-legende">
+                        <strong>{pl.n}</strong>
+                        <span className="vit-detail">
+                          <span>{INFOS[pl.s]?.[1]}</span>
+                          <em>Voir la fiche →</em>
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
               <div className="vit-commandes">
-                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v - 1 + VITRINE.length) % VITRINE.length)} aria-label="Plante précédente">‹</button>
+                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => v - 1)} aria-label="Plante précédente">‹</button>
                 <span className="vit-points" aria-hidden="true">
                   {VITRINE.map((_, i) => (
-                    <i key={i} className={i === vedette % VITRINE.length ? "on" : ""} />
+                    <i key={i} className={i === (((vedette % VITRINE.length) + VITRINE.length) % VITRINE.length) ? "on" : ""} />
                   ))}
                 </span>
-                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v + 1) % VITRINE.length)} aria-label="Plante suivante">›</button>
+                <button type="button" className="vit-fleche" onClick={() => setVedette((v) => v + 1)} aria-label="Plante suivante">›</button>
+              </div>
+              <div className="vit-plus">
+                <a className="btn btn-primary" href="#galerie">Voir plus de plantes</a>
               </div>
             </div>
             <div id="paysagisme" className="paysa rv-pop" data-reveal>
@@ -2084,24 +2082,6 @@ section[id]{scroll-margin-top:16px}
 .vit-k{margin:0 0 6px;font-family:var(--serif);font-size:1.35rem;color:var(--vert)}
 .vit-tete h2{margin:0;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.04;color:var(--vert-nuit)}
 .vit-intro{margin:0;color:#4B5A52;max-width:40ch}
-.vit-label{margin:26px 0 12px;font-weight:700;font-size:.9rem;color:var(--vert-nuit)}
-.vit-scene{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,2.6fr);gap:clamp(14px,2vw,26px);align-items:end}
-.vit-vedette,.vit-carte{font:inherit;color:inherit;cursor:pointer;border:0;padding:0;text-align:left}
-.vit-vedette{position:relative;display:block;border-radius:20px;overflow:hidden;background:#EAF1EC;
-  box-shadow:0 18px 40px rgba(20,35,12,.18);aspect-ratio:3/4;animation:vitEntree .7s var(--ease-out) both}
-.vit-vedette img{width:100%;height:100%;object-fit:cover;display:block;animation:vitZoom 5s ease-out both}
-.vit-vedette-txt{position:absolute;inset:auto 0 0 0;display:grid;gap:4px;padding:46px 16px 16px;
-  background:linear-gradient(to top,rgba(11,36,23,.78),rgba(11,36,23,0));color:#fff}
-.vit-vedette-txt strong{font:400 1.3rem/1.15 var(--serif)}
-.vit-vedette-txt span{font-size:.85rem;line-height:1.4;color:rgba(255,255,255,.88);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.vit-vedette-txt em{font-style:normal;font-weight:700;font-size:.82rem;color:#F6C26B}
-.vit-piste{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.6vw,20px)}
-.vit-carte{display:grid;gap:10px;justify-items:start;background:#EAF1EC;border-radius:16px;padding:10px 10px 14px;
-  box-shadow:0 10px 26px rgba(20,35,12,.10);animation:vitGlisse .65s var(--ease-out) both;animation-delay:calc(var(--k) * 70ms);
-  transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out)}
-.vit-carte:hover,.vit-carte:focus-visible{transform:translateY(-6px);box-shadow:0 18px 36px rgba(20,35,12,.2)}
-.vit-carte img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:11px;display:block}
-.vit-carte span{font:700 .88rem/1.25 var(--sans);color:var(--vert-nuit);padding:0 4px}
 .vit-commandes{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
 .vit-fleche{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--vert);
   background:#fff;color:var(--vert);font-size:1.4rem;line-height:1;cursor:pointer;transition:background .25s,color .25s}
@@ -2109,23 +2089,10 @@ section[id]{scroll-margin-top:16px}
 .vit-points{display:flex;gap:7px}
 .vit-points i{width:8px;height:8px;border-radius:50%;background:#B9CBBF;transition:width .35s var(--ease-out),background .3s}
 .vit-points i.on{width:24px;border-radius:99px;background:var(--vert)}
-@keyframes vitEntree{from{opacity:0;transform:translateX(-26px) scale(.96)}to{opacity:1;transform:none}}
-@keyframes vitGlisse{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
-@keyframes vitZoom{from{transform:scale(1.12)}to{transform:scale(1)}}
 .paysa{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:20px 26px;
   background:#fff;border-radius:var(--r-carte,16px);box-shadow:var(--ombre-carte,0 10px 28px rgba(20,35,12,.1))}
 .paysa strong{display:block;font:400 1.4rem/1.2 var(--serif);color:var(--vert-nuit)}
 .paysa span{color:var(--muted);font-size:.94rem}
-@media (max-width:900px){
-  .vit-tete{grid-template-columns:1fr}
-  .vit-scene{grid-template-columns:1fr}
-  .vit-vedette{aspect-ratio:4/3}
-  .vit-piste{grid-template-columns:repeat(4,64%);overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
-    margin:0 calc(-1 * clamp(22px,3.4vw,44px));padding:4px clamp(22px,3.4vw,44px) 14px;scrollbar-width:none}
-  .vit-piste::-webkit-scrollbar{display:none}
-  .vit-carte{scroll-snap-align:start}
-  .paysa{flex-direction:column;align-items:flex-start}
-}
 
 /* ---------- pied de page : 3 colonnes alignées en haut, titres identiques ---------- */
 .site-foot{padding:clamp(48px,6vw,72px) 0 28px}
@@ -2151,7 +2118,45 @@ section[id]{scroll-margin-top:16px}
 .ct-titre{font:400 1.5rem/1.2 var(--serif)}
 .duo-in{background:#fff}
 .duo-note{margin-top:2px}
-.vit-label{font-weight:500}
+
+/* ---------- vitrine : défilé de plantes (la plante à la une sort à gauche, la suivante grandit) ---------- */
+.vit-rang{position:relative;height:clamp(400px,36vw,470px);margin-top:30px}
+.vit-item{position:absolute;display:block;padding:0;border:0;border-radius:18px;overflow:hidden;cursor:pointer;
+  background:#EAF1EC;font:inherit;color:inherit;text-align:left;box-shadow:0 10px 26px rgba(20,35,12,.13);
+  transition:left .8s var(--ease-out),top .8s var(--ease-out),width .8s var(--ease-out),height .8s var(--ease-out),opacity .6s var(--ease),box-shadow .4s}
+.vit-item img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block;transition:transform 1s var(--ease-out)}
+.vit-item:hover img{transform:scale(1.05)}
+.vit-item:focus-visible{outline:3px solid var(--terre);outline-offset:3px}
+.vit-item.on{box-shadow:0 22px 48px rgba(20,35,12,.24)}
+.vit-item.s0{left:0;top:0;width:27%;height:100%;opacity:1}
+.vit-item.s1{left:29.2%;top:34%;width:16.4%;height:66%;opacity:1}
+.vit-item.s2{left:47.2%;top:34%;width:16.4%;height:66%;opacity:1}
+.vit-item.s3{left:65.2%;top:34%;width:16.4%;height:66%;opacity:1}
+.vit-item.s4{left:83.2%;top:34%;width:16.4%;height:66%;opacity:1}
+.vit-item.s5,.vit-item.s6{left:104%;top:34%;width:16.4%;height:66%;opacity:0;pointer-events:none}
+.vit-item.sm{left:-24%;top:0;width:27%;height:100%;opacity:0;pointer-events:none}
+.vit-legende{position:absolute;left:0;right:0;bottom:0;display:grid;gap:6px;padding:11px 12px;background:#fff}
+.vit-legende strong{font:500 .86rem/1.25 var(--sans);color:var(--vert-nuit)}
+.vit-detail{display:none}
+.vit-item.on .vit-legende strong{font:400 1.4rem/1.15 var(--serif)}
+.vit-item.on .vit-detail{display:grid;gap:6px;animation:vitTexte .6s var(--ease-out) .35s both}
+.vit-detail span{font-size:.88rem;line-height:1.45;color:var(--muted)}
+.vit-detail em{font-style:normal;font-weight:700;font-size:.84rem;color:var(--terre)}
+@keyframes vitTexte{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.vit-plus{display:flex;justify-content:center;margin-top:20px}
+@media (max-width:900px){
+  .vit-tete{grid-template-columns:1fr}
+  .vit-rang{height:520px}
+  .vit-item.s0{left:0;top:0;width:100%;height:62%}
+  .vit-item.s1{left:0;top:65%;width:31.4%;height:35%}
+  .vit-item.s2{left:34.3%;top:65%;width:31.4%;height:35%}
+  .vit-item.s3{left:68.6%;top:65%;width:31.4%;height:35%}
+  .vit-item.s4,.vit-item.s5,.vit-item.s6{left:104%;top:65%;width:31.4%;height:35%;opacity:0;pointer-events:none}
+  .vit-item.sm{left:-40%;top:0;width:100%;height:62%}
+  .vit-item:not(.on) .vit-legende{padding:7px 8px}
+  .vit-item:not(.on) .vit-legende strong{font-size:.72rem}
+  .paysa{flex-direction:column;align-items:flex-start}
+}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
