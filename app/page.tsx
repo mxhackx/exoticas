@@ -1818,8 +1818,9 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
-/* ---------- texture : grandes feuilles en filigrane (fournie), sur le hero, le café et l'aménagement paysager (pas sur l'en-tête) ---------- */
+/* ---------- texture : grandes feuilles en filigrane (fournie), sur le hero, l'en-tête, le café et l'aménagement paysager ---------- */
 .hero,.cafe,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+.site-head::before{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
