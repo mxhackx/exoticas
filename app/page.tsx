@@ -261,12 +261,12 @@ function waLink(message: string) {
    pour les fonds verts. Aucune retouche de tracé : recadrage seul.
 ------------------------------------------------------------------ */
 
-function Logo({ size = 34 }: { size?: number }) {
+function Logo({ size = 34, verte = false }: { size?: number; verte?: boolean }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className="mark"
-      src="/logo/marque-blanche.png"
+      src={verte ? "/logo/marque-verte.png" : "/logo/marque-blanche.png"}
       alt=""
       width={size}
       height={Math.round((size * 289) / 279)}
@@ -779,7 +779,7 @@ export default function Home() {
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="#top" className="head-logo" aria-label="Exoticas, accueil">
-            <Logo size={28} />
+            <Logo size={28} verte />
             <span className="head-nom">exoticas</span>
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
@@ -788,7 +788,7 @@ export default function Home() {
             <a href="#coworking">Coworking</a>
             <a href="#paysagisme">Paysagisme</a>
             <a href="#galerie">Plantes</a>
-            <a className="btn btn-light btn-sm" href={BRAND.telHref} aria-label="Appeler Exoticas">
+            <a className="btn btn-primary btn-sm" href={BRAND.telHref} aria-label="Appeler Exoticas">
               <PhoneIcon size={16} /> <span className="btn-txt">Appeler</span>
             </a>
             <button
@@ -1184,21 +1184,9 @@ export default function Home() {
                       </a>
                     </>
                   )}
-                  {geo.etat === "repos" && (
-                    <>
-                      Le repère sur la carte est approximatif :{" "}
-                      <a href={itinLink()} target="_blank" rel="noopener">
-                        itinéraire vers Exoticas
-                      </a>
-                      .
-                    </>
-                  )}
                 </p>
               </div>
 
-              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
-                <PinIcon size={18} /> Voir la fiche Google Maps
-              </a>
             </div>
 
             <div data-reveal className="reveal rv-right ct-droite" style={{ "--d": "160ms" } as React.CSSProperties}>
@@ -1372,7 +1360,7 @@ const css = `
   --ease:cubic-bezier(.22,.61,.36,1);
   --ease-out:cubic-bezier(.16,1,.3,1);
   /* étiquettes : meme écriture partout (champ, footer, carte) */
-  --lbl:600 .74rem/1.2 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --lbl:600 .74rem/1.2 var(--sans);
   --lbl-space:.16em;
   /* glace / cristal : seule la carte est translucide, jamais les photos.
      --flou ne sert que devant un fond réellement occupé (tuiles de la carte). */
@@ -1410,7 +1398,7 @@ a[href^="tel"]{font-variant-numeric:tabular-nums}
    (galerie, contact) grandit simplement. */
 /* Design « boutique » : seul le hero occupe tout l'écran ; les autres sections
    ont une hauteur naturelle, avec des marges régulières entre elles. */
-main>section.hero{min-height:100vh;min-height:100svh}
+main>section.hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px)}
 main>section.section{padding-top:clamp(44px,5vw,72px);padding-bottom:clamp(44px,5vw,72px)}
 main{overflow-x:clip}
 main>section>.wrap{width:100%}
@@ -1419,25 +1407,23 @@ section[id]{scroll-margin-top:16px}
 
 /* ---------- header ---------- */
 /* en-tête : en haut de page seulement, il défile avec le contenu et disparaît (pas fixe) */
-.site-head{position:absolute;top:0;left:0;right:0;z-index:50;color:#fff;
+.site-head{position:relative;z-index:50;color:var(--vert-nuit);
   background:transparent;transition:background .45s var(--ease),box-shadow .45s var(--ease),padding .45s var(--ease);padding:6px 0}
-.site-head::before{content:"";position:absolute;inset:0;background:var(--vert);
-  opacity:1;transition:opacity .45s var(--ease);z-index:-1}
-.site-head.is-scrolled::before{opacity:1}
+.site-head::before{content:"";position:absolute;inset:0;background:#fff;border-bottom:1px solid #E3E5DC;z-index:-1}
 .site-head.is-scrolled{box-shadow:0 6px 24px rgba(20,35,12,.18)}
 .head-in{display:flex;align-items:center;justify-content:space-between;height:60px;
   transition:height .45s var(--ease)}
 .site-head.is-scrolled .head-in{height:54px}
-.head-logo{display:flex;align-items:center;gap:9px;color:#fff;text-decoration:none}
+.head-logo{display:flex;align-items:center;gap:9px;color:var(--vert-nuit);text-decoration:none}
 .head-nom{font-size:1.15rem;letter-spacing:.01em}
 .mark{transition:transform .6s var(--ease-out)}
 .head-logo:hover .mark{transform:rotate(-8deg) scale(1.06)}
 /* mêmes tailles que le texte du site (16,5 px) */
 .head-nav{display:flex;align-items:center;gap:22px;font-size:16.5px}
 .head-nav .btn-sm{font-size:16.5px}
-.head-nav a:not(.btn){text-decoration:none;color:#fff;position:relative}
+.head-nav a:not(.btn){text-decoration:none;color:var(--vert-nuit);position:relative}
 .head-nav a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-6px;height:1.5px;width:100%;
-  background:currentColor;transform:scaleX(0);transform-origin:0 50%;transition:transform .35s var(--ease-out)}
+  background:var(--terre);transform:scaleX(0);transform-origin:0 50%;transition:transform .35s var(--ease-out)}
 .head-nav a:not(.btn):hover::after{transform:scaleX(1)}
 
 /* ---------- boutons ---------- */
@@ -1462,7 +1448,7 @@ section[id]{scroll-margin-top:16px}
 .btn-wa:hover{background:var(--creme);border-color:var(--vert)}
 
 /* ---------- hero ---------- */
-.hero{position:relative;background:var(--vert);color:#fff;padding:150px 0 96px;overflow:hidden}
+.hero{position:relative;background:var(--vert);color:#fff;padding:56px 0 64px;overflow:hidden}
 /* PC : le hero occupe la hauteur de la fenêtre, contenu centré dans la zone
    utile (le padding haut dégage toujours l'en-tête fixe). Mobile : même
    hauteur de fenêtre, mais contenu calé en bas sur sa bande, l'image restant
@@ -1470,7 +1456,7 @@ section[id]{scroll-margin-top:16px}
    1080 px : sans elle, ses marges auto le réduiraient à la largeur de son
    contenu (892 px au lieu de 1040). */
 @media (min-width:821px){
-  .hero{min-height:100vh;min-height:100svh;display:grid;
+  .hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);display:grid;
     grid-template-columns:minmax(0,1fr);align-content:center}
   /* dans une grille, les marges auto du .wrap le font rétrécir à son contenu
      (892 px au lieu de 1040) : width:100% lui rend sa largeur mesurée. */
@@ -1603,7 +1589,7 @@ section[id]{scroll-margin-top:16px}
   transition:opacity .35s var(--ease),transform .4s var(--ease-out)}
 .card:hover .card-voir,.card:focus-visible .card-voir{opacity:1;transform:translate(-50%,0)}
 .card-cap{display:grid;gap:3px;padding:12px 14px 15px}
-.card-tag{font:600 .68rem/1.2 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--terre)}
+.card-tag{font:600 .68rem/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--terre)}
 .card-nom{font:500 1.02rem/1.25 var(--serif);color:var(--texte)}
 
 /* ---------- fiche plante (clic sur une carte) ---------- */
@@ -1622,7 +1608,7 @@ section[id]{scroll-margin-top:16px}
 .fiche-txt p{margin:0;color:var(--muted);font-size:1.02rem}
 .fiche-soin{list-style:none;margin:6px 0;padding:0;display:grid;gap:8px;width:100%}
 .fiche-soin li{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:.95rem}
-.fiche-soin strong{display:block;font:600 .68rem/1.2 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;
+.fiche-soin strong{display:block;font:600 .68rem/1.2 var(--sans);letter-spacing:.14em;
   text-transform:uppercase;color:var(--terre);margin-bottom:2px}
 .fiche-txt .fiche-note{font-size:.86rem}
 .fiche-compte{margin-top:auto;font-size:.8rem;color:var(--muted)}
@@ -1827,8 +1813,7 @@ section[id]{scroll-margin-top:16px}
 .cafe,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 /* header et hero partagent UNE seule texture : même taille, même point d'ancrage
    (haut de la page), donc le motif se prolonge sans coupure sous le header */
-:root{--tex-w:max(100vw,calc(140svh * .797))}
-.hero,.site-head::before{background-image:url(/texture-feuilles.png);background-size:var(--tex-w) auto;background-position:center top;background-repeat:no-repeat}
+.hero{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
@@ -1867,7 +1852,7 @@ section[id]{scroll-margin-top:16px}
   /* Mobile : la photo (collage) et le texte tiennent ensemble sur le premier écran.
      Le logo du hero et l'adresse, déjà présents dans l'en-tête et le pied de page,
      sont masqués pour gagner de la place. */
-  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:84px 0 22px}
+  .hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);display:grid;align-content:center;padding:28px 0 22px}
   .hero-bg{opacity:0}
   .hero-in{grid-template-columns:1fr;gap:16px}
   .hero-photo{display:flex;order:-1;justify-content:center}
@@ -1904,15 +1889,15 @@ section[id]{scroll-margin-top:16px}
 
 
 /* ---------- burger + menu mobile ---------- */
-.burger{display:none;width:44px;height:44px;margin-left:4px;border:0;border-radius:50%;background:rgba(255,255,255,.14);
+.burger{display:none;width:44px;height:44px;margin-left:4px;border:0;border-radius:50%;background:#EEF0E6;
   cursor:pointer;position:relative;flex:none}
-.burger span{position:absolute;left:12px;right:12px;height:2px;border-radius:2px;background:#fff;
+.burger span{position:absolute;left:12px;right:12px;height:2px;border-radius:2px;background:var(--vert-nuit);
   transition:transform .35s var(--ease-out),opacity .2s var(--ease),top .35s var(--ease-out)}
 .burger span:nth-child(1){top:15px}.burger span:nth-child(2){top:21px}.burger span:nth-child(3){top:27px}
 .burger.ouvert span:nth-child(1){top:21px;transform:rotate(45deg)}
 .burger.ouvert span:nth-child(2){opacity:0}
 .burger.ouvert span:nth-child(3){top:21px;transform:rotate(-45deg)}
-.burger:focus-visible{outline:3px solid #F0C469;outline-offset:2px}
+.burger:focus-visible{outline:3px solid var(--terre);outline-offset:2px}
 .menu-mobile{position:fixed;inset:0;z-index:49;display:flex;flex-direction:column;justify-content:center;gap:28px;
   padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-feuilles.png);background-size:cover;background-position:center;
   color:#fff;visibility:hidden;opacity:0;transform:translateY(-12px);
@@ -2082,13 +2067,37 @@ section[id]{scroll-margin-top:16px}
 .ct-form{width:100%;max-width:none;margin:0;padding:clamp(20px,3vw,32px);background:#fff;border:0;border-radius:24px;
   box-shadow:0 14px 40px rgba(20,35,12,.16);backdrop-filter:none;-webkit-backdrop-filter:none;gap:16px}
 .ct-form label{font:700 .88rem/1.2 var(--sans);letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
-.ct-form input,.ct-form select,.ct-form textarea{background:#fff;border:1.5px dashed #8A8A5A;border-radius:20px;box-shadow:none;
+.ct-form input,.ct-form select,.ct-form textarea{background:#fff;border:1.5px solid #C9D2C0;border-radius:20px;box-shadow:none;
   padding:12px 18px;font-weight:400}
 .ct-form textarea{border-radius:22px;resize:vertical}
-.ct-form input:hover,.ct-form select:hover,.ct-form textarea:hover{background:#fff;border-color:#6B6B3E}
-.ct-form input:focus,.ct-form select:focus,.ct-form textarea:focus{background:#fff;border-style:solid;border-color:var(--vert);
+.ct-form input:hover,.ct-form select:hover,.ct-form textarea:hover{background:#fff;border-color:#9DB092}
+.ct-form input:focus,.ct-form select:focus,.ct-form textarea:focus{background:#fff;border-color:var(--vert);
   box-shadow:0 0 0 3px rgba(35,127,60,.2)}
 @media (max-width:900px){.contact-in{grid-template-columns:1fr}.ct-droite{order:-1}}
+
+/* ---------- harmonisation : mêmes rayons, mêmes ombres, mêmes titres, fonds alternés ---------- */
+:root{--r-carte:16px;--ombre-carte:0 10px 28px rgba(20,35,12,.10)}
+.promo,.card-img,.duo-in,.avis,.conseil,.loc-map,.loc-map .map,.carte{border-radius:var(--r-carte)}
+.ct-form{border-radius:20px}
+.promo,.avis,.duo-in,.loc-map{box-shadow:var(--ombre-carte)}
+.promo{border:0}
+/* titres de section : même taille, même filet court sous les titres centrés */
+.galerie h2,.conseils h2,.avisband h2{font-size:clamp(1.8rem,3vw,2.4rem)}
+.conseils h2::after,.avisband h2::after{content:"";display:block;width:72px;height:2px;margin:12px auto 0;background:var(--vert)}
+.duo-carte h2,.ct-grand{letter-spacing:-.01em}
+/* fonds : crème / blanc en alternance, fonds colorés pour les bandes */
+.galerie{background:var(--creme)}
+.conseils{background:#fff}
+.duo{background:var(--creme)}
+.avisband{background:#E3E7DB}
+.contact .loc-map{box-shadow:var(--ombre-carte)}
+.ct-form{box-shadow:0 14px 40px rgba(20,35,12,.14);border:1px solid #E9ECE2}
+.conseil{border:0}
+/* un seul style de bouton secondaire */
+.btn-wa{background:#fff;color:var(--vert);border:1.5px solid var(--vert);box-shadow:none}
+.btn-wa:hover{background:var(--vert);color:#fff;border-color:var(--vert)}
+.btn-geo{background:#fff;color:var(--vert);border:1.5px solid var(--vert);box-shadow:none}
+.btn-geo:hover:not(:disabled){background:var(--vert);color:#fff}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
