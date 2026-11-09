@@ -767,13 +767,9 @@ export default function Home() {
 
       <main id="top">
         {/* HERO */}
-        <section
-          className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}
-          style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
-        >
-          <div className="hero-bg" aria-hidden="true" />
-          <Feuille className="feuille-h1" />
-          <Feuille className="feuille-h2" />
+        <section className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="hero-bg" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} fetchPriority="high" decoding="async" />
           {bienvenue !== "off" && (
             <div
               className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
@@ -786,33 +782,23 @@ export default function Home() {
             </div>
           )}
           <div className="wrap hero-in">
-            <div className="hero-copy">
-              <p className="eyebrow eyebrow-clair rise" style={{ "--d": "110ms" } as React.CSSProperties}>
-                Tokpa-hoho · Cotonou
-              </p>
-              <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
-                Aménagement paysager et plantes rares à Cotonou.
-              </h1>
-              <p className="rise" style={{ "--d": "260ms" } as React.CSSProperties}>
-                Un lieu unique où la nature rencontre l'élégance : espaces verts
-                sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
-              </p>
-              <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
-                <a className="btn btn-moutarde btn-fl" href="#contact">
-                  Demander un devis
-                </a>
-                <a className="btn btn-ghost btn-fl" href="#galerie">
-                  Voir les plantes
-                </a>
-              </div>
-            </div>
-            <div className="hero-photo rise" style={{ "--d": "320ms" } as React.CSSProperties}>
-              <div className="collage">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-a" src={LIEU.tasses.src} width={LIEU.tasses.w} height={LIEU.tasses.h} alt={LIEU.tasses.alt} fetchPriority="high" decoding="async" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} decoding="async" />
-              </div>
+            <p className="eyebrow eyebrow-clair rise" style={{ "--d": "110ms" } as React.CSSProperties}>
+              Tokpa-hoho · Cotonou
+            </p>
+            <h1 className="rise" style={{ "--d": "160ms" } as React.CSSProperties}>
+              Aménagement paysager et plantes rares à Cotonou.
+            </h1>
+            <p className="hero-sous rise" style={{ "--d": "260ms" } as React.CSSProperties}>
+              Un lieu unique où la nature rencontre l'élégance : espaces verts
+              sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
+            </p>
+            <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
+              <a className="btn btn-moutarde btn-fl" href="#contact">
+                Demander un devis
+              </a>
+              <a className="btn btn-ghost btn-fl" href="#galerie">
+                Voir les plantes
+              </a>
             </div>
           </div>
         </section>
@@ -1479,37 +1465,22 @@ section[id]{scroll-margin-top:0}
 .btn-wa{background:#fff;color:var(--vert);border-color:var(--line);box-shadow:0 4px 12px rgba(20,35,12,.08)}
 .btn-wa:hover{background:var(--creme);border-color:var(--vert)}
 
-/* ---------- hero ---------- */
-.hero{position:relative;background:var(--vert);color:#fff;padding:150px 0 96px;overflow:hidden}
-/* PC : le hero occupe la hauteur de la fenêtre, contenu centré dans la zone
-   utile (le padding haut dégage toujours l'en-tête fixe). Mobile : même
-   hauteur de fenêtre, mais contenu calé en bas sur sa bande, l'image restant
-   visible au-dessus. La colonne unique en minmax(0,1fr) garde au .wrap ses
-   1080 px : sans elle, ses marges auto le réduiraient à la largeur de son
-   contenu (892 px au lieu de 1040). */
-@media (min-width:821px){
-  .hero{min-height:100vh;min-height:100svh;display:grid;
-    grid-template-columns:minmax(0,1fr);align-content:center}
-  /* dans une grille, les marges auto du .wrap le font rétrécir à son contenu
-     (892 px au lieu de 1040) : width:100% lui rend sa largeur mesurée. */
-  .hero .hero-in{width:100%}
-  /* le cadre suit la hauteur de la fenêtre (340 px → la largeur de sa colonne,
-     ~423 px) : sinon il flotte, minuscule, dans un hero de 900 px de haut.
-     Sélecteur doublé pour passer devant la règle .frame placée plus bas. */
-  .hero .frame{max-width:clamp(340px,46vh,440px)}
-  .hero-photo{justify-content:center}
-}
-.hero-bg{position:absolute;inset:0;background-image:var(--hero-img);background-size:cover;background-position:50% 34%;
-  opacity:0;transition:opacity .8s var(--ease)}
-.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+/* ---------- hero : une photo en fond, titre, sous-titre et deux boutons centrés ---------- */
+.hero{position:relative;background:var(--vert);color:#fff;overflow:hidden;text-align:center;
+  min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:110px 0 80px}
+/* la photo source est petite (382 px) : un léger flou évite l'effet pixellisé sur grand écran */
+.hero-bg{position:absolute;inset:-12px;width:calc(100% + 24px);height:calc(100% + 24px);max-width:none;object-fit:cover;object-position:50% 55%;filter:blur(4px)}
+/* voile vert : lisibilité du texte, et adoucit la photo agrandie */
+.hero::before{content:"";position:absolute;inset:0;background:rgba(19,74,36,.72);z-index:1}
+.hero-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%}
+.hero h1{margin:0 0 18px;max-width:18ch;font-size:clamp(2.2rem,5.4vw,4.1rem);line-height:1.06}
+.hero-sous{max-width:46ch;margin:0 auto;font-size:clamp(1.02rem,1.6vw,1.22rem);line-height:1.55;color:rgba(255,255,255,.94)}
+.hero .eyebrow{margin:0 0 16px}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
 .wordmark{display:inline-flex;align-items:center;gap:10px}
 .wordmark-text{display:flex;flex-direction:column;line-height:1.1}
 .wordmark-nom{font-size:1.5rem}
 .wordmark-sig{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
-.hero-copy h1{margin:24px 0 18px;max-width:15ch}
-.hero-copy p{max-width:44ch;font-size:1.06rem;line-height:1.55;color:rgba(255,255,255,.92)}
-.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-.hero-photo{display:flex;justify-content:flex-end}
 .frame{position:relative;width:100%;max-width:340px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
   border:1px solid rgba(255,255,255,.28);box-shadow:0 24px 60px rgba(15,30,8,.35);
   background:var(--vert-fonce)}
@@ -1522,7 +1493,7 @@ section[id]{scroll-margin-top:0}
    le temps de la frappe, puis glisse vers le haut (le hero est en overflow:hidden).
    min-height sur le texte : la ligne ne saute pas quand elle est encore vide. */
 .hero.is-welcome .rise{animation-play-state:paused}
-.welcome{position:absolute;inset:0;z-index:2;display:grid;place-items:center;padding:0 24px;
+.welcome{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:0 24px;
   background:var(--vert);color:#fff;text-align:center;
   transition:transform .8s var(--ease)}
 .welcome-up{transform:translateY(-100%)}
@@ -1562,8 +1533,6 @@ section[id]{scroll-margin-top:0}
 .js [data-reveal].done{transition-delay:0ms;transition-duration:.4s}
 .js .card.done{transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s var(--ease)}
 /* léger parallaxe sur le collage du hero */
-.collage-a{transform:translateY(calc(var(--sy,0) * -.03px))}
-.collage-b{transform:translateY(calc(var(--sy,0) * -.09px))}
 
 /* ---------- sections ---------- */
 .section{padding:clamp(64px,8vw,104px) 0}
@@ -1600,12 +1569,6 @@ section[id]{scroll-margin-top:0}
 .btn-moutarde{background:var(--terre);color:#fff;box-shadow:0 6px 18px rgba(178,88,50,.38)}
 .btn-moutarde:hover{background:#9A4A27;box-shadow:0 12px 28px rgba(178,88,50,.42)}
 
-/* collage du hero */
-.collage{position:relative;width:min(100%,470px);aspect-ratio:1/1.12}
-.collage img{position:absolute;object-fit:cover;border-radius:var(--r);
-  border:3px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(8,20,18,.45)}
-.collage-a{left:0;top:0;width:66%;height:84%;border-radius:140px 140px var(--r) var(--r)!important}
-.collage-b{right:0;bottom:0;width:50%;height:58%}
 
 /* ---------- galerie : planche-contact sur plaque de glace ----------
    La photo garde son ratio 3:4 (aucun recadrage) et ne recoit ni filtre ni nappe :
@@ -1768,7 +1731,6 @@ section[id]{scroll-margin-top:0}
 /* ---------- surtitres ---------- */
 .eyebrow{margin:0 0 12px;font:700 .74rem/1.2 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--terre)}
 .eyebrow-clair{color:#F0C469}
-.hero-copy .eyebrow{margin:18px 0 -6px;font-size:.74rem;line-height:1.2;color:#F0C469}
 
 /* ---------- bande des activités ---------- */
 /* bande qui défile : le groupe est écrit deux fois, la piste glisse d'une moitié puis boucle */
@@ -1843,7 +1805,6 @@ section[id]{scroll-margin-top:0}
 .feuille-h2{width:90px;right:34%;bottom:9%;animation-duration:12s;animation-delay:-4s;transform-origin:50% 100%}
 .feuille-p1{width:200px;left:-40px;bottom:-30px;transform-origin:50% 100%;opacity:.07}
 @keyframes balance{from{transform:rotate(-7deg)}to{transform:rotate(8deg)}}
-.hero-in{z-index:1}
 
 /* ---------- formulaire : indication WhatsApp ---------- */
 .form-hint{margin:0;font-size:.88rem;color:var(--muted);padding:10px 12px;background:rgba(225,163,45,.14);border-radius:var(--r)}
@@ -1854,8 +1815,12 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
-/* ---------- texture : grandes feuilles en filigrane (fournie), seulement sur le hero, l'aménagement paysager et le menu mobile ---------- */
-.hero,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+/* ---------- texture : grandes feuilles en filigrane (fournie), sur tous les fonds verts ---------- */
+.cafe,.pays,.bande,.site-foot{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+.site-head::before{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+/* le hero a une photo : la texture se pose par-dessus le voile vert */
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:url(/texture-feuilles.png) center/cover}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
@@ -1885,23 +1850,11 @@ section[id]{scroll-margin-top:0}
   .avis-liste::-webkit-scrollbar{display:none}
   .avis{flex:0 0 86%;scroll-snap-align:center}
   .avis-hint{display:block;margin:0 0 14px;text-align:center;font-size:.82rem;color:var(--muted)}
-  /* Mobile : la photo (collage) et le texte tiennent ensemble sur le premier écran.
-     Le logo du hero et l'adresse, déjà présents dans l'en-tête et le pied de page,
-     sont masqués pour gagner de la place. */
-  .hero{min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:84px 0 22px}
-  .hero-bg{opacity:0}
-  .hero-in{grid-template-columns:1fr;gap:16px}
-  .hero-photo{display:flex;order:-1;justify-content:center}
-  .collage{width:min(100%,300px);aspect-ratio:1/.78;margin:0 auto}
-  .collage-a{width:100%;height:100%;border-radius:150px 150px var(--r) var(--r)!important}
-  .collage-b{display:none}
-  .hero-copy{background:none;padding:0;box-shadow:none}
-  .hero-copy .eyebrow{margin:0 0 6px}
-  .hero-copy h1{margin:0 0 10px;font-size:clamp(1.85rem,8.4vw,2.4rem);max-width:none}
-  .hero-copy p{font-size:1rem;line-height:1.5}
-  .hero-cta{margin-top:18px}
-  .hero-cta{display:grid;grid-template-columns:1fr;gap:10px}
-  .hero-cta .btn{padding:14px 16px}
+  /* Mobile : même hero, photo en fond, texte centré, boutons pleine largeur */
+  .hero{padding:96px 0 56px}
+  .hero h1{font-size:clamp(1.95rem,9vw,2.6rem)}
+  .hero-cta{width:100%;flex-direction:column;gap:10px}
+  .hero-cta .btn{width:100%;padding:14px 16px}
   .head-nav{gap:12px;font-size:.88rem}
   .head-nav a:not(.btn){display:none}
   .lieu-photos,.cafe-photos{height:420px}
@@ -1912,15 +1865,10 @@ section[id]{scroll-margin-top:0}
   .grid{grid-template-columns:repeat(2,1fr)}
   .card-nom{font-size:.95rem}.card-cap{padding:10px 11px 13px}
 }
-@media (max-width:460px){
-  .hero-cta{grid-template-columns:1fr}
-}
-/* tablettes en portrait : collage et titre plus grands */
+/* tablettes en portrait : boutons côte à côte */
 @media (min-width:600px) and (max-width:820px){
-  .collage{width:min(100%,400px);aspect-ratio:1/.78}
-  .hero-copy h1{font-size:2.8rem}
-  .hero-copy p{font-size:1.1rem;max-width:52ch}
-  .hero-cta{grid-template-columns:1fr 1fr}
+  .hero-cta{flex-direction:row;width:auto}
+  .hero-cta .btn{width:auto}
 }
 /* très petits écrans : l'en-tête garde le logo lisible, « Appeler » ne garde que son icône */
 @media (max-width:400px){
