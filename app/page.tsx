@@ -994,28 +994,28 @@ export default function Home() {
           </div>
         </section>
 
-        {/* BANDEAU PLANTES */}
-        <section id="bandeau" className="section bandeau">
+        {/* BANDEAU : une bande verte, deux photos rondes, titre, texte et bouton */}
+        <div className="bandeau">
           <div className="wrap bandeau-in">
-            <div className="bandeau-ronds" aria-hidden="false">
+            <div className="bandeau-ronds">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="rond rond-a" src={LIEU.etageres.src} width={LIEU.etageres.w} height={LIEU.etageres.h} alt={LIEU.etageres.alt} loading="lazy" decoding="async" />
+              <img className="rond rond-a" src="/galerie/mini/anthurium.jpg" width={480} height={640} alt="Anthurium" loading="lazy" decoding="async" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="rond rond-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
+              <img className="rond rond-b" src="/galerie/mini/monstera-adansonii.jpg" width={480} height={640} alt="Monstera adansonii" loading="lazy" decoding="async" />
             </div>
-            <div data-reveal className="reveal rv-right">
-              <h2>Des plantes pour une vie plus verte</h2>
-              <p className="lede">
+            <h2 data-reveal className="reveal">Des plantes pour une vie plus verte</h2>
+            <div className="bandeau-txt" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
+              <p>
                 Plantes rares, plantes d'intérieur, arbres tropicaux : choisissez
                 en boutique ou écrivez-nous, nous vous conseillons la plante qui
                 convient à votre espace.
               </p>
-              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je cherche une plante pour mon espace.")} target="_blank" rel="noopener">
-                <WhatsAppIcon size={18} /> Demander conseil
+              <a className="btn btn-moutarde btn-sm" href={waLink("Bonjour Exoticas, je cherche une plante pour mon espace.")} target="_blank" rel="noopener">
+                Demander conseil
               </a>
             </div>
           </div>
-        </section>
+        </div>
 
         {/* CONSEILS */}
         <section id="conseils" className="section conseils">
@@ -1945,7 +1945,7 @@ section[id]{scroll-margin-top:0}
 .arche{width:min(100%,380px);aspect-ratio:3/4;overflow:hidden;border-radius:999px 999px 24px 24px;
   background:var(--creme);padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .arche img{width:100%;height:100%;object-fit:cover;border-radius:999px 999px 16px 16px}
-.pastille-ronde{position:absolute;left:4%;bottom:12%;display:grid;place-items:center;width:84px;height:84px;
+.pastille-ronde{position:absolute;right:6%;bottom:30%;display:grid;place-items:center;width:84px;height:84px;
   border-radius:50%;background:var(--vert-nuit);color:#fff;text-align:center;font:600 .78rem/1.2 var(--sans);
   border:2px solid rgba(255,255,255,.35);box-shadow:0 10px 24px rgba(0,0,0,.35)}
 .services{background:var(--vert-nuit);color:#fff}
@@ -1982,7 +1982,7 @@ section[id]{scroll-margin-top:0}
   .service{border-left:0;padding:0}
   .bandeau-in{grid-template-columns:1fr}
   .conseils-grille{grid-template-columns:1fr}
-  .pastille-ronde{width:72px;height:72px;left:0}
+  .pastille-ronde{width:72px;height:72px;right:0}
   .arche{width:min(100%,250px)}
 }
 
@@ -2030,6 +2030,41 @@ section[id]{scroll-margin-top:0}
   .foot-pages{justify-items:center}
 }
 
+
+/* ---------- finitions « maquette » ---------- */
+/* section des cartes promo : fond vert très pâle, cartes grises */
+.promos{background:#DCE8D4}
+.promo{background:#E2E2DC;border:0}
+.promo-k{font-family:var(--serif);font-weight:500;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
+.promo-txt strong{font-size:clamp(1.6rem,2.6vw,2.2rem)}
+/* titre de la galerie : filet court dessous, comme la maquette */
+.galerie h2::after{content:"";display:block;width:72px;height:2px;margin:12px auto 0;background:var(--vert)}
+.galerie .eyebrow{display:none}
+/* cartes plantes : tuile grise, photo dedans, légende dessous */
+.card{background:transparent;border:0;box-shadow:none;overflow:visible;gap:10px}
+.card:hover{box-shadow:none}
+.card-img{background:#DCDCD4;padding:14px;border-radius:14px;transition:background .35s var(--ease)}
+.card-img img{border-radius:9px}
+.card:hover .card-img,.card:focus-visible .card-img{background:#8FCB7C}
+.card-cap{padding:0 4px}
+.card-soins{display:none}
+/* bandeau vert compact */
+.bandeau{padding:30px 0;overflow:hidden}
+.conseils .eyebrow,.avisband .eyebrow{display:none}
+.bandeau-in{grid-template-columns:auto 1.1fr 1.2fr;gap:clamp(20px,4vw,56px);align-items:center}
+.bandeau-ronds{position:relative;width:210px;height:130px}
+.rond{border-width:4px;box-shadow:none}
+.rond-a{left:0;bottom:0;width:104px}
+.rond-b{right:0;top:0;width:124px}
+.bandeau h2{margin:0;font-size:clamp(1.6rem,3vw,2.5rem)}
+.bandeau-txt{display:grid;gap:12px;justify-items:start}
+.bandeau-txt p{margin:0;font-size:.92rem;color:rgba(255,255,255,.82)}
+/* bloc image + texte : titre en gras, comme la maquette */
+.duo-carte h2{font-family:var(--sans);font-weight:700;font-size:clamp(1.15rem,1.9vw,1.5rem);line-height:1.3;letter-spacing:0}
+@media (max-width:900px){
+  .bandeau-in{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .bandeau-txt{justify-items:center}
+}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
