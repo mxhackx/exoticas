@@ -1854,8 +1854,8 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
-/* ---------- texture : feuilles au trait, seulement sur le hero et l'aménagement paysager ---------- */
-.hero,.pays{background-image:url(/texture-claire.svg);background-size:520px 520px}
+/* ---------- texture : grandes feuilles en filigrane (fournie), seulement sur le hero, l'aménagement paysager et le menu mobile ---------- */
+.hero,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
@@ -1941,7 +1941,7 @@ section[id]{scroll-margin-top:0}
 .burger.ouvert span:nth-child(3){top:21px;transform:rotate(-45deg)}
 .burger:focus-visible{outline:3px solid #F0C469;outline-offset:2px}
 .menu-mobile{position:fixed;inset:0;z-index:49;display:flex;flex-direction:column;justify-content:center;gap:28px;
-  padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-claire.svg);background-size:520px 520px;
+  padding:96px 28px 32px;background:var(--vert-fonce);background-image:url(/texture-feuilles.png);background-size:cover;background-position:center;
   color:#fff;visibility:hidden;opacity:0;transform:translateY(-12px);
   transition:opacity .35s var(--ease),transform .45s var(--ease-out),visibility 0s linear .45s}
 .menu-mobile.ouvert{visibility:visible;opacity:1;transform:none;transition-delay:0s}
