@@ -422,6 +422,55 @@ function LecteurVideo({ v }: { v: Video }) {
   );
 }
 
+function FeuilleIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M5 19 14 10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function TasseIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M16 11h2a2.5 2.5 0 0 1 0 5h-2M8 3c0 1.5 1.5 1.5 1.5 3M12 3c0 1.5 1.5 1.5 1.5 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function BureauIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="4" y="5" width="16" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M2 19h20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function GoutteIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 3s6 6.2 6 10.5A6 6 0 0 1 6 13.5C6 9.2 12 3 12 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function SoleilIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function CiseauxIcone({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="2.6" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="6" cy="18" r="2.6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 7.5 20 18M8 16.5 20 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function PinIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -805,15 +854,30 @@ export default function Home() {
               </div>
             </div>
             <div className="hero-photo rise" style={{ "--d": "320ms" } as React.CSSProperties}>
-              <div className="collage">
+              <div className="arche">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-a" src={LIEU.tasses.src} width={LIEU.tasses.w} height={LIEU.tasses.h} alt={LIEU.tasses.alt} fetchPriority="high" decoding="async" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="collage-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} decoding="async" />
+                <img src={LIEU.tasses.src} width={LIEU.tasses.w} height={LIEU.tasses.h} alt={LIEU.tasses.alt} fetchPriority="high" decoding="async" />
               </div>
+              <span className="pastille-ronde">Café<br />&amp; plantes</span>
             </div>
           </div>
         </section>
+
+        {/* SERVICES */}
+        <div className="services">
+          <div className="wrap services-in">
+            {[
+              { i: <FeuilleIcone />, t: "Espaces verts sur mesure", d: "Conception et plantation, sur devis" },
+              { i: <TasseIcone />, t: "Terrasse café conviviale", d: "Brunch, jus frais et café" },
+              { i: <BureauIcone />, t: "Coworking", d: "Travaillez entouré de verdure" },
+            ].map((x, k) => (
+              <div key={x.t} className="service rv-pop" data-reveal style={{ "--d": `${k * 100}ms` } as React.CSSProperties}>
+                <span className="service-ico">{x.i}</span>
+                <span className="service-txt"><strong>{x.t}</strong><span>{x.d}</span></span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* LE LIEU */}
         <section id="lieu" className="section">
@@ -1050,6 +1114,53 @@ export default function Home() {
                 </button>
               </div>
             )}
+          </div>
+        </section>
+
+        {/* BANDEAU PLANTES */}
+        <section id="bandeau" className="section bandeau">
+          <div className="wrap bandeau-in">
+            <div className="bandeau-ronds" aria-hidden="false">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="rond rond-a" src={LIEU.etageres.src} width={LIEU.etageres.w} height={LIEU.etageres.h} alt={LIEU.etageres.alt} loading="lazy" decoding="async" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="rond rond-b" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} loading="lazy" decoding="async" />
+            </div>
+            <div data-reveal className="reveal rv-right">
+              <h2>Des plantes pour une vie plus verte</h2>
+              <p className="lede">
+                Plantes rares, plantes d'intérieur, arbres tropicaux : choisissez
+                en boutique ou écrivez-nous, nous vous conseillons la plante qui
+                convient à votre espace.
+              </p>
+              <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je cherche une plante pour mon espace.")} target="_blank" rel="noopener">
+                <WhatsAppIcon size={18} /> Demander conseil
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* CONSEILS */}
+        <section id="conseils" className="section conseils">
+          <div className="wrap">
+            <p data-reveal className="eyebrow reveal">Conseils</p>
+            <h2 data-reveal className="reveal">Bien prendre soin de vos plantes</h2>
+            <p data-reveal className="reveal lede" style={{ "--d": "90ms" } as React.CSSProperties}>
+              Trois gestes simples pour que vos plantes restent en bonne santé.
+            </p>
+            <div className="conseils-grille">
+              {[
+                { i: <SoleilIcone size={30} />, t: "Lumière", d: "La plupart des plantes d'intérieur aiment une lumière vive, sans soleil direct qui brûle les feuilles." },
+                { i: <GoutteIcone size={30} />, t: "Arrosage", d: "Arrosez quand le dessus du terreau est sec, et ne laissez jamais d'eau stagner dans la soucoupe." },
+                { i: <CiseauxIcone size={30} />, t: "Entretien", d: "Retirez les feuilles abîmées, essuyez la poussière et rempotez tous les un à deux ans." },
+              ].map((c, k) => (
+                <div key={c.t} className="conseil rv-pop" data-reveal style={{ "--d": `${140 + k * 100}ms` } as React.CSSProperties}>
+                  <span className="conseil-ico">{c.i}</span>
+                  <h3>{c.t}</h3>
+                  <p>{c.d}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -1348,14 +1459,14 @@ export default function Home() {
 const css = `
 :root{
   /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
-  --vert:#237F3C;
-  --vert-fonce:#1B6430;
-  --vert-nuit:#134A24;
+  --vert:#17432C;
+  --vert-fonce:#103321;
+  --vert-nuit:#0B2417;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#E56717;
   --bois:#8B5A34;
-  --creme:#F6EFE2;
+  --creme:#EEF0E6;
   --texte:#1E2B28;
   --muted:#6B726B;
   --line:#E3DACA;
@@ -1444,8 +1555,8 @@ section[id]{scroll-margin-top:0}
 .btn:focus-visible{outline:3px solid #F0C469;outline-offset:3px}
 .btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
 .btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
-.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(35,127,60,.3)}
-.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(35,127,60,.35)}
+.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(23,67,44,.3)}
+.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(23,67,44,.35)}
 .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
 .btn-ghost:hover{background:#fff;color:var(--vert);border-color:#fff}
 .btn-sm{padding:9px 18px;min-height:40px;font-size:.9rem}
@@ -1862,9 +1973,6 @@ section[id]{scroll-margin-top:0}
   .hero-bg{opacity:0}
   .hero-in{grid-template-columns:1fr;gap:16px}
   .hero-photo{display:flex;order:-1;justify-content:center}
-  .collage{width:min(100%,300px);aspect-ratio:1/.78;margin:0 auto}
-  .collage-a{width:100%;height:100%}
-  .collage-b{display:none}
   .hero-copy{background:none;padding:0;box-shadow:none}
   .hero-copy .eyebrow{margin:0 0 6px}
   .hero-copy h1{margin:0 0 10px;font-size:clamp(1.85rem,8.4vw,2.4rem);max-width:none}
@@ -1926,6 +2034,53 @@ section[id]{scroll-margin-top:0}
 @keyframes pouls{0%,100%{scale:1}50%{scale:1.045}}
 .collage img:hover,.lieu-p:hover,.cafe-p:hover,.cow-p:hover,.pays-visuel img:hover,.video:hover{animation:pouls 1.3s ease-in-out infinite}
 .card:hover .card-img img,.card:focus-visible .card-img img{animation:pouls 1.3s ease-in-out infinite}
+
+
+/* ---------- design « boutique de plantes » (inspiré de la maquette) ---------- */
+.hero-photo{position:relative;display:flex;justify-content:center}
+.arche{width:min(100%,380px);aspect-ratio:3/4;overflow:hidden;border-radius:999px 999px 24px 24px;
+  background:var(--creme);padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.arche img{width:100%;height:100%;object-fit:cover;border-radius:999px 999px 16px 16px}
+.pastille-ronde{position:absolute;left:4%;bottom:12%;display:grid;place-items:center;width:84px;height:84px;
+  border-radius:50%;background:var(--vert-nuit);color:#fff;text-align:center;font:600 .78rem/1.2 var(--sans);
+  border:2px solid rgba(255,255,255,.35);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.services{background:var(--vert-nuit);color:#fff}
+.services-in{display:grid;grid-template-columns:repeat(3,1fr);padding-top:26px;padding-bottom:26px}
+.service{display:flex;align-items:center;gap:14px;padding:0 24px;border-left:1px solid rgba(255,255,255,.18)}
+.service:first-child{border-left:0;padding-left:0}
+.service-ico{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;flex:none;
+  border:1px solid rgba(255,255,255,.35);color:#fff}
+.service-txt{display:grid;gap:1px;min-width:0}
+.service-txt strong{font-weight:700;font-size:.98rem}
+.service-txt span{font-size:.84rem;color:rgba(255,255,255,.72)}
+.bandeau{background:var(--vert-nuit);color:#fff}
+.bandeau h2{color:#fff}
+.bandeau .lede{color:rgba(255,255,255,.8)}
+.bandeau-in{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center}
+.bandeau-ronds{position:relative;height:clamp(260px,30vw,380px)}
+.rond{position:absolute;height:auto;border-radius:50%;object-fit:cover;border:6px solid var(--creme);box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.rond-a{left:0;bottom:0;width:62%;aspect-ratio:1}
+.rond-b{right:0;top:0;width:52%;aspect-ratio:1}
+.conseils{background:var(--creme)}
+.conseils-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.conseil{display:grid;gap:8px;justify-items:center;text-align:center;padding:28px 22px;border-radius:14px;background:#fff;
+  border:1px solid var(--line)}
+.conseil-ico{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--vert);color:#fff;margin-bottom:4px}
+.conseil h3{margin:0;font:500 1.3rem/1.2 var(--serif)}
+.conseil p{margin:0;color:var(--muted);font-size:.96rem}
+/* cartes plantes : tuile grise, étiquette orange */
+.card{background:#E3E5DC;border-color:transparent;box-shadow:none}
+.card-cap{background:transparent}
+.card-tag{color:var(--terre)}
+.filtre.on{background:var(--vert)}
+@media (max-width:900px){
+  .services-in{grid-template-columns:1fr;gap:16px}
+  .service{border-left:0;padding:0}
+  .bandeau-in{grid-template-columns:1fr}
+  .conseils-grille{grid-template-columns:1fr}
+  .pastille-ronde{width:72px;height:72px;left:0}
+  .arche{width:min(100%,250px)}
+}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
