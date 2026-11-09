@@ -1820,7 +1820,7 @@ section[id]{scroll-margin-top:0}
 .foot-col a.foot-pill-insta{background:var(--terre);color:#fff;border-color:transparent;font-weight:600}
 
 /* ---------- texture : grandes feuilles en filigrane (fournie), sur les fonds verts (sauf l'en-tête) ---------- */
-.cafe,.pays,.site-foot{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
+.cafe,.pays{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
