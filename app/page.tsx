@@ -779,8 +779,8 @@ export default function Home() {
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="#top" className="head-logo" aria-label="Exoticas, accueil">
-            <Logo size={28} verte />
-            <span className="head-nom">exoticas</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="logo-complet" src="/logo/logo-complet-vert.png" width={946} height={289} alt="Exoticas" decoding="async" />
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
             {VIDEOS.length > 0 && <a href="#videos">Vidéos</a>}
@@ -1248,7 +1248,8 @@ export default function Home() {
             </p>
           </div>
           <div data-reveal className="reveal foot-marque" style={{ "--d": "90ms" } as React.CSSProperties}>
-            <Wordmark />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="logo-complet logo-pied" src="/logo/logo-complet-blanc.png" width={946} height={289} alt="Exoticas, la vie en vert" loading="lazy" decoding="async" />
             <p>Un lieu unique où la nature rencontre l'élégance : espaces verts sur mesure, terrasse café et coworking à Tokpa-hoho, Cotonou.</p>
             <span className="foot-pills">
               <a href={BRAND.instagram} target="_blank" rel="noopener me" className="foot-pill foot-pill-insta">
@@ -1381,7 +1382,7 @@ body{
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 h1,h2,h3{margin:0 0 .55rem;font-weight:550;text-wrap:balance}
-h1,h2,.head-nom,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500;font-variation-settings:"SOFT" 100}
+h1,h2,.wordmark-nom,.welcome-texte{font-family:var(--serif);font-weight:500;font-variation-settings:"SOFT" 100}
 h1{font-size:clamp(2.35rem,4.6vw,3.45rem);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(1.65rem,2.6vw,2.15rem);line-height:1.1;letter-spacing:-.03em}
 h3{font-size:1.02rem;line-height:1.2;letter-spacing:-.015em}
@@ -1415,7 +1416,8 @@ section[id]{scroll-margin-top:16px}
   transition:height .45s var(--ease)}
 .site-head.is-scrolled .head-in{height:54px}
 .head-logo{display:flex;align-items:center;gap:9px;color:var(--vert-nuit);text-decoration:none}
-.head-nom{font-size:1.15rem;letter-spacing:.01em}
+.logo-complet{display:block;height:44px;width:auto}
+.logo-pied{height:52px}
 .mark{transition:transform .6s var(--ease-out)}
 .head-logo:hover .mark{transform:rotate(-8deg) scale(1.06)}
 /* mêmes tailles que le texte du site (16,5 px) */
