@@ -471,6 +471,23 @@ function CiseauxIcone({ size = 26 }: { size?: number }) {
   );
 }
 
+function MailIcone({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="2" />
+      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function HorlogeIcone({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function PinIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1104,90 +1121,28 @@ export default function Home() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="section section-alt">
+        <section id="contact" className="section contact">
           <div className="wrap contact-in">
             <div data-reveal className="reveal rv-left">
-              <p className="eyebrow">Contact</p>
-              <h2>Venez nous voir</h2>
-              <p className="lede">
-                Écrivez-nous sur WhatsApp : remplissez le formulaire, votre
-                message s'ouvre prêt à envoyer, et on vous répond rapidement.
+              <h3 className="ct-titre">Informations pratiques</h3>
+              <p className="ct-texte">
+                Passez nous voir à Tokpa-hoho, appelez-nous ou écrivez-nous sur
+                WhatsApp : nous répondons rapidement.
               </p>
-              <form onSubmit={onSubmit} className="form">
-                <label>
-                  Nom
-                  <input
-                    required
-                    value={form.nom}
-                    onChange={set("nom")}
-                    placeholder="Votre nom"
-                    autoComplete="name"
-                  />
-                </label>
-                <label>
-                  Téléphone ou e-mail
-                  <input
-                    required
-                    value={form.contact}
-                    onChange={set("contact")}
-                    placeholder="01 …  ou  vous@exemple.com"
-                    autoComplete="tel"
-                  />
-                </label>
-                <label>
-                  Objet
-                  <select
-                    value={form.objet}
-                    onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}
-                  >
-                    {["Aménagement paysager (devis)", "Coworking", "Café et brunch", "Plantes", "Autre"].map((o) => (
-                      <option key={o}>{o}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Message
-                  <textarea
-                    required
-                    rows={4}
-                    value={form.message}
-                    onChange={set("message")}
-                    placeholder="Je souhaite aménager une terrasse de 40 m²…"
-                  />
-                </label>
-                <p className="form-hint">
-                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
-                  avec votre message déjà écrit. Il n'est envoyé qu'une fois
-                  validé dans WhatsApp.
-                </p>
-                <button className="btn btn-moutarde" type="submit">
-                  <WhatsAppIcon size={18} /> Continuer sur WhatsApp
-                </button>
-                <p className={`note${envoye ? " show" : ""}`} role="status">
-                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer. Vous pouvez aussi nous appeler au{" "}
-                  <a href={BRAND.telHref}>{BRAND.tel}</a> ou écrire à{" "}
-                  <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
-                </p>
-              </form>
-            </div>
-
-            <aside data-reveal className="reveal rv-right coords" style={{ "--d": "160ms" } as React.CSSProperties}>
-              <Plan lat={MAP.lat} lng={MAP.lng} />
-
-              <dl>
-                <dt>Téléphone</dt>
-                <dd>
-                  <a href={BRAND.telHref}>{BRAND.tel}</a>
-                </dd>
-                <dt>Courriel</dt>
-                <dd>
-                  <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
-                </dd>
-                <dt>Adresse</dt>
-                <dd>{BRAND.adresseCourte}</dd>
-                <dd className="muted">{BRAND.adresseLongue}</dd>
-              </dl>
-
+              <ul className="ct-liste">
+                <li><span className="ct-ico"><PhoneIcon size={15} /></span><a href={BRAND.telHref}>{BRAND.tel}</a></li>
+                <li><span className="ct-ico"><WhatsAppIcon size={15} /></span><a href={waLink("Bonjour Exoticas, j'aimerais avoir des informations.")} target="_blank" rel="noopener">Écrire sur WhatsApp</a></li>
+                <li><span className="ct-ico"><MailIcone size={15} /></span><a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a></li>
+                <li><span className="ct-ico"><HorlogeIcone size={15} /></span><span>Horaires : demandez-nous par téléphone ou WhatsApp</span></li>
+              </ul>
+              <h3 className="ct-titre ct-loc">Adresse et accès :</h3>
+              <p className="ct-texte ct-adr">
+                {BRAND.adresseCourte}
+                <span>{BRAND.adresseLongue}</span>
+              </p>
+              <div className="loc-map">
+                <Plan lat={MAP.lat} lng={MAP.lng} />
+              </div>
               <div className="geo">
                 <button
                   type="button"
@@ -1241,13 +1196,50 @@ export default function Home() {
                 </p>
               </div>
 
-              <a className="btn btn-wa" href={waLink("Bonjour Exoticas, j'aimerais avoir des informations.")} target="_blank" rel="noopener">
-                <WhatsAppIcon size={18} /> Écrire sur WhatsApp
-              </a>
-              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me" style={{ marginTop: 10 }}>
+              <a className="btn btn-wa" href={BRAND.fiche} target="_blank" rel="noopener me">
                 <PinIcon size={18} /> Voir la fiche Google Maps
               </a>
-            </aside>
+            </div>
+
+            <div data-reveal className="reveal rv-right ct-droite" style={{ "--d": "160ms" } as React.CSSProperties}>
+              <span className="ct-pastille">Contact</span>
+              <h2 className="ct-grand">Contactez-nous !</h2>
+              <form onSubmit={onSubmit} className="form ct-form">
+                <label>
+                  Nom
+                  <input required name="nom" value={form.nom} onChange={set("nom")} placeholder="Votre nom" autoComplete="name" />
+                </label>
+                <label>
+                  Téléphone ou e-mail
+                  <input required name="contact" value={form.contact} onChange={set("contact")} placeholder="01 …  ou  vous@exemple.com" autoComplete="on" />
+                </label>
+                <label>
+                  Objet
+                  <select name="objet" value={form.objet} onChange={(e) => setForm((f) => ({ ...f, objet: e.target.value }))}>
+                    {["Aménagement paysager (devis)", "Coworking", "Café et brunch", "Plantes", "Autre"].map((o) => (
+                      <option key={o}>{o}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Message
+                  <textarea required name="message" rows={5} value={form.message} onChange={set("message")} placeholder="Je souhaite aménager une terrasse de 40 m²…" />
+                </label>
+                <p className="form-hint">
+                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
+                  avec votre message déjà écrit. Il n'est envoyé qu'une fois
+                  validé dans WhatsApp.
+                </p>
+                <button className="btn btn-moutarde" type="submit">
+                  <WhatsAppIcon size={18} /> Continuer sur WhatsApp
+                </button>
+                <p className={`note${envoye ? " show" : ""}`} role="status">
+                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer.
+                  Vous pouvez aussi nous appeler au <a href={BRAND.telHref}>{BRAND.tel}</a> ou
+                  écrire à <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
+                </p>
+              </form>
+            </div>
           </div>
         </section>
       </main>
@@ -2067,6 +2059,36 @@ section[id]{scroll-margin-top:16px}
   .bandeau-in{grid-template-columns:1fr;justify-items:center;text-align:center}
   .bandeau-txt{justify-items:center}
 }
+
+/* ---------- contact : deux colonnes, carte blanche à champs pointillés ---------- */
+.contact{background:var(--creme)}
+.contact-in{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:start}
+.ct-titre{margin:0 0 10px;font:700 1.25rem/1.2 var(--sans);color:var(--vert-nuit)}
+.ct-texte{margin:0 0 16px;color:var(--muted);font-size:.95rem}
+.ct-liste{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:12px}
+.ct-liste li{display:flex;align-items:center;gap:12px;font-size:.98rem}
+.ct-liste a{text-decoration:none;color:inherit}
+.ct-liste a:hover{color:var(--vert);text-decoration:underline}
+.ct-ico{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--vert);color:#fff;flex:none}
+.ct-loc{margin-top:6px}
+.ct-adr{display:grid;gap:2px;margin-bottom:14px}
+.ct-adr span{color:var(--muted);font-size:.9rem}
+.loc-map{width:min(100%,440px);margin-bottom:16px;border-radius:18px;overflow:hidden;box-shadow:0 10px 26px rgba(20,35,12,.14)}
+.loc-map .map{margin:0;border:0;border-radius:18px}
+.contact .geo{max-width:440px}
+.ct-droite{display:grid;justify-items:start}
+.ct-pastille{display:inline-block;padding:5px 22px;border:1px solid var(--vert-nuit);border-radius:999px;font-size:.9rem;color:var(--vert-nuit);background:#fff}
+.ct-grand{margin:14px 0 22px;font:700 clamp(2rem,4.4vw,3.2rem)/1.1 var(--serif);color:var(--vert-nuit);letter-spacing:-.02em}
+.ct-form{width:100%;max-width:none;margin:0;padding:clamp(20px,3vw,32px);background:#fff;border:0;border-radius:24px;
+  box-shadow:0 14px 40px rgba(20,35,12,.16);backdrop-filter:none;-webkit-backdrop-filter:none;gap:16px}
+.ct-form label{font:700 .88rem/1.2 var(--sans);letter-spacing:0;text-transform:none;color:var(--vert-nuit)}
+.ct-form input,.ct-form select,.ct-form textarea{background:#F3EEDC;border:1.5px dashed #8A8A5A;border-radius:20px;box-shadow:none;
+  padding:12px 18px;font-weight:400}
+.ct-form textarea{border-radius:22px;resize:vertical}
+.ct-form input:hover,.ct-form select:hover,.ct-form textarea:hover{background:#F6F2E4;border-color:#6B6B3E}
+.ct-form input:focus,.ct-form select:focus,.ct-form textarea:focus{background:#fff;border-style:solid;border-color:var(--vert);
+  box-shadow:0 0 0 3px rgba(35,127,60,.2)}
+@media (max-width:900px){.contact-in{grid-template-columns:1fr}.ct-droite{order:-1}}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
