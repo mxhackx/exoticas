@@ -1838,6 +1838,12 @@ section[id]{scroll-margin-top:0}
   .cafe-photos{order:2}
   .grid{grid-template-columns:repeat(3,1fr)}
   .contact-in,.foot-in{grid-template-columns:1fr;gap:30px}
+  /* pied de page centré sur mobile et tablette */
+  .site-foot{text-align:center}
+  .foot-in{justify-items:center}
+  .site-foot .wordmark{justify-content:center}
+  .foot-pills{justify-content:center}
+  .foot-bottom{text-align:center;padding-bottom:56px}  /* dégage la ligne du bouton WhatsApp flottant */
 }
 @media (max-width:820px){
   .head-nav .burger{display:block}
