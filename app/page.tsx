@@ -717,14 +717,11 @@ export default function Home() {
             <span className="head-nom">exoticas</span>
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
-            <a href="#lieu">Le lieu</a>
             {VIDEOS.length > 0 && <a href="#videos">Vidéos</a>}
             <a href="#cafe">Café</a>
             <a href="#coworking">Coworking</a>
             <a href="#paysagisme">Paysagisme</a>
             <a href="#galerie">Plantes</a>
-            <a href="#avis">Avis</a>
-            <a href="#contact">Contact</a>
             <a className="btn btn-light btn-sm" href={BRAND.telHref} aria-label="Appeler Exoticas">
               <PhoneIcon size={16} /> <span className="btn-txt">Appeler</span>
             </a>
@@ -1378,9 +1375,9 @@ export default function Home() {
 const css = `
 :root{
   /* palette : vert Exoticas d'origine, avec les accents du lieu (bois brut, jaune moutarde, terre cuite) */
-  --vert:#466931;
-  --vert-fonce:#3A5528;
-  --vert-nuit:#2C4220;
+  --vert:#237F3C;
+  --vert-fonce:#1B6430;
+  --vert-nuit:#134A24;
   --vert-accent:#E1A32D;
   --moutarde:#E1A32D;
   --terre:#B25832;
@@ -1474,8 +1471,8 @@ section[id]{scroll-margin-top:0}
 .btn-fl:hover::before{transform:translateX(5px)}
 .btn-light{background:#fff;color:var(--vert);border-color:#fff;box-shadow:0 4px 14px rgba(20,35,12,.18)}
 .btn-light:hover{background:var(--creme);box-shadow:0 10px 24px rgba(20,35,12,.22)}
-.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(70,105,49,.3)}
-.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(70,105,49,.35)}
+.btn-primary{background:var(--vert);color:#fff;box-shadow:0 6px 16px rgba(35,127,60,.3)}
+.btn-primary:hover{background:var(--vert-fonce);box-shadow:0 12px 26px rgba(35,127,60,.35)}
 .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
 .btn-ghost:hover{background:#fff;color:var(--vert);border-color:#fff}
 .btn-sm{padding:9px 18px;min-height:40px;font-size:.9rem}
@@ -1500,6 +1497,7 @@ section[id]{scroll-margin-top:0}
      ~423 px) : sinon il flotte, minuscule, dans un hero de 900 px de haut.
      Sélecteur doublé pour passer devant la règle .frame placée plus bas. */
   .hero .frame{max-width:clamp(340px,46vh,440px)}
+  .hero-photo{justify-content:center}
 }
 .hero-bg{position:absolute;inset:0;background-image:var(--hero-img);background-size:cover;background-position:50% 34%;
   opacity:0;transition:opacity .8s var(--ease)}
@@ -1603,7 +1601,7 @@ section[id]{scroll-margin-top:0}
 .btn-moutarde:hover{background:#9A4A27;box-shadow:0 12px 28px rgba(178,88,50,.42)}
 
 /* collage du hero */
-.collage{position:relative;width:min(100%,400px);aspect-ratio:1/1.12}
+.collage{position:relative;width:min(100%,470px);aspect-ratio:1/1.12}
 .collage img{position:absolute;object-fit:cover;border-radius:var(--r);
   border:3px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(8,20,18,.45)}
 .collage-a{left:0;top:0;width:66%;height:84%;border-radius:140px 140px var(--r) var(--r)!important}
@@ -1894,9 +1892,9 @@ section[id]{scroll-margin-top:0}
   .hero-bg{opacity:0}
   .hero-in{grid-template-columns:1fr;gap:16px}
   .hero-photo{display:flex;order:-1;justify-content:center}
-  .collage{width:min(100%,330px);aspect-ratio:1/.6}
-  .collage-a{width:42%;height:100%;border-radius:90px 90px var(--r) var(--r)!important}
-  .collage-b{width:62%;height:80%}
+  .collage{width:min(100%,300px);aspect-ratio:1/.78;margin:0 auto}
+  .collage-a{width:100%;height:100%;border-radius:150px 150px var(--r) var(--r)!important}
+  .collage-b{display:none}
   .hero-copy{background:none;padding:0;box-shadow:none}
   .hero-copy .eyebrow{margin:0 0 6px}
   .hero-copy h1{margin:0 0 10px;font-size:clamp(1.85rem,8.4vw,2.4rem);max-width:none}
@@ -1919,7 +1917,7 @@ section[id]{scroll-margin-top:0}
 }
 /* tablettes en portrait : collage et titre plus grands */
 @media (min-width:600px) and (max-width:820px){
-  .collage{width:min(100%,520px)}
+  .collage{width:min(100%,400px);aspect-ratio:1/.78}
   .hero-copy h1{font-size:2.8rem}
   .hero-copy p{font-size:1.1rem;max-width:52ch}
   .hero-cta{grid-template-columns:1fr 1fr}
