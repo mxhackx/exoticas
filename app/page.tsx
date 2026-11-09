@@ -25,20 +25,20 @@ const BRAND = {
    ce point est le milieu entre les deux repères cités sur ton flyer et tous deux
    géocodés par OpenStreetMap — Acropole (6.35726, 2.43610) et l'échangeur Ganhi
    (6.35476, 2.43810). Il pilote la carte, le marqueur et l'itinéraire.
-   Pour la corriger : Google Maps → appui long sur la porte d'entrée → remplace les
+   Pour la corriger : Google Maps → appui long sur la porte d'entrée → remplace les
    deux valeurs ci-dessous. */
 const MAP = { lat: 6.35601, lng: 2.4371 };
 const ZOOM = 16;
 
 function itinLink(depuis?: { lat: number; lng: number }) {
   const d = `destination=${MAP.lat},${MAP.lng}`;
-  const o = depuis ? `origin=${depuis.lat},${depuis.lng}&` : "";
+  const o = depuis ? `origin=${depuis.lat},${depuis.lng}&` : "";
   return `https://www.google.com/maps/dir/?api=1&${o}${d}`;
 }
 
 /* Plantes photographiées à la boutique. Les noms sont repris tels quels des
    fichiers fournis (dossier Drive drive-download-20261028T191730Z-1-001) ; les HEIC
-   ont été convertis en JPEG sans recadrage ni retouche : mini/ = 640 px pour la
+   ont été convertis en JPEG sans recadrage ni retouche : mini/ = 640 px pour la
    grille, pleine/ = 1600 px ouverte au clic. Les originaux restent sur le disque. */
 const PLANTES = [
   { n: "Alocasia sanderiana nain ou oreille d’âne", s: "alocasia-sanderiana-nain-ou-oreille-d-ane" },
@@ -91,7 +91,7 @@ const PLANTES = [
   { n: "Tradescantia zebrina", s: "tradescantia-zebrina" },
 ];
 /* Avis publiés sur la fiche Google Maps d'Exoticas, repris tels quels
-   (Alain tête koussi : sans mention « Local Guide »). Mettre à jour « quand » de temps en temps. */
+   (Alain tête koussi : sans mention « Local Guide »). Mettre à jour « quand » de temps en temps. */
 const AVIS = [
   {
     nom: "Claudia Jordá",
@@ -99,7 +99,7 @@ const AVIS = [
     lang: "fr",
     quand: "il y a 10 mois",
     texte:
-      "Excellente boutique de plantes, sans aucun doute le meilleur endroit au Bénin pour trouver des espèces exotiques. Ils ont également un coin café parfait pour se détendre et profiter de l’ambiance : un petit paradis caché. Le manager est très sympathique et toujours attentif, ce qui rend la visite encore plus agréable. Je recommande vivement !",
+      "Excellente boutique de plantes, sans aucun doute le meilleur endroit au Bénin pour trouver des espèces exotiques. Ils ont également un coin café parfait pour se détendre et profiter de l’ambiance : un petit paradis caché. Le manager est très sympathique et toujours attentif, ce qui rend la visite encore plus agréable. Je recommande vivement !",
     notes: "Cuisine 5/5 · Service 5/5 · Ambiance 5/5",
   },
   {
@@ -124,8 +124,8 @@ const AVIS = [
 ];
 
 
-/* Fiches de la galerie : descriptions générales de chaque plante (rien sur
-   les prix ni les stocks : on les confirme par WhatsApp). */
+/* Fiches de la galerie : descriptions générales de chaque plante (rien sur
+   les prix ni les stocks : on les confirme par WhatsApp). */
 const CAT = {
   interieur: { t: "Plante d'intérieur", l: "Lumière vive, sans soleil direct", a: "Substrat légèrement humide", lc: "Lumière vive", ac: "Arrosage modéré", f: "interieur" },
   rare: { t: "Plante rare", l: "Lumière vive, sans soleil direct", a: "Laisser sécher le dessus du terreau", lc: "Lumière vive", ac: "Arrosage prudent", f: "rare" },
@@ -147,66 +147,66 @@ const FILTRES = [
 
 const INFOS: Record<string, [keyof typeof CAT, string]> = {
   "alocasia-sanderiana-nain-ou-oreille-d-ane": ["rare", "Feuilles en fer de lance vert sombre, aux nervures blanches très contrastées. Elle aime l'humidité ambiante."],
-  "anthurium-hookeri-black": ["rare", "Variété d'anthurium hookeri : une rosette dense de grandes feuilles brillantes, au port spectaculaire."],
+  "anthurium-hookeri-black": ["rare", "Variété d'anthurium hookeri : une rosette dense de grandes feuilles brillantes, au port spectaculaire."],
   "anthurium-hookerie-aurea": ["rare", "Variété d'anthurium hookeri à rosette de grandes feuilles lancéolées, très décorative en intérieur lumineux."],
-  "anthurium": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
-  "anthurium-2": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
+  "anthurium": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
+  "anthurium-2": ["interieur", "Feuillage lustré et fleurs colorées qui durent des semaines : l'une des plantes d'intérieur les plus élégantes."],
   "asparagus": ["retombante", "Un feuillage fin et plumeux, aérien, qui s'étale ou retombe en cascade. Facile à vivre en pot suspendu."],
   "begonia-masoniana-ou-begonia-croix-de-fer": ["rare", "Feuilles bosselées vert vif marquées d'une croix brun-pourpre en leur centre, d'où son nom de bégonia croix de fer."],
-  "bonsai-araucaria-cunninghamii": ["bonsai", "Un araucaria cunninghamii (pin de Moreton Bay) conduit en bonsaï : silhouette de conifère en miniature."],
-  "bonsai": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-2": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-3": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "bonsai-4": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
-  "cocotier": ["arbre", "Le palmier emblématique des côtes tropicales, ici en jeune plant : feuilles arquées et silhouette élancée."],
+  "bonsai-araucaria-cunninghamii": ["bonsai", "Un araucaria cunninghamii (pin de Moreton Bay) conduit en bonsaï : silhouette de conifère en miniature."],
+  "bonsai": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-2": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-3": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "bonsai-4": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
+  "cocotier": ["arbre", "Le palmier emblématique des côtes tropicales, ici en jeune plant : feuilles arquées et silhouette élancée."],
   "colocasia-cintho-aloha": ["rare", "Un colocasia aux grandes feuilles en forme de cœur, qui donne un effet jungle immédiat. Il apprécie un sol frais."],
   "dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
-  "epipremnum": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
-  "epipremnum-2": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
-  "epiprenum-variegata": ["retombante", "Un pothos panaché : des feuilles marbrées de crème ou de jaune, qui éclairent un coin sombre."],
+  "epipremnum": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
+  "epipremnum-2": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
+  "epiprenum-variegata": ["retombante", "Un pothos panaché : des feuilles marbrées de crème ou de jaune, qui éclairent un coin sombre."],
   "frangipanier": ["arbre", "L'arbuste aux fleurs parfumées des tropiques, utilisé en bouquets et en jardins. Il aime le plein soleil."],
-  "goyavier-blanc": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
-  "goyavier": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
+  "goyavier-blanc": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
+  "goyavier": ["arbre", "Un goyavier : arbre fruitier tropical, au feuillage dense et aux fruits parfumés."],
   "grenadier": ["arbre", "Un arbuste fruitier aux fleurs orangées qui donne des grenades. Idéal en grand pot ou au jardin."],
-  "hosta-africain": ["interieur", "Un feuillage décoratif qui se plaît à la mi-ombre : une valeur sûre pour garnir un coin de terrasse."],
+  "hosta-africain": ["interieur", "Un feuillage décoratif qui se plaît à la mi-ombre : une valeur sûre pour garnir un coin de terrasse."],
   "lys-du-bengale-variegata": ["interieur", "Un feuillage panaché élégant, qui apporte de la lumière dans un massif ou un grand pot."],
   "monstera-adansonii": ["interieur", "Le monstera aux feuilles percées de trous, qui grimpe ou retombe. Très graphique sur une étagère."],
   "monstera-albo": ["rare", "Une variété panachée de blanc, très recherchée par les collectionneurs. Chaque feuille est unique."],
   "monstera-burle-marx": ["rare", "Un feuillage découpé, graphique et compact, très prisé des amateurs de plantes tropicales."],
-  "monstera-delicioca-variegata": ["rare", "Le monstera deliciosa en version panachée : de grandes feuilles découpées marbrées de crème."],
-  "monstera-deliciosa": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
-  "monstera-deliciosa-2": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
+  "monstera-delicioca-variegata": ["rare", "Le monstera deliciosa en version panachée : de grandes feuilles découpées marbrées de crème."],
+  "monstera-deliciosa": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
+  "monstera-deliciosa-2": ["interieur", "La grande classique : d'immenses feuilles découpées et perforées, qui donnent un style tropical à toute pièce."],
   "monstera-thai-constellation": ["rare", "Une variété panachée aux feuilles étoilées de crème, comme un ciel de constellations. Rare et très décorative."],
-  "murier-platane-rouge-et-blanc": ["arbre", "Un mûrier à grandes feuilles, aussi beau qu'utile : il donne des mûres sucrées."],
+  "murier-platane-rouge-et-blanc": ["arbre", "Un mûrier à grandes feuilles, aussi beau qu'utile : il donne des mûres sucrées."],
   "orchidee-chauve-souris": ["rare", "Une plante surprenante aux fleurs sombres à longs filaments, qui évoquent des ailes de chauve-souris."],
   "orchidee-dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
   "orchidee-dendrobium-2": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
-  "orchidee-phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "papayer": ["arbre", "Un papayer, à croissance rapide : un arbre fruitier tropical au feuillage découpé très décoratif."],
+  "orchidee-phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "papayer": ["arbre", "Un papayer, à croissance rapide : un arbre fruitier tropical au feuillage découpé très décoratif."],
   "peperomia-lemon-lime": ["interieur", "Un petit péperomia au feuillage vert tendre et citron, compact et facile. Il éclaire n'importe quelle étagère."],
   "peperomia-raindrop": ["interieur", "Des feuilles rondes et charnues, en forme de gouttes de pluie. Compact, facile et très mignon sur un bureau."],
-  "phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "phalaenopsis-2": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
-  "phalaenopsis-3": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "phalaenopsis": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "phalaenopsis-2": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
+  "phalaenopsis-3": ["orchidee", "L'orchidée papillon : des fleurs élégantes qui durent plusieurs semaines. La plus simple pour débuter."],
   "philodendron-erubescens": ["rare", "Un philodendron aux tiges et feuilles teintées de rouge-bordeaux, au port grimpant et élégant."],
   "philodendron-pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
   "philodendron-xanadu": ["interieur", "Un philodendron touffu aux feuilles lobées, au port compact. Très généreux en volume, facile à vivre."],
   "pink-princess": ["rare", "Un philodendron aux feuilles sombres éclaboussées de rose. L'une des plantes les plus prisées du moment."],
-  "spathiphyllium": ["interieur", "Le « lys de la paix » : feuillage vert profond et fleurs blanches, qui supporte les pièces peu éclairées."],
+  "spathiphyllium": ["interieur", "Le « lys de la paix » : feuillage vert profond et fleurs blanches, qui supporte les pièces peu éclairées."],
   "tradescantia-zebrina": ["retombante", "Des feuilles rayées d'argent et de violet, qui retombent en cascade. Se bouture très facilement."],
 };
 
-/* Photos du lieu (fiche Google Maps) : boutique, salle, coin café. */
+/* Photos du lieu (fiche Google Maps) : boutique, salle, coin café. */
 const LIEU = {
-  arbre: { src: "/lieu/boutique-arbre.webp", w: 382, h: 510, alt: "Salle d'Exoticas : grand arbre, étagères de plantes et fauteuil, à Cotonou" },
+  arbre: { src: "/lieu/boutique-arbre.webp", w: 382, h: 510, alt: "Salle d'Exoticas : grand arbre, étagères de plantes et fauteuil, à Cotonou" },
   tasses: { src: "/lieu/salle-tasses.webp", w: 382, h: 510, alt: "Table avec deux cafés au milieu des plantes chez Exoticas, Cotonou" },
   etageres: { src: "/lieu/boutique-etageres.webp", w: 382, h: 510, alt: "Étagères de plantes en pots et tables du coin café d'Exoticas" },
-  brunch: { src: "/lieu/cafe-brunch.webp", w: 382, h: 510, alt: "Brunch chez Exoticas : gaufres au chocolat, croissant, omelette, jus et café" },
+  brunch: { src: "/lieu/cafe-brunch.webp", w: 382, h: 510, alt: "Brunch chez Exoticas : gaufres au chocolat, croissant, omelette, jus et café" },
   crepes: { src: "/lieu/cafe-crepes-sandwich.webp", w: 287, h: 510, alt: "Crêpes, sandwich grillé et jus frais au café d'Exoticas" },
   jus: { src: "/lieu/cafe-jus.webp", w: 287, h: 510, alt: "Jus frais devant les étagères de plantes du café Exoticas" },
 };
 
-/* Carte du café : aperçu des plats vus sur place et cités dans les avis (sans prix) */
+/* Carte du café : aperçu des plats vus sur place et cités dans les avis (sans prix) */
 const CARTE = [
   { t: "Brunch et salé", items: ["Brunch", "Omelette", "Sandwichs grillés", "Salades"] },
   { t: "Sucré", items: ["Gaufres", "Crêpes", "Croissant"] },
@@ -219,12 +219,12 @@ const CARTE = [
    Le comparateur s'affiche dès qu'il y a au moins une entrée. */
 const REALISATIONS: { avant: string; apres: string; alt: string }[] = [];
 
-/* Vidéos du site. Vide pour l'instant : la section « Le lieu en vidéo » (et son
+/* Vidéos du site. Vide pour l'instant : la section « Le lieu en vidéo » (et son
    lien dans le menu) n'apparaît que lorsqu'il y a au moins une entrée.
-   • Fichier du site : déposer le .mp4 dans public/videos/ (court, ≤ 720 p, idéalement
+   • Fichier du site : déposer le .mp4 dans public/videos/ (court, ≤ 720 p, idéalement
      < 6 Mo) et une image d'aperçu .jpg, puis ajouter
      { src: "/videos/cafe.mp4", poster: "/videos/cafe.jpg", titre: "Le café d'Exoticas" }.
-   • YouTube (vidéos longues ou lourdes) : { youtube: "ID_DE_LA_VIDEO", titre: "…" }.
+   • YouTube (vidéos longues ou lourdes) : { youtube: "ID_DE_LA_VIDEO", titre: "…" }.
      Le lecteur YouTube ne se charge qu'au clic (pas de suivi avant). */
 type Video = { titre: string; src?: string; poster?: string; youtube?: string };
 const VIDEOS: Video[] = [];
@@ -236,7 +236,7 @@ const VITRINE_SLUGS = [
 ];
 const VITRINE = VITRINE_SLUGS.map((sl) => PLANTES.findIndex((p) => p.s === sl)).filter((i) => i >= 0);
 
-/* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
+/* Nom unique d'une photo de la galerie : « Anthurium (photo 2) » quand le même
    nom existe plusieurs fois, pour que les liens et les textes alternatifs
    ne soient jamais identiques. */
 function nomUnique(i: number) {
@@ -252,9 +252,9 @@ function waLink(message: string) {
 }
 
 /* ------------------------------------------------------------------
-   Logo : le symbole recadré depuis le fichier fourni
+   Logo : le symbole recadré depuis le fichier fourni
    « Exoticas logo H1.png » (279 × 289 px, vert #237F3C), décliné en blanc
-   pour les fonds verts. Aucune retouche de tracé : recadrage seul.
+   pour les fonds verts. Aucune retouche de tracé : recadrage seul.
 ------------------------------------------------------------------ */
 
 function Logo({ size = 34, verte = false }: { size?: number; verte?: boolean }) {
@@ -262,7 +262,7 @@ function Logo({ size = 34, verte = false }: { size?: number; verte?: boolean }) 
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className="mark"
-      src={verte ? "/logo/marque-verte.png" : "/logo/marque-blanche.png"}
+      src={verte ? "/logo/marque-verte.png" : "/logo/marque-blanche.png"}
       alt=""
       width={size}
       height={Math.round((size * 289) / 279)}
@@ -274,7 +274,7 @@ function Logo({ size = 34, verte = false }: { size?: number; verte?: boolean }) 
 
 function Wordmark({ light = true }: { light?: boolean }) {
   return (
-    <span className="wordmark" style={{ color: light ? "#fff" : "#1E2B28" }}>
+    <span className="wordmark" style={{ color: light ? "#fff" : "#1E2B28" }}>
       <Logo size={30} />
       <span className="wordmark-text">
         <span className="wordmark-nom">{BRAND.nom}</span>
@@ -310,7 +310,7 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-/* Feuille décorative : très discrète, ondule lentement et suit un peu le défilement */
+/* Feuille décorative : très discrète, ondule lentement et suit un peu le défilement */
 function Feuille({ className = "" }: { className?: string }) {
   return (
     <svg className={`feuille ${className}`} viewBox="0 0 120 160" aria-hidden="true" focusable="false">
@@ -344,9 +344,9 @@ function AvantApres({ avant, apres, alt }: { avant: string; apres: string; alt: 
   );
 }
 
-/* Lecteur vidéo léger : rien ne se télécharge avant d'être proche de l'écran ;
+/* Lecteur vidéo léger : rien ne se télécharge avant d'être proche de l'écran ;
    un fichier local joue en boucle, muet, uniquement quand on le voit ; un clic
-   donne le son et les commandes. Mouvement réduit : pas de lecture automatique. */
+   donne le son et les commandes. Mouvement réduit : pas de lecture automatique. */
 function LecteurVideo({ v }: { v: Video }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [actif, setActif] = useState(false); // YouTube chargé / commandes affichées
@@ -382,8 +382,8 @@ function LecteurVideo({ v }: { v: Video }) {
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
           />
-        ) : (
-          <button type="button" className="video-facade" onClick={() => setActif(true)} aria-label={`Lire la vidéo : ${v.titre}`}>
+        ) : (
+          <button type="button" className="video-facade" onClick={() => setActif(true)} aria-label={`Lire la vidéo : ${v.titre}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`https://i.ytimg.com/vi/${v.youtube}/hqdefault.jpg`} alt="" loading="lazy" />
             <span className="video-play" aria-hidden="true">▶</span>
@@ -507,7 +507,7 @@ function tuileDe(lat: number, lng: number, z: number) {
   return { x, y };
 }
 
-/* Carte composée de 9 tuiles OSM : pas de WebGL, pas de cookie, cliquable vers Google Maps */
+/* Carte composée de 9 tuiles OSM : pas de WebGL, pas de cookie, cliquable vers Google Maps */
 function Plan({ lat, lng }: { lat: number; lng: number }) {
   const { x, y } = tuileDe(lat, lng, ZOOM);
   const x0 = Math.floor(x) - 1;
@@ -575,7 +575,7 @@ export default function Home() {
     setFiche(i);
   };
   const [filtre, setFiltre] = useState<string>("toutes");
-  /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
+  /* galerie : deux rangées d'abord, puis « Voir plus » en ajoute deux à chaque clic */
   const [cols, setCols] = useState(3);
   const [paliers, setPaliers] = useState(1);
   /* indices (dans PLANTES) des plantes du filtre ; « affichees » = celles montrées */
@@ -585,14 +585,14 @@ export default function Home() {
   const affiche = cols * 2 * paliers;
   const affichees = visibles.slice(0, affiche);
 
-  /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
+  /* vitrine : la plante à la une change toute seule (sauf survol, fiche ouverte, mouvement réduit) */
   useEffect(() => {
     if (pause || fiche !== null || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = window.setInterval(() => setVedette((v) => (v + 1) % VITRINE.length), 4500);
     return () => window.clearInterval(t);
   }, [pause, fiche]);
 
-  /* menu mobile : Échap pour fermer, page figée derrière */
+  /* menu mobile : Échap pour fermer, page figée derrière */
   useEffect(() => {
     if (!menu) return;
     const touche = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
@@ -607,13 +607,13 @@ export default function Home() {
 
   /* nombre de colonnes de la galerie, aux mêmes seuils que le CSS */
   useEffect(() => {
-    const calc = () => setCols(window.innerWidth > 620 ? 3 : 2);
+    const calc = () => setCols(window.innerWidth > 620 ? 3 : 2);
     calc();
     window.addEventListener("resize", calc);
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  /* fiche plante : Échap, flèches, et page figée derrière */
+  /* fiche plante : Échap, flèches, et page figée derrière */
   useEffect(() => {
     if (fiche === null) return;
     const liste = PLANTES.map((p, i) => i).filter(
@@ -639,12 +639,12 @@ export default function Home() {
     };
   }, [fiche, filtre]);
 
-  /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
+  /* Bienvenue dactylographiée, à la première visite seulement : un rideau de la
      couleur du hero porte le texte qui se tape caractère par caractère, puis se
      lève et les entrées du hero jouent (elles sont en pause tant qu'il est up).
      Le passage est marqué dans localStorage ; prefers-reduced-motion coupe tout,
      et un localStorage inaccessible (navigation privée) n'empêche pas l'affichage.
-     Volontairement sans cleanup : en dev, StrictMode montez/démontez reminderait
+     Volontairement sans cleanup : en dev, StrictMode montez/démontez reminderait
      l'effet après que la trace a été posée, et le rideau resterait baissé sans
      que rien ne se tape. Le garde en ref ne lance la séquence qu'une fois, et les
      trois temporaires se terminent d'eux-mêmes en moins de 3 s. */
@@ -666,7 +666,7 @@ export default function Home() {
     try {
       localStorage.setItem("exo-bienvenue", "1");
     } catch {
-      /* pas de trace : la bienvenue se rejouera, ce n'est pas grave */
+      /* pas de trace : la bienvenue se rejouera, ce n'est pas grave */
     }
     const chars = [..."Bienvenue à Exoticas"];
     const PAS = 62; // ms entre deux caractères
@@ -682,7 +682,7 @@ export default function Home() {
     window.setTimeout(() => setBienvenue("off"), FIN + 800);
   }, []);
 
-  /* révélation au scroll : chaque élément apparaît quand il entre à l'écran.
+  /* révélation au scroll : chaque élément apparaît quand il entre à l'écran.
      Sans IntersectionObserver (très vieux navigateur), tout est montré d'emblée,
      pour que le contenu ne reste jamais caché. */
   useEffect(() => {
@@ -750,9 +750,9 @@ export default function Home() {
     e.preventDefault();
     const msg =
       `Bonjour Exoticas,\n\n` +
-      `Objet : ${form.objet}\n` +
+      `Objet : ${form.objet}\n` +
       `Je m'appelle ${form.nom || "—"}. ${form.message}\n\n` +
-      `Me joindre : ${form.contact || "—"}`;
+      `Me joindre : ${form.contact || "—"}`;
     window.open(waLink(msg), "_blank", "noopener");
     setEnvoye(true);
   }
@@ -761,7 +761,7 @@ export default function Home() {
     <>
       <style>{css}</style>
 
-      <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
+      <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="#top" className="head-logo" aria-label="Exoticas, accueil">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -778,8 +778,8 @@ export default function Home() {
             </a>
             <button
               type="button"
-              className={`burger${menu ? " ouvert" : ""}`}
-              aria-label={menu ? "Fermer le menu" : "Ouvrir le menu"}
+              className={`burger${menu ? " ouvert" : ""}`}
+              aria-label={menu ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={menu}
               aria-controls="menu-mobile"
               onClick={() => setMenu((m) => !m)}
@@ -790,7 +790,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
+      <div id="menu-mobile" className={`menu-mobile${menu ? " ouvert" : ""}`} aria-hidden={!menu}>
         <nav aria-label="Menu mobile">
           {[
             ["#cafe", "Café"],
@@ -800,16 +800,16 @@ export default function Home() {
             ["#avis", "Avis"],
             ["#contact", "Contact"],
           ].map(([h, n], i) => (
-            <a key={h} href={h} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
+            <a key={h} href={h} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties}>
               {n}
             </a>
           ))}
         </nav>
         <div className="menu-cta">
-          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener">
+          <a className="btn btn-moutarde" tabIndex={menu ? 0 : -1} href={waLink("Bonjour Exoticas,")} target="_blank" rel="noopener">
             <WhatsAppIcon size={18} /> Écrire sur WhatsApp
           </a>
-          <a className="btn btn-ghost" tabIndex={menu ? 0 : -1} href={BRAND.telHref}>
+          <a className="btn btn-ghost" tabIndex={menu ? 0 : -1} href={BRAND.telHref}>
             <PhoneIcon size={16} /> {BRAND.tel}
           </a>
         </div>
@@ -818,13 +818,13 @@ export default function Home() {
       <main id="top">
         {/* HERO */}
         <section
-          className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}
+          className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}
           style={{ "--hero-img": "url('/galerie/00-mosaic.jpg')" } as React.CSSProperties}
         >
           <div className="hero-bg" aria-hidden="true" />
           {bienvenue !== "off" && (
             <div
-              className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
+              className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
               aria-hidden="true"
             >
               <p className="welcome-texte">
@@ -842,7 +842,7 @@ export default function Home() {
                 Aménagement paysager et plantes rares à Cotonou.
               </h1>
               <p className="rise" style={{ "--d": "260ms" } as React.CSSProperties}>
-                Un lieu unique où la nature rencontre l'élégance : espaces verts
+                Un lieu unique où la nature rencontre l'élégance : espaces verts
                 sur mesure, terrasse café conviviale et coworking, à Tokpa-hoho.
               </p>
               <div className="hero-cta rise" style={{ "--d": "360ms" } as React.CSSProperties}>
@@ -880,7 +880,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* VITRINE : plante à la une + défilé de plantes */}
+        {/* VITRINE : plante à la une + défilé de plantes */}
         <section id="vitrine" className="vitrine" onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
           <div className="wrap">
             <div className="vit-panneau">
@@ -891,7 +891,7 @@ export default function Home() {
                 </div>
                 <p className="vit-intro">
                   Découvrez les plantes de la boutique, leurs besoins et leurs
-                  petites habitudes : chacune se choisit et s'entretient avec
+                  petites habitudes : chacune se choisit et s'entretient avec
                   nos conseils.
                 </p>
               </div>
@@ -902,7 +902,7 @@ export default function Home() {
                   className="vit-vedette"
                   key={`v-${vedette}`}
                   onClick={() => ouvrirPlante(VITRINE[vedette % VITRINE.length])}
-                  aria-label={`Voir la fiche : ${nomUnique(VITRINE[vedette % VITRINE.length])}`}
+                  aria-label={`Voir la fiche : ${nomUnique(VITRINE[vedette % VITRINE.length])}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={`/galerie/pleine/${PLANTES[VITRINE[vedette % VITRINE.length]].s}.jpg`} alt={`${nomUnique(VITRINE[vedette % VITRINE.length])}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} decoding="async" />
@@ -922,7 +922,7 @@ export default function Home() {
                         key={idx}
                         style={{ "--k": k } as React.CSSProperties}
                         onClick={() => ouvrirPlante(idx)}
-                        aria-label={`Voir la fiche : ${nomUnique(idx)}`}
+                        aria-label={`Voir la fiche : ${nomUnique(idx)}`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={`/galerie/mini/${PLANTES[idx].s}.jpg`} alt={`${nomUnique(idx)}, plante de la boutique Exoticas à Cotonou`} width={480} height={640} loading="lazy" decoding="async" />
@@ -936,7 +936,7 @@ export default function Home() {
                 <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v - 1 + VITRINE.length) % VITRINE.length)} aria-label="Plante précédente">‹</button>
                 <span className="vit-points" aria-hidden="true">
                   {VITRINE.map((_, i) => (
-                    <i key={i} className={i === vedette % VITRINE.length ? "on" : ""} />
+                    <i key={i} className={i === vedette % VITRINE.length ? "on" : ""} />
                   ))}
                 </span>
                 <button type="button" className="vit-fleche" onClick={() => setVedette((v) => (v + 1) % VITRINE.length)} aria-label="Plante suivante">›</button>
@@ -945,7 +945,7 @@ export default function Home() {
             <div id="paysagisme" className="paysa rv-pop" data-reveal>
               <div>
                 <strong>Aménagement paysager sur devis</strong>
-                <span>Conception et plantation d'espaces verts : décrivez-nous votre projet.</span>
+                <span>Conception et plantation d'espaces verts : décrivez-nous votre projet.</span>
               </div>
               <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je souhaite un devis pour un aménagement paysager.")} target="_blank" rel="noopener">
                 Demander un devis
@@ -985,7 +985,7 @@ export default function Home() {
                 <button
                   key={f.k}
                   type="button"
-                  className={`filtre${filtre === f.k ? " on" : ""}`}
+                  className={`filtre${filtre === f.k ? " on" : ""}`}
                   aria-pressed={filtre === f.k}
                   onClick={() => {
                     setFiltre(f.k);
@@ -1007,7 +1007,7 @@ export default function Home() {
                     style={{ "--d": `${(i % 4) * 70}ms` } as React.CSSProperties}
                     href={`/galerie/pleine/${p.s}.jpg`}
                     key={p.s}
-                    aria-label={`Voir la fiche : ${nomUnique(i)}`}
+                    aria-label={`Voir la fiche : ${nomUnique(i)}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setFiche(i);
@@ -1050,7 +1050,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* BANDEAU : une bande verte, deux photos rondes, titre, texte et bouton */}
+        {/* BANDEAU : une bande verte, deux photos rondes, titre, texte et bouton */}
         <div className="bandeau">
           <div className="wrap bandeau-in">
             <div className="bandeau-ronds">
@@ -1062,7 +1062,7 @@ export default function Home() {
             <h2 data-reveal className="reveal">Des plantes pour une vie plus verte</h2>
             <div className="bandeau-txt" data-reveal style={{ "--d": "120ms" } as React.CSSProperties}>
               <p>
-                Plantes rares, plantes d'intérieur, arbres tropicaux : choisissez
+                Plantes rares, plantes d'intérieur, arbres tropicaux : choisissez
                 en boutique ou écrivez-nous, nous vous conseillons la plante qui
                 convient à votre espace.
               </p>
@@ -1097,7 +1097,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* IMAGE + TEXTE : café et coworking */}
+        {/* IMAGE + TEXTE : café et coworking */}
         <section id="cafe" className="section duo">
           <span id="coworking" aria-hidden="true" />
           <div className="wrap">
@@ -1113,7 +1113,7 @@ export default function Home() {
                 savourer dans un décor de plantes et de bois brut. Un espace de
                 coworking est aussi à votre disposition dans la boutique-jardin.
               </p>
-              <p className="duo-note">Carte, tarifs et horaires : demandez-nous.</p>
+              <p className="duo-note">Carte, tarifs et horaires : demandez-nous.</p>
               <a className="btn btn-moutarde" href={waLink("Bonjour Exoticas, je voudrais des informations sur le café et le coworking.")} target="_blank" rel="noopener">
                 <WhatsAppIcon size={18} /> Se renseigner
               </a>
@@ -1144,7 +1144,7 @@ export default function Home() {
                   </p>
                   <p lang={a.lang}>« {a.texte} »</p>
                   <footer>
-                    <strong>{a.nom}</strong>{a.guide === false ? ", avis Google" : ", Local Guide Google"} · {a.quand}
+                    <strong>{a.nom}</strong>{a.guide === false ? ", avis Google" : ", Local Guide Google"} · {a.quand}
                     <span className="avis-notes">{a.notes}</span>
                   </footer>
                 </blockquote>
@@ -1166,13 +1166,13 @@ export default function Home() {
               <h3 className="ct-titre">Informations pratiques</h3>
               <p className="ct-texte">
                 Passez nous voir à Tokpa-hoho, appelez-nous ou écrivez-nous sur
-                WhatsApp : nous répondons rapidement.
+                WhatsApp : nous répondons rapidement.
               </p>
               <ul className="ct-liste">
                 <li><span className="ct-ico"><PhoneIcon size={15} /></span><a href={BRAND.telHref}>{BRAND.tel}</a></li>
                 <li><span className="ct-ico"><WhatsAppIcon size={15} /></span><a href={waLink("Bonjour Exoticas, j'aimerais avoir des informations.")} target="_blank" rel="noopener">Écrire sur WhatsApp</a></li>
                 <li><span className="ct-ico"><MailIcone size={15} /></span><a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a></li>
-                <li><span className="ct-ico"><HorlogeIcone size={15} /></span><span>Horaires : demandez-nous par téléphone ou WhatsApp</span></li>
+                <li><span className="ct-ico"><HorlogeIcone size={15} /></span><span>Horaires : demandez-nous par téléphone ou WhatsApp</span></li>
               </ul>
               <h3 className="ct-titre ct-loc">Adresse et accès :</h3>
               <p className="ct-texte ct-adr">
@@ -1208,15 +1208,15 @@ export default function Home() {
                   <textarea required name="message" rows={5} value={form.message} onChange={set("message")} placeholder="Je souhaite aménager une terrasse de 40 m²…" />
                 </label>
                 <p className="form-hint">
-                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
+                  Ce formulaire ne s'envoie pas par e-mail : il ouvre WhatsApp
                   avec votre message déjà écrit. Il n'est envoyé qu'une fois
                   validé dans WhatsApp.
                 </p>
                 <button className="btn btn-moutarde" type="submit">
                   <WhatsAppIcon size={18} /> Continuer sur WhatsApp
                 </button>
-                <p className={`note${envoye ? " show" : ""}`} role="status">
-                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer.
+                <p className={`note${envoye ? " show" : ""}`} role="status">
+                  WhatsApp s'est ouvert avec votre message : il ne reste qu'à l'envoyer.
                   Vous pouvez aussi nous appeler au <a href={BRAND.telHref}>{BRAND.tel}</a> ou
                   écrire à <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>.
                 </p>
@@ -1228,20 +1228,7 @@ export default function Home() {
 
       <footer className="site-foot">
         <div className="wrap foot-in">
-          <div data-reveal className="reveal foot-col">
-            <p>
-              <strong>Adresse</strong>
-              {BRAND.adresseCourte}
-              <span className="muted">{BRAND.adresseLongue}</span>
-            </p>
-            <p>
-              <strong>Contact</strong>
-              <a href={BRAND.telHref}>{BRAND.tel}</a>
-              <br />
-              <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
-            </p>
-          </div>
-          <div data-reveal className="reveal foot-marque" style={{ "--d": "90ms" } as React.CSSProperties}>
+          <div data-reveal className="reveal foot-marque">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="logo-complet logo-pied" src="/logo/logo-complet-blanc.png" width={946} height={289} alt="Exoticas, la vie en vert" loading="lazy" decoding="async" />
             <p>Un lieu unique où la nature rencontre l'élégance : espaces verts sur mesure, terrasse café et coworking à Tokpa-hoho, Cotonou.</p>
@@ -1257,8 +1244,21 @@ export default function Home() {
               </a>
             </span>
           </div>
+          <div data-reveal className="reveal foot-col" style={{ "--d": "90ms" } as React.CSSProperties}>
+            <h3 className="foot-titre">Adresse</h3>
+            <p>
+              {BRAND.adresseCourte}
+              <span className="muted">{BRAND.adresseLongue}</span>
+            </p>
+            <h3 className="foot-titre">Contact</h3>
+            <p>
+              <a href={BRAND.telHref}>{BRAND.tel}</a>
+              <br />
+              <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a>
+            </p>
+          </div>
           <div data-reveal className="reveal foot-col foot-pages" style={{ "--d": "180ms" } as React.CSSProperties}>
-            <strong>Pages</strong>
+            <h3 className="foot-titre">Pages</h3>
             <a href="#galerie">Plantes</a>
             <a href="#cafe">Café et coworking</a>
             <a href="#paysagisme">Paysagisme</a>
@@ -1283,7 +1283,7 @@ export default function Home() {
             className="fiche-fond"
             role="dialog"
             aria-modal="true"
-            aria-label={`Fiche : ${nomUnique(fiche)}`}
+            aria-label={`Fiche : ${nomUnique(fiche)}`}
             onClick={(e) => { if (e.target === e.currentTarget) setFiche(null); }}
           >
             <div className="fiche">
@@ -1302,10 +1302,10 @@ export default function Home() {
                   <li><strong>Lumière</strong>{c.l}</li>
                   <li><strong>Arrosage</strong>{c.a}</li>
                 </ul>
-                <p className="fiche-note">Photographiée à la boutique. Prix et disponibilité : demandez-nous sur WhatsApp.</p>
+                <p className="fiche-note">Photographiée à la boutique. Prix et disponibilité : demandez-nous sur WhatsApp.</p>
                 <a
                   className="btn btn-moutarde"
-                  href={waLink(`Bonjour Exoticas, je suis intéressé(e) par : ${p.n}. Est-elle disponible ?`)}
+                  href={waLink(`Bonjour Exoticas, je suis intéressé(e) par : ${p.n}. Est-elle disponible ?`)}
                   target="_blank"
                   rel="noopener"
                 >
@@ -1392,7 +1392,7 @@ a[href^="tel"]{font-variant-numeric:tabular-nums}
    (galerie, contact) grandit simplement. */
 /* Design « boutique » : seul le hero occupe tout l'écran ; les autres sections
    ont une hauteur naturelle, avec des marges régulières entre elles. */
-main>section.hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px)}
+main>section.hero{min-height:calc(100vh - 80px);min-height:calc(100svh - 80px)}
 main>section.section{padding-top:clamp(44px,5vw,72px);padding-bottom:clamp(44px,5vw,72px)}
 main{overflow-x:clip}
 main>section>.wrap{width:100%}
@@ -1402,15 +1402,14 @@ section[id]{scroll-margin-top:16px}
 /* ---------- header ---------- */
 /* en-tête : en haut de page seulement, il défile avec le contenu et disparaît (pas fixe) */
 .site-head{position:relative;z-index:50;color:var(--vert-nuit);
-  background:transparent;transition:background .45s var(--ease),box-shadow .45s var(--ease),padding .45s var(--ease);padding:6px 0}
+  background:transparent;transition:background .45s var(--ease),box-shadow .45s var(--ease),padding .45s var(--ease);padding:0}
 .site-head::before{content:"";position:absolute;inset:0;background:#fff;border-bottom:1px solid #E3E5DC;z-index:-1}
 .site-head.is-scrolled{box-shadow:0 6px 24px rgba(20,35,12,.18)}
-.head-in{display:flex;align-items:center;justify-content:space-between;height:60px;
+.head-in{display:flex;align-items:center;justify-content:space-between;height:80px;
   transition:height .45s var(--ease)}
-.site-head.is-scrolled .head-in{height:54px}
 .head-logo{display:flex;align-items:center;gap:9px;color:var(--vert-nuit);text-decoration:none}
-.logo-complet{display:block;height:44px;width:auto}
-.logo-pied{height:52px}
+.logo-complet{display:block;height:50px;width:auto}
+.logo-pied{height:60px}
 .mark{transition:transform .6s var(--ease-out)}
 .head-logo:hover .mark{transform:rotate(-8deg) scale(1.06)}
 /* mêmes tailles que le texte du site (16,5 px) */
@@ -1451,7 +1450,7 @@ section[id]{scroll-margin-top:16px}
    1080 px : sans elle, ses marges auto le réduiraient à la largeur de son
    contenu (892 px au lieu de 1040). */
 @media (min-width:821px){
-  .hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);display:grid;
+  .hero{min-height:calc(100vh - 80px);min-height:calc(100svh - 80px);display:grid;
     grid-template-columns:minmax(0,1fr);align-content:center}
   /* dans une grille, les marges auto du .wrap le font rétrécir à son contenu
      (892 px au lieu de 1040) : width:100% lui rend sa largeur mesurée. */
@@ -1847,7 +1846,7 @@ section[id]{scroll-margin-top:16px}
   /* Mobile : la photo (collage) et le texte tiennent ensemble sur le premier écran.
      Le logo du hero et l'adresse, déjà présents dans l'en-tête et le pied de page,
      sont masqués pour gagner de la place. */
-  .hero{min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);display:grid;align-content:center;padding:28px 0 22px}
+  .hero{min-height:calc(100vh - 80px);min-height:calc(100svh - 80px);display:grid;align-content:center;padding:28px 0 22px}
   .hero-bg{opacity:0}
   .hero-in{grid-template-columns:1fr;gap:16px}
   .hero-photo{display:flex;order:-1;justify-content:center}
@@ -1973,7 +1972,7 @@ section[id]{scroll-margin-top:16px}
 .duo-photo{position:relative;min-height:380px}
 .duo-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .duo-carte{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;padding:clamp(24px,4vw,48px)}
-.duo-carte h2{margin:0;font-size:clamp(1.4rem,2.4vw,2rem)}
+.duo-carte h2{margin:0}
 .duo-carte p{margin:0;color:var(--muted)}
 .duo-note{font-size:.9rem}
 .conseil{background:transparent;border:0;padding:10px 18px}
@@ -2127,6 +2126,32 @@ section[id]{scroll-margin-top:16px}
   .vit-carte{scroll-snap-align:start}
   .paysa{flex-direction:column;align-items:flex-start}
 }
+
+/* ---------- pied de page : 3 colonnes alignées en haut, titres identiques ---------- */
+.site-foot{padding:clamp(48px,6vw,72px) 0 28px}
+.foot-in{grid-template-columns:1.5fr 1.1fr .8fr;gap:clamp(28px,5vw,64px);align-items:start}
+.foot-marque{justify-items:start;text-align:left;gap:16px}
+.foot-marque p{max-width:36ch}
+.foot-titre{margin:0 0 8px;font:700 .8rem/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.foot-col p{margin:0 0 20px}
+.foot-pages{gap:8px}
+.foot-pages .foot-titre{margin-bottom:6px}
+.foot-bottom{margin-top:36px}
+@media (max-width:900px){
+  .site-foot{text-align:center}
+  .foot-in{grid-template-columns:1fr;justify-items:center;gap:30px}
+  .foot-marque{justify-items:center;text-align:center}
+  .foot-pills{justify-content:center}
+  .foot-pages{justify-items:center}
+}
+
+/* ---------- harmonisation (2) : tous les titres en Chapaza, mêmes tailles, mêmes fonds de cartes ---------- */
+.duo-carte h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,3vw,2.4rem);line-height:1.1}
+.ct-grand{font-weight:400;font-size:clamp(1.8rem,3vw,2.4rem);margin:0 0 20px}
+.ct-titre{font:400 1.5rem/1.2 var(--serif)}
+.duo-in{background:#fff}
+.duo-note{margin-top:2px}
+.vit-label{font-weight:500}
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
