@@ -768,8 +768,6 @@ export default function Home() {
       <main id="top">
         {/* HERO */}
         <section className={`hero${bienvenue !== "off" ? " is-welcome" : ""}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="hero-bg" src={LIEU.arbre.src} width={LIEU.arbre.w} height={LIEU.arbre.h} alt={LIEU.arbre.alt} fetchPriority="high" decoding="async" />
           {bienvenue !== "off" && (
             <div
               className={`welcome${bienvenue === "leve" ? " welcome-up" : ""}`}
@@ -1425,7 +1423,7 @@ section[id]{scroll-margin-top:0}
 .site-head{position:fixed;top:0;left:0;right:0;z-index:50;color:#fff;
   background:transparent;transition:background .45s var(--ease),box-shadow .45s var(--ease),padding .45s var(--ease);padding:6px 0}
 .site-head::before{content:"";position:absolute;inset:0;background:var(--vert);
-  opacity:0;transition:opacity .45s var(--ease);z-index:-1}
+  opacity:1;transition:opacity .45s var(--ease);z-index:-1}
 .site-head.is-scrolled::before{opacity:1}
 .site-head.is-scrolled{box-shadow:0 6px 24px rgba(20,35,12,.18)}
 .head-in{display:flex;align-items:center;justify-content:space-between;height:60px;
@@ -1465,16 +1463,19 @@ section[id]{scroll-margin-top:0}
 .btn-wa{background:#fff;color:var(--vert);border-color:var(--line);box-shadow:0 4px 12px rgba(20,35,12,.08)}
 .btn-wa:hover{background:var(--creme);border-color:var(--vert)}
 
-/* ---------- hero : une photo en fond, titre, sous-titre et deux boutons centrés ---------- */
-.hero{position:relative;background:var(--vert);color:#fff;overflow:hidden;text-align:center;
+/* ---------- hero : fond blanc, titre, sous-titre et deux boutons centrés ---------- */
+.hero{position:relative;background:#fff;color:var(--texte);overflow:hidden;text-align:center;
   min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:110px 0 80px}
-/* la photo source est petite (382 px) : un léger flou évite l'effet pixellisé sur grand écran */
-.hero-bg{position:absolute;inset:-12px;width:calc(100% + 24px);height:calc(100% + 24px);max-width:none;object-fit:cover;object-position:50% 55%;filter:blur(4px)}
-/* voile vert : lisibilité du texte, et adoucit la photo agrandie */
-.hero::before{content:"";position:absolute;inset:0;background:rgba(19,74,36,.72);z-index:1}
+/* texture verte très discrète sur le blanc */
+.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:url(/texture-feuilles-vert.png) center/cover}
 .hero-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero h1{margin:0 0 18px;max-width:18ch;font-size:clamp(2.2rem,5.4vw,4.1rem);line-height:1.06}
-.hero-sous{max-width:46ch;margin:0 auto;font-size:clamp(1.02rem,1.6vw,1.22rem);line-height:1.55;color:rgba(255,255,255,.94)}
+.hero h1{color:var(--vert-nuit)}
+.hero-sous{max-width:46ch;margin:0 auto;font-size:clamp(1.02rem,1.6vw,1.22rem);line-height:1.55;color:var(--muted)}
+.hero .eyebrow-clair{color:var(--terre)}
+.hero .btn-ghost{color:var(--vert);border-color:var(--vert)}
+.hero .btn-ghost:hover{background:var(--vert);color:#fff;border-color:var(--vert)}
 .hero .eyebrow{margin:0 0 16px}
 .hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
 .wordmark{display:inline-flex;align-items:center;gap:10px}
@@ -1818,9 +1819,6 @@ section[id]{scroll-margin-top:0}
 /* ---------- texture : grandes feuilles en filigrane (fournie), sur tous les fonds verts ---------- */
 .cafe,.pays,.bande,.site-foot{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
 .site-head::before{background-image:url(/texture-feuilles.png);background-size:cover;background-position:center}
-/* le hero a une photo : la texture se pose par-dessus le voile vert */
-.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:url(/texture-feuilles.png) center/cover}
 
 /* ---------- whatsapp flottant ---------- */
 .wa-fixed{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;
