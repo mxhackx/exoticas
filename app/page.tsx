@@ -1409,7 +1409,8 @@ section[id]{scroll-margin-top:0}
 
 
 /* ---------- header ---------- */
-.site-head{position:fixed;top:0;left:0;right:0;z-index:50;color:#fff;
+/* en-tête : en haut de page seulement, il défile avec le contenu et disparaît (pas fixe) */
+.site-head{position:absolute;top:0;left:0;right:0;z-index:50;color:#fff;
   background:transparent;transition:background .45s var(--ease),box-shadow .45s var(--ease),padding .45s var(--ease);padding:6px 0}
 .site-head::before{content:"";position:absolute;inset:0;background:var(--vert);
   opacity:1;transition:opacity .45s var(--ease);z-index:-1}
