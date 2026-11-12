@@ -2787,7 +2787,7 @@ strong.souligne{color:inherit}
 
 /* ---------- instagram : profil + 6 vignettes ---------- */
 .insta{background:#fff}
-.insta-tete{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px}
+.insta-tete{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px}
 .insta-tete h2{margin:0;color:var(--texte)}
 .insta-profil{display:flex;align-items:center;gap:14px;padding:10px 10px 10px 12px;border-radius:999px;text-decoration:none;color:inherit;
   background:linear-gradient(180deg,#fff,#F6FAF4);border:1px solid rgba(20,60,30,.06);box-shadow:var(--relief-carte);
