@@ -159,7 +159,7 @@ const INFOS: Record<string, [keyof typeof CAT, string]> = {
   "bonsai-3": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
   "bonsai-4": ["bonsai", "Un arbre miniature taillé et formé avec patience : une pièce de caractère pour un bureau ou une terrasse."],
   "cocotier": ["arbre", "Le palmier emblématique des côtes tropicales, ici en jeune plant : feuilles arquées et silhouette élancée."],
-  "colocasia-cintho-aloha": ["rare", "Un colocasia aux grandes feuilles en forme de cœur, qui donne un effet jungle immédiat. Il apprécie un sol frais."],
+  "colocasia-cintho-aloha": ["rare", "Un colocasia aux grandes feuilles en forme de cœur, qui donne un effet tropical immédiat. Il apprécie un sol frais."],
   "dendrobium": ["orchidee", "Une orchidée à cannes qui fleurit en grappes. Résistante et généreuse, elle convient bien au climat chaud."],
   "epipremnum": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
   "epipremnum-2": ["retombante", "Le pothos : une liane robuste aux feuilles en cœur, parfaite pour débuter. Elle pousse en retombant ou en grimpant."],
@@ -278,10 +278,11 @@ const POT_HAUT = 1.07;
 const VITRINE = VITRINE_PLANTES.map((v) => {
   const iw = 1 / ((v.x1 - v.x0) * POT_LARGE); // largeur de la photo, en largeurs de pot
   const ratio = ((v.yb - v.yr) * v.h * POT_HAUT) / ((v.x1 - v.x0) * v.w * POT_LARGE); // hauteur / largeur du pot
+  const fh = iw * (v.h / v.w); // hauteur du feuillage, en largeurs de pot
   return {
     s: v.s,
     i: PLANTES.findIndex((p) => p.s === v.s),
-    vars: { "--iw": iw.toFixed(4), "--cx": ((v.x0 + v.x1) / 2).toFixed(4), "--yb": v.yb, "--ratio": ratio.toFixed(4) },
+    vars: { "--iw": iw.toFixed(4), "--cx": ((v.x0 + v.x1) / 2).toFixed(4), "--yb": v.yb, "--ratio": ratio.toFixed(4), "--fh": fh.toFixed(4) },
   };
 }).filter((v) => v.i >= 0);
 
@@ -304,8 +305,8 @@ function Pot() {
           <stop offset="1" stopColor="#DFE6E1" />
         </linearGradient>
       </defs>
-      <path d="M4 10H96L93.5 95.5Q93 100 88.5 100H11.5Q7 100 6.5 95.5Z" fill="url(#pot-corps)" />
-      <path d="M4 10H96L95.6 15H4.4Z" fill="#000" opacity=".06" />
+      <path d="M0 10H100L97 95.5Q96.5 100 92 100H8Q3.5 100 3 95.5Z" fill="url(#pot-corps)" />
+      <path d="M0 10H100L99.6 15H.4Z" fill="#000" opacity=".06" />
       <rect x="0" y="0" width="100" height="10.5" rx="2" fill="url(#pot-bord)" />
     </svg>
   );
@@ -1289,8 +1290,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="/" className="head-logo" aria-label="Exoticas, accueil">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="logo-complet" src="/logo/logo-complet-vert.png" width={946} height={289} alt="Exoticas" decoding="async" />
+            <Logo size={36} />
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
             {LIENS.map(([h, n]) => (
@@ -1625,7 +1625,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
             <div className="insta-tete">
               <div>
                 <p data-reveal className="eyebrow reveal">Instagram</p>
-                <h2 data-reveal className="reveal">Suivez la <strong className="souligne">jungle</strong> au quotidien</h2>
+                <h2 data-reveal className="reveal">Faites vivre votre <strong className="souligne">oasis</strong> au quotidien</h2>
               </div>
               <a className="insta-profil" href={BRAND.instagram} target="_blank" rel="noopener me" data-reveal>
                 <span className="insta-avatar">
@@ -1765,7 +1765,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img data-reveal className="reveal jungle-logo" src="/logo/logo-complet-blanc.png" width={946} height={289} alt="" aria-hidden="true" loading="lazy" decoding="async" />
             <h2 data-reveal className="reveal" style={{ "--d": "80ms" } as React.CSSProperties}>
-              Prêt à créer <strong className="souligne">votre jungle</strong> ?
+              Prêt à créer <strong className="souligne">votre oasis</strong> tropicale ?
             </h2>
             <p data-reveal className="reveal" style={{ "--d": "160ms" } as React.CSSProperties}>
               Passez nous voir en boutique pour des <strong>conseils personnalisés</strong>.
@@ -2525,7 +2525,7 @@ strong.souligne{color:inherit}
 .avis-notes{display:block;margin-top:4px}
 .avis-hint{display:none}
 
-/* ---------- « Prêt à créer votre jungle ? » ---------- */
+/* ---------- « Prêt à créer votre oasis tropicale ? » ---------- */
 .jungle{position:relative;overflow:hidden;padding:var(--sec) 0;text-align:center}
 .jungle-in{position:relative;display:grid;justify-items:center;gap:6px}
 .jungle-logo{height:64px;width:auto;margin-bottom:24px}
@@ -2625,6 +2625,8 @@ strong.souligne{color:inherit}
 .site-foot{padding:clamp(64px,8vw,104px) 0 32px;border-top:1px solid rgba(255,255,255,.18)}
 .foot-in{display:grid;grid-template-columns:1.6fr 1.1fr .8fr;gap:clamp(32px,6vw,80px);align-items:start}
 .foot-marque{display:grid;gap:20px;justify-items:start}
+/* le logo « Exoticas » du pied de page se voit davantage */
+.logo-pied{height:clamp(48px,6vw,68px)}
 .foot-marque p{margin:0;max-width:36ch;color:rgba(255,255,255,.82)}
 .foot-titre{margin:0 0 12px;font:400 .82rem/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.65)}
 .foot-col p{margin:0 0 28px;color:#fff}
@@ -2703,10 +2705,16 @@ strong.souligne{color:inherit}
   .vit-legende{top:calc(100% + 8px)}
   .vit-legende strong{font-size:.72rem}
   .vit-cat{display:none}
-  .vit-item.on .vit-plante{left:23%;width:54%}
-  .vit-item.on .vit-legende{left:23%;width:54%}
-  .foot-in{grid-template-columns:1fr;gap:40px}
-  .foot-bottom{padding-bottom:64px}
+  /* les feuillages ne quittent jamais leur cadre : pas de débord sur le texte
+     au-dessus, ni sur la plante à la une (--fh = hauteur du feuillage en largeurs de pot) */
+  .vit-item .vit-plante{width:min(52%,calc(140px / var(--fh)))}
+  .vit-item.on .vit-plante,.vit-item.sm .vit-plante{left:calc(50% - min(27%,150px / var(--fh)));width:min(54%,calc(300px / var(--fh)))}
+  .vit-item.on .vit-legende{left:calc(50% - min(27%,150px / var(--fh)));width:min(54%,calc(300px / var(--fh)))}
+  .foot-in{grid-template-columns:1fr;gap:40px;justify-items:center;text-align:center}
+  .foot-marque{justify-items:center}
+  .foot-pills{justify-content:center}
+  .foot-pages{justify-items:center}
+  .foot-bottom{padding-bottom:64px;text-align:center}
   .fiche-soin{grid-template-columns:1fr}
   .jungle-fleche{display:none}
 }
