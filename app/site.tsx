@@ -2984,7 +2984,7 @@ strong.souligne{color:inherit}
 .card-img{box-shadow:0 2px 4px rgba(20,60,30,.06),0 24px 44px -20px rgba(20,60,30,.35);
   transition:transform .6s var(--ease-out),box-shadow .6s var(--ease-out)}
 .card:hover .card-img{transform:perspective(900px) rotateX(3deg) translateY(-6px);box-shadow:0 4px 8px rgba(20,60,30,.08),0 36px 60px -22px rgba(20,60,30,.4)}
-.duo-photo{box-shadow:0 2px 4px rgba(20,60,30,.06),0 30px 60px -24px rgba(20,60,30,.35)}
+/* (la photo du café, découpée en nuage, n'a plus d'ombre rectangulaire) */
 .ct-droite{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 30px 70px -30px rgba(20,60,30,.45)}
 .astuces-liste button.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 18px 36px -18px rgba(0,0,0,.35)}
 .wa-fixed{background:linear-gradient(180deg,#F27D33,var(--terre));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 26px -6px rgba(229,103,23,.6)}
@@ -3068,13 +3068,7 @@ h1 em,h2 em,h1 .souligne,h2 .souligne{font-style:normal;font-weight:900;color:va
 /* la plante du hero se détache sur le nuage clair : pas de liseré blanc, qui soulignerait les jours entre les feuilles */
 .hero-feuillage{filter:drop-shadow(0 16px 14px rgba(20,60,30,.18))}
 
-/* formes orange en bord des sections vertes (comme l'affiche « Journée verte ») */
-.conseils,.jungle{position:relative;overflow:hidden}
-.conseils>.wrap,.jungle>.wrap{position:relative;z-index:1}
-.conseils::before,.jungle::before{content:"";position:absolute;z-index:0;right:-70px;top:-90px;width:230px;height:230px;
-  border-radius:58% 42% 50% 50%/50% 55% 45% 50%;background:var(--lime);transform:rotate(-18deg)}
-.conseils::after,.jungle::after{content:"";position:absolute;z-index:0;left:-60px;bottom:-60px;width:160px;height:160px;
-  border-radius:50%;border:22px solid var(--lime);opacity:.9}
+/* pas de formes décoratives orange : les sections vertes restent sobres */
 /* hero : pastilles orange derrière la plante, qui suivent la parallaxe */
 .hero-photo::before{content:"";position:absolute;z-index:0;left:14%;top:44%;width:clamp(70px,8vw,120px);aspect-ratio:1;border-radius:50%;
   background:var(--lime);translate:calc(var(--px,0) * -16px) calc(var(--py,0) * -12px);transition:translate .6s var(--ease-out)}
@@ -3099,8 +3093,6 @@ h1 em,h2 em,h1 .souligne,h2 .souligne{font-style:normal;font-weight:900;color:va
 @media (max-width:620px){
   .hero .hero-copy h1{font-size:clamp(1.9rem,8.2vw,2.6rem)}
   h2{font-size:clamp(1.7rem,7vw,2.2rem)}
-  .conseils::before,.jungle::before{width:140px;height:140px;right:-50px;top:-60px}
-  .conseils::after,.jungle::after{width:110px;height:110px;border-width:16px}
 }
 
 /* bouton flottant « boutique » : pastille vert nuit, icône du sac, étiquette au survol */
