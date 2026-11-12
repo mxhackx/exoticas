@@ -2215,9 +2215,7 @@ strong.souligne{color:inherit}
   padding:calc(var(--head-h) + var(--head-top) + clamp(28px,5vw,64px)) 0 clamp(72px,8vw,120px);
   background:radial-gradient(46% 60% at 74% 48%,#DCEFD5 0%,rgba(220,239,213,.55) 42%,rgba(255,255,255,0) 74%),
     linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 55%,#EEF6EA 100%)}
-@media (min-width:901px){
-  .hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center}
-}
+.hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center}
 .hero-bg{display:none}
 .hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(24px,4vw,64px);align-items:center}
 .hero-copy h1{margin:0 0 22px;max-width:15ch;font-weight:500;font-size:clamp(2.3rem,4.4vw,3.9rem);line-height:1.04;
@@ -2695,7 +2693,9 @@ strong.souligne{color:inherit}
   .vit-tete{position:static;grid-template-columns:1fr;gap:8px;align-items:start}
   .vit-top{position:static;margin:22px 0 0}
   .vit-rang{position:relative;inset:auto;height:560px;margin-top:24px}
-  .vit-item.s0,.vit-item.sm{left:4%;top:0;width:64%;height:58%}
+  /* à la une : la plante sélectionnée est centrée ; sm = la plante qui sort, file à gauche */
+  .vit-item.s0{left:18%;top:0;width:64%;height:58%}
+  .vit-item.sm{top:0;width:64%;height:58%}
   .vit-item.s1,.vit-item.s2,.vit-item.s3,.vit-item.s4,.vit-item.s5,.vit-item.s6{top:66%;width:30%;height:20%}
   .vit-item.s1{left:0}.vit-item.s2{left:35%}.vit-item.s3{left:70%}
   .vit-item.s4,.vit-item.s5,.vit-item.s6{left:108%;opacity:0;pointer-events:none}
@@ -2703,8 +2703,8 @@ strong.souligne{color:inherit}
   .vit-legende{top:calc(100% + 8px)}
   .vit-legende strong{font-size:.72rem}
   .vit-cat{display:none}
-  .vit-item.on .vit-plante{left:18%;width:54%}
-  .vit-item.on .vit-legende{left:18%;width:54%}
+  .vit-item.on .vit-plante{left:23%;width:54%}
+  .vit-item.on .vit-legende{left:23%;width:54%}
   .foot-in{grid-template-columns:1fr;gap:40px}
   .foot-bottom{padding-bottom:64px}
   .fiche-soin{grid-template-columns:1fr}
