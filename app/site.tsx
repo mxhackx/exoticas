@@ -3292,6 +3292,9 @@ h1 .souligne,h2 .souligne,h3 .souligne{background:var(--vert-profond)!important;
   .hero .hero-copy h1{font-size:clamp(2.5rem,11.5vw,3.4rem)}
   .hero-titre-label{font-size:.56em}
   .hero .hero-copy .hero-k{font-size:.68rem;letter-spacing:.07em}
+  /* sur téléphone, la plante en pot du hero est retirée */
+  .hero-photo{display:none}
+  .hero{padding-bottom:56px}
   .hero-cta{grid-template-columns:1fr}
   .hero-cta .btn{padding:14px 16px}
   .btn{font-size:.84rem;padding:13px 18px}
