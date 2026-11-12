@@ -2162,10 +2162,10 @@ strong.souligne{color:inherit}
 .head-nav a:hover,.head-nav a.actif{color:#fff}
 .head-nav a:hover::after,.head-nav a.actif::after{transform:scale(1)}
 .head-actions{display:flex;align-items:center;gap:10px}
-.head-tel{display:inline-flex;align-items:center;gap:9px;padding:6px 12px 6px 6px;border-radius:999px;text-decoration:none;
+.head-tel{display:inline-flex;align-items:center;gap:9px;padding:6px 12px 6px 6px;border-radius:5px;text-decoration:none;
   font:500 .9rem/1 var(--sans);color:#fff;transition:background .25s var(--ease)}
 .head-tel:hover{background:rgba(255,255,255,.1)}
-.head-tel-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;color:#fff;
+.head-tel-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:5px;color:#fff;
   background:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 .head-cta{position:relative;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;border:0;border-radius:999px;cursor:pointer;
   font:500 .92rem/1 var(--sans);color:#fff;text-decoration:none;background:linear-gradient(180deg,var(--lime-clair),var(--lime));
@@ -3195,10 +3195,10 @@ h1 .souligne,h2 .souligne,h3 .souligne{background:var(--vert-profond)!important;
 .hero-cta .btn:nth-child(2),.paysa-cta .btn:nth-child(2),.menu-cta .btn:nth-child(2){transform:rotate(1.2deg)}
 .hero-cta .btn:nth-child(2):hover,.paysa-cta .btn:nth-child(2):hover,.menu-cta .btn:nth-child(2):hover{transform:rotate(0) translateY(-2px)}
 
-/* ---- en-tête : le bouton devient une étiquette blanche ---- */
+/* ---- en-tête : bouton étiquette, côtés droits, posé bien à plat ---- */
 .head-cta{border-radius:5px;background:#fff;color:var(--vert-profond);box-shadow:0 5px 0 rgba(0,0,0,.22);
-  font:900 .84rem/1 var(--display);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-1.4deg)}
-.head-cta:hover{transform:rotate(0) translateY(-2px);box-shadow:0 7px 0 rgba(0,0,0,.2)}
+  font:900 .84rem/1 var(--display);letter-spacing:.06em;text-transform:uppercase;transform:none}
+.head-cta:hover{transform:translateY(-2px);box-shadow:0 7px 0 rgba(0,0,0,.2)}
 .head-cta-nb{background:var(--vert-profond);color:#fff}
 
 /* ---- HERO : l'affiche verte, titre blanc, étiquettes et nuage photo ---- */
