@@ -266,9 +266,7 @@ const VITRINE_PLANTES = [
 /* liens de navigation, communs à l'en-tête et au menu mobile (ancres de l'accueil : /#…) */
 const LIENS: [string, string][] = [
   ["/plantes", "Plantes"],
-  ["/#paysagisme", "Paysagisme"],
   ["/#cafe", "Café & coworking"],
-  ["/#conseils", "Conseils"],
   ["/#avis", "Avis"],
   ["/#contact", "Contact"],
 ];
@@ -2151,13 +2149,13 @@ strong.souligne{color:inherit}
   background:var(--vert);
   box-shadow:inset 0 -1px 0 rgba(255,255,255,.08);transition:box-shadow .35s var(--ease)}
 .site-head.is-scrolled{box-shadow:inset 0 -1px 0 rgba(255,255,255,.08),0 12px 30px -12px rgba(10,40,20,.45)}
-.head-in{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;height:var(--head-h);
+.head-in{display:grid;grid-template-columns:auto auto 1fr;gap:24px;align-items:center;height:var(--head-h);
   transition:height .35s var(--ease)}
 .site-head.is-scrolled .head-in{height:calc(var(--head-h) - 10px)}
 .head-logo{display:flex;align-items:center;text-decoration:none}
 .logo-complet{display:block;height:36px;width:auto;transition:height .35s var(--ease)}
 .site-head.is-scrolled .logo-complet{height:31px}
-.head-nav{justify-self:center;display:flex;align-items:center;gap:clamp(16px,2.2vw,30px);font:500 .92rem/1 var(--sans)}
+.head-nav{justify-self:end;display:flex;align-items:center;gap:clamp(16px,2.2vw,30px);font:500 .92rem/1 var(--sans)}
 .head-nav a{position:relative;padding:8px 0;text-decoration:none;color:rgba(255,255,255,.86);transition:color .25s var(--ease)}
 .head-nav a::after{content:"";position:absolute;left:50%;bottom:-4px;width:6px;height:6px;margin-left:-3px;border-radius:50%;
   background:var(--lime);transform:scale(0);transition:transform .3s var(--ease-out)}
