@@ -1288,7 +1288,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="/" className="head-logo" aria-label="Exoticas, accueil">
-            <Logo size={36} verte />
+            <Logo size={36} />
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
             {LIENS.map(([h, n]) => (
@@ -3297,38 +3297,13 @@ h1 .souligne,h2 .souligne,h3 .souligne{background:var(--vert-profond)!important;
 .vit-plus{top:calc(100% + 50px)}
 
 /* =====================================================================
-   EN-TÊTE — barre flottante en forme de capsule (fond crème translucide,
-   fin liseré, ombre douce). Le contenu reste identique : logo, liens,
+   EN-TÊTE — barre pleine largeur, classique, aux couleurs du site :
+   fond vert de marque, liens blancs (point orange sous la page en cours),
+   téléphone et bouton orange. Fixe en haut ; il s'affine et prend une
+   ombre au défilement. Le contenu reste identique : logo, liens,
    téléphone, panier et menu.
    ===================================================================== */
-:root{--head-top:12px;--capsule:rgba(249,246,238,.965)}
-.site-head{top:var(--head-top);left:50%;right:auto;transform:translateX(-50%);
-  width:min(1280px,calc(100% - 32px));border-radius:999px;color:var(--vert-profond);
-  background:var(--capsule);border:1px solid rgba(20,60,30,.13);
-  -webkit-backdrop-filter:blur(14px) saturate(108%);backdrop-filter:blur(14px) saturate(108%);
-  box-shadow:0 16px 38px -24px rgba(10,40,20,.55),inset 0 1px 0 rgba(255,255,255,.7);
-  transition:box-shadow .35s var(--ease),background .35s var(--ease)}
-.site-head.is-scrolled{background:rgba(249,246,238,.97);
-  box-shadow:0 18px 42px -24px rgba(10,40,20,.6),inset 0 1px 0 rgba(255,255,255,.8)}
-.site-head .head-in{max-width:none;padding:0 clamp(12px,1.8vw,26px)}
-.site-head .head-nav a{color:rgba(20,60,30,.72)}
-.site-head .head-nav a:hover,.site-head .head-nav a.actif{color:var(--vert-profond)}
-.site-head .head-tel{color:var(--vert-profond)}
-.site-head .head-tel:hover{background:rgba(20,60,30,.07)}
-.site-head .head-tel-ico{color:var(--vert-profond);background:rgba(20,60,30,.07);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
-.site-head .head-cta{background:var(--vert-profond);color:#fff;
-  box-shadow:0 3px 0 rgba(10,40,20,.22),inset 0 1px 0 rgba(255,255,255,.14)}
-.site-head .head-cta:hover{background:#1C6B33;box-shadow:0 5px 0 rgba(10,40,20,.2)}
-.site-head .head-cta:focus-visible{outline-color:var(--vert-profond)}
-.site-head .head-cta-nb{background:#fff;color:var(--vert-profond)}
-.site-head .burger{background:rgba(20,60,30,.08)}
-.site-head .burger span{background:var(--vert-profond)}
-.site-head .burger:focus-visible{outline-color:var(--vert-profond)}
-@media (max-width:900px){
-  :root{--head-top:8px}
-  .site-head{width:calc(100% - 20px)}
-}
+:root{--head-top:0px}
 
 /* ---------- accessibilité : mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
