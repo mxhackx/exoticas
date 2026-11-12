@@ -1290,7 +1290,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
       <header className={`site-head${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap head-in">
           <a href="/" className="head-logo" aria-label="Exoticas, accueil">
-            <Logo size={36} />
+            <Logo size={36} verte />
           </a>
           <nav className="head-nav" aria-label="Navigation principale">
             {LIENS.map(([h, n]) => (
@@ -1438,10 +1438,6 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
                   <button type="button" aria-label="Plante précédente" onClick={() => setVedette((v) => v - 1)}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
-                  <span className="vit-compte" aria-live="polite">
-                    {String((((vedette % VITRINE.length) + VITRINE.length) % VITRINE.length) + 1).padStart(2, "0")}
-                    <span> / {String(VITRINE.length).padStart(2, "0")}</span>
-                  </span>
                   <button type="button" aria-label="Plante suivante" onClick={() => setVedette((v) => v + 1)}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
@@ -1787,7 +1783,7 @@ export default function Site({ vue = "accueil" }: { vue?: "accueil" | "plantes" 
         {/* CONTACT */}
         <section id="contact" className="section contact">
           <div className="wrap contact-in">
-            <div data-reveal data-tilt className="reveal rv-left">
+            <div data-reveal className="reveal rv-left">
               <h3 className="ct-titre">Informations pratiques</h3>
               <p className="ct-texte">
                 Passez nous voir à Tokpa-hoho, appelez-nous ou écrivez-nous sur
@@ -2320,8 +2316,6 @@ strong.souligne{color:inherit}
   background:transparent;color:var(--texte);cursor:pointer;transition:background .25s var(--ease),color .25s,border-color .25s}
 .vit-nav button:hover{background:var(--vert);border-color:var(--vert);color:#fff}
 .vit-nav button:focus-visible{outline:3px solid var(--terre);outline-offset:2px}
-.vit-compte{min-width:5ch;white-space:nowrap;text-align:center;font:500 .9rem/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--texte)}
-.vit-compte span{color:var(--muted)}
 .vit-rang{position:absolute;inset:0;z-index:3;pointer-events:none}
 .vit-item{position:absolute;display:block;padding:0;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer;pointer-events:auto;
   --dur:.7s;--courbe:cubic-bezier(.65,0,.3,1);
