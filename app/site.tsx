@@ -3221,13 +3221,9 @@ h1 .souligne,h2 .souligne,h3 .souligne{background:var(--vert-profond)!important;
 .hero .btn-primary:hover{background:#F2F8EC;box-shadow:0 8px 0 rgba(0,0,0,.24)}
 .hero .btn-contour{background:transparent;color:#fff;border-color:rgba(255,255,255,.85);box-shadow:none}
 .hero .btn-contour:hover{background:#fff;color:var(--vert-profond);border-color:#fff}
-/* nuage : grand contour blanc, intérieur crème, la plante se pose devant */
+/* nuage retiré : la plante se pose directement sur le fond vert du hero */
 .hero-photo::before,.hero-photo::after{display:none}
-.hero-halo{left:2%;right:2%;top:2%;bottom:5%;border-radius:0;background:transparent}
-.hero-halo::before{content:"";position:absolute;inset:-2.5% -2%;background:#fff;
-  -webkit-mask:var(--nuage) center/100% 100% no-repeat;mask:var(--nuage) center/100% 100% no-repeat}
-.hero-halo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#F5FAF0 0%,#D9E9CE 100%);
-  -webkit-mask:var(--nuage) center/100% 100% no-repeat;mask:var(--nuage) center/100% 100% no-repeat}
+.hero-halo{display:none}
 .hero-pep{width:clamp(180px,17vw,250px);margin-bottom:8%}
 .hero-ombre{width:clamp(180px,17vw,250px);background:radial-gradient(closest-side,rgba(0,20,8,.34),rgba(0,20,8,0))}
 .hero-fleche{position:absolute;left:43%;bottom:13%;z-index:2;width:clamp(64px,7vw,108px);color:#fff;
