@@ -18,16 +18,6 @@ const sans = localFont({
   variable: "--font-sans",
   display: "swap",
 });
-/* Titres : Grandstander (licence SIL OFL), ronde et très grasse, comme les visuels
-   Instagram d'Exoticas (« Quelle plante êtes-vous ? »). Fichiers locaux. */
-const display = localFont({
-  src: [
-    { path: "./fonts/Grandstander-700.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/Grandstander-900.woff2", weight: "900", style: "normal" },
-  ],
-  variable: "--font-display",
-  display: "swap",
-});
 
 /* ------------------------------------------------------------------
    Domaine public du site — UNE SEULE LIGNE À CHANGER le jour de la mise
@@ -235,7 +225,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${serif.variable} ${sans.variable} ${display.variable}`}>
+    <html lang="fr" className={`${serif.variable} ${sans.variable}`}>
       <head>
         <link rel="preconnect" href="https://tile.openstreetmap.org" />
         <script
